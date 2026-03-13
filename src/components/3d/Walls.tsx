@@ -116,20 +116,16 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                     return null;
                 }
 
-                // Window opening framing
+                // Window opening - skip regular studs in the rough opening area
                 if (hasWindow) {
-                    const windowHalfWidth = 0.2;
-                    // King studs at edges of opening (full height)
-                    if (Math.abs(Math.abs(xPos - windowOffset) - windowHalfWidth) < 0.05) {
-                        return (
-                            <mesh key={`stud-${i}`} position={[xPos, 0, 0]} castShadow receiveShadow>
-                                <boxGeometry args={[0.038, wallHeight, 0.089]} />
-                                <meshStandardMaterial color={frameColor} roughness={0.8} />
-                            </mesh>
-                        );
-                    }
-                    // Skip studs in the middle of the opening
-                    if (Math.abs(xPos - windowOffset) < windowHalfWidth) {
+                    // Window dimensions: 0.61m x 1.83m (24" x 72")
+                    const windowWidth = 0.61;
+                    const windowHalfWidth = windowWidth / 2; // 0.305m
+                    // Rough opening (RO) - slightly larger than window for shims (20mm each side)
+                    const roHalfWidth = windowHalfWidth + 0.02; // 0.325m
+
+                    // Skip regular studs in the window opening area (RO + half stud width)
+                    if (Math.abs(xPos - windowOffset) < roHalfWidth + 0.03) {
                         return null;
                     }
                 }
@@ -142,21 +138,56 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 );
             })}
 
-            {/* Window header and sill (if wall has window) */}
-            {hasWindow && (
-                <>
-                    {/* Window header ( lintel ) - spans the width of window + extra on each side */}
-                    <mesh position={[windowOffset, wallHeight / 2 - 0.4, 0.048]} castShadow receiveShadow>
-                        <boxGeometry args={[0.45 + 0.089, 0.089]} />
-                        <meshStandardMaterial color={frameColor} roughness={0.8} />
-                    </mesh>
-                    {/* Window sill (bottom of opening) */}
-                    <mesh position={[windowOffset, -wallHeight / 2 + 0.6, 0.048]} castShadow receiveShadow>
-                        <boxGeometry args={[0.45 + 0.089, 0.089]} />
-                        <meshStandardMaterial color={frameColor} roughness={0.8} />
-                    </mesh>
-                </>
-            )}
+            {/* Window framing - explicit king studs, header, and sill */}
+            {hasWindow && (() => {
+                // Window dimensions: 0.61m x 1.83m (24" x 72")
+                const windowWidth = 0.61;
+                const windowHeight = 1.83;
+                const windowHalfWidth = windowWidth / 2; // 0.305m
+
+                // Rough opening (RO) - slightly larger than window for shims (20mm each side)
+                const roHalfWidth = windowHalfWidth + 0.02; // 0.325m
+
+                // King stud positions (centered at rough opening edges)
+                const studHalfWidth = 0.019; // half of 0.038m (2x4 actual width)
+                const kingStudLeftX = windowOffset - roHalfWidth - studHalfWidth;
+                const kingStudRightX = windowOffset + roHalfWidth + studHalfWidth;
+
+                // Header spans rough opening + king studs on each side
+                const headerWidth = roHalfWidth * 2 + 0.038 * 2; // RO + one king stud width on each side
+
+                // Header and sill Y positions
+                // Sill at floor level (bottom of wall + sill height)
+                const sillY = -wallHeight / 2 + 0.089 / 2 + 0.038; // just above bottom plate
+                // Header at top of window opening
+                const headerY = sillY + windowHeight + 0.089; // sill + window height + header height
+
+                return (
+                    <>
+                        {/* King studs at window edges - full height */}
+                        <mesh position={[kingStudLeftX, 0, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                            <meshStandardMaterial color={frameColor} roughness={0.8} />
+                        </mesh>
+                        <mesh position={[kingStudRightX, 0, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                            <meshStandardMaterial color={frameColor} roughness={0.8} />
+                        </mesh>
+
+                        {/* Header - spans rough opening, sits on king studs */}
+                        <mesh position={[windowOffset, headerY, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[headerWidth, 0.089, 0.089]} />
+                            <meshStandardMaterial color={frameColor} roughness={0.8} />
+                        </mesh>
+
+                        {/* Sill - bottom of rough opening */}
+                        <mesh position={[windowOffset, sillY, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[roHalfWidth * 2, 0.089, 0.089]} />
+                            <meshStandardMaterial color={frameColor} roughness={0.8} />
+                        </mesh>
+                    </>
+                );
+            })()}
 
             {/* OSB Sheathing- on EXTERIOR side (positive Z in local coords) */}
             <mesh position={[0, 0, 0.048]} castShadow receiveShadow>

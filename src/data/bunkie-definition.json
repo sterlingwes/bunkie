@@ -250,19 +250,19 @@
       "name": "South Window",
       "category": "window",
       "phase": "envelope",
-      "dimensions": { "width": 0.45, "height": 1.2, "depth": 0.08 },
-      "position": { "x": 1.5, "y": 1.4, "z": 0.6 },
+      "dimensions": { "width": 0.61, "height": 1.83, "depth": 0.08 },
+      "position": { "x": 1.5, "y": 1.2, "z": 0.6 },
       "materials": [
-        { "id": "window-unit-s", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 180, "totalCost": 180, "specs": "18\" x 48\" vinyl, dual pane" },
+        { "id": "window-unit-s", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 280, "totalCost": 280, "specs": "24\" x 72\" vinyl, dual pane Low-E" },
         { "id": "window-flashing-s", "name": "Flashing Tape", "quantity": 0.2, "unit": "roll", "unitCost": 25, "totalCost": 5, "specs": "Grace Vycor Plus" }
       ],
       "codeReferences": [
         { "code": "OBC", "section": "9.7.2", "description": "Window requirements" },
         { "code": "OBC", "section": "9.7.4", "description": "Egress requirements (if applicable)" }
       ],
-      "estimatedCost": { "materials": 185, "labor": 0, "hardware": 15, "total": 200, "currency": "CAD" },
+      "estimatedCost": { "materials": 285, "labor": 0, "hardware": 15, "total": 300, "currency": "CAD" },
       "annotations": [
-        { "id": "ann-ws1", "type": "label", "text": "0.45m x 1.2m", "position": { "x": 1.65, "y": 1.4, "z": 0.6 } }
+        { "id": "ann-ws1", "type": "label", "text": "0.61m x 1.83m (24\" x 72\")", "position": { "x": 1.65, "y": 1.2, "z": 0.6 } }
       ]
     },
     {
@@ -270,18 +270,18 @@
       "name": "North Window",
       "category": "window",
       "phase": "envelope",
-      "dimensions": { "width": 0.45, "height": 1.2, "depth": 0.08 },
-      "position": { "x": -1.5, "y": 1.4, "z": 0.6 },
+      "dimensions": { "width": 0.61, "height": 1.83, "depth": 0.08 },
+      "position": { "x": -1.5, "y": 1.2, "z": 0.6 },
       "materials": [
-        { "id": "window-unit-n", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 180, "totalCost": 180, "specs": "18\" x 48\" vinyl, dual pane" },
+        { "id": "window-unit-n", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 280, "totalCost": 280, "specs": "24\" x 72\" vinyl, dual pane Low-E" },
         { "id": "window-flashing-n", "name": "Flashing Tape", "quantity": 0.2, "unit": "roll", "unitCost": 25, "totalCost": 5, "specs": "Grace Vycor Plus" }
       ],
       "codeReferences": [
         { "code": "OBC", "section": "9.7.2", "description": "Window requirements" }
       ],
-      "estimatedCost": { "materials": 185, "labor": 0, "hardware": 15, "total": 200, "currency": "CAD" },
+      "estimatedCost": { "materials": 285, "labor": 0, "hardware": 15, "total": 300, "currency": "CAD" },
       "annotations": [
-        { "id": "ann-wn1", "type": "label", "text": "0.45m x 1.2m", "position": { "x": -1.65, "y": 1.4, "z": 0.6 } }
+        { "id": "ann-wn1", "type": "label", "text": "0.61m x 1.83m (24\" x 72\")", "position": { "x": -1.65, "y": 1.2, "z": 0.6 } }
       ]
     },
     {
