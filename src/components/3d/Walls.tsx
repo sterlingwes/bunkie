@@ -14,119 +14,155 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
   const groupRef = useRef<Group>(null);
   const { selectedComponentId, hoveredComponentId, hoverComponent, selectComponent } = useBunkieStore();
 
-  const isSelected = selectedComponentId === component.id;
-  const isHovered = hoveredComponentId === component.id;
+    const isSelected = selectedComponentId === component.id;
+    const isHovered = hoveredComponentId === component.id;
 
-  const handlePointerOver = () => {
-    hoverComponent(component.id);
-    document.body.style.cursor = 'pointer';
-  };
+    const handlePointerOver = () => {
+        hoverComponent(component.id);
+        document.body.style.cursor = 'pointer';
+    };
 
-  const handlePointerOut = () => {
-    hoverComponent(null);
-    document.body.style.cursor = 'auto';
-  };
+    const handlePointerOut = () => {
+        hoverComponent(null);
+        document.body.style.cursor = 'auto';
+    };
 
-  const handleClick = () => {
-    selectComponent(isSelected ? null : component.id);
-  };
+    const handleClick = () => {
+        selectComponent(isSelected ? null : component.id);
+    };
 
-  // Determine wall orientation based on ID
-  // West/East walls run along X axis (width is along X)
-  // North/South walls run along Z axis (depth is along Z)
-  const isXAxis = component.id === 'wall-west' || component.id === 'wall-east';
+    // Wall dimensions - width is the length along the wall
+    const wallLength = component.dimensions.width;
+    const wallHeight = component.dimensions.height;
 
-  // Wall dimensions
-  const wallLength = isXAxis ? component.dimensions.depth : component.dimensions.width;
-  const wallHeight = component.dimensions.height;
-  const studSpacing = 0.406; // 16" OC in meters
-  const studCount = Math.floor(wallLength / studSpacing) + 1;
+    // Rotation based on wall ID:
+    // - wall-west (front, +Z): exterior faces +Z, rotate 180° to face outward
+    // - wall-east (back, -Z): exterior faces -Z, no rotation (default)
+    // - wall-south (+X): exterior faces +X, rotate -90° to face +X
+    // - wall-north (-X): exterior faces -X, rotate +90° to face -X
+    let rotation: [number, number, number];
+    switch (component.id) {
+        case 'wall-west':
+            rotation = [0, Math.PI, 0]; // 180° - face +Z (front/exterior)
+            break;
+        case 'wall-east':
+            rotation = [0, 0, 0]; // 0° - face -Z (back/exterior)
+            break;
+        case 'wall-south':
+            rotation = [0, -Math.PI / 2, 0]; // -90° - face +X (right/exterior)
+            break;
+        case 'wall-north':
+            rotation = [0, Math.PI / 2, 0]; // +90° - face -X (left/exterior)
+            break;
+        default:
+            rotation = [0, 0, 0];
+    }
 
-  // Rotation: X-axis walls need no rotation, Z-axis walls need 90 degree Y rotation
-  const rotation: [number, number, number] = isXAxis ? [0, 0, 0] : [0, Math.PI / 2, 0];
+    const studSpacing = 0.406; // 16" OC in meters
+    const studCount = Math.floor(wallLength / studSpacing) + 1;
 
-  // Wall color based on selection state
-  const frameColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#c4a574';
-  const sheathingColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#d4b896';
+    // Wall color based on selection state
+    const frameColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#c4a574';
+    const sheathingColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#d4b896';
 
-  return (
-    <group
-      ref={groupRef}
-      position={[component.position.x, component.position.y, component.position.z]}
-      rotation={rotation}
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
-      onClick={handleClick}
-    >
-      {/* Bottom plate */}
-      <mesh position={[0, -wallHeight / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[wallLength, 0.038, 0.089]} />
-        <meshStandardMaterial color={frameColor} roughness={0.8} />
-      </mesh>
+    // Window opening position along wall
+    const windowOffset = windowPosition === 'front' ? wallLength / 4 : -wallLength / 4;
 
-      {/* Top plate (double) */}
-      <mesh position={[0, wallHeight / 2 + 0.019, 0]} castShadow receiveShadow>
-        <boxGeometry args={[wallLength, 0.076, 0.089]} />
-        <meshStandardMaterial color={frameColor} roughness={0.8} />
-      </mesh>
-
-      {/* Studs */}
-      {Array.from({ length: studCount }).map((_, i) => {
-        const xPos = -wallLength / 2 + 0.089 / 2 + i * studSpacing;
-
-        // Skip studs where door opening is (centered on wall)
-        if (hasDoor && Math.abs(xPos) < 0.95) {
-          // Door header
-          if (i === Math.floor(studCount / 2) - 1 || i === Math.floor(studCount / 2)) {
-            return (
-              <mesh key={`stud-${i}`} position={[xPos, wallHeight / 2 - 0.3, 0]} castShadow receiveShadow>
-                <boxGeometry args={[0.038, 0.089, 0.089]} />
+    return (
+        <group
+            ref={groupRef}
+            position={[component.position.x, component.position.y, component.position.z]}
+            rotation={rotation}
+            onPointerOver={handlePointerOver}
+            onPointerOut={handlePointerOut}
+            onClick={handleClick}
+        >
+            {/* Bottom plate */}
+            <mesh position={[0, -wallHeight / 2, 0]} castShadow receiveShadow>
+                <boxGeometry args={[wallLength, 0.038, 0.089]} />
                 <meshStandardMaterial color={frameColor} roughness={0.8} />
-              </mesh>
-            );
-          }
-          // Door jack studs
-          if (Math.abs(xPos - 0.95) < 0.05 || Math.abs(xPos + 0.95) < 0.05) {
-            return (
-              <mesh key={`stud-${i}`} position={[xPos, 0, 0]} castShadow receiveShadow>
-                <boxGeometry args={[0.038, wallHeight - 0.6, 0.089]} />
+            </mesh>
+
+            {/* Top plate (double) */}
+            <mesh position={[0, wallHeight / 2 + 0.019, 0]} castShadow receiveShadow>
+                <boxGeometry args={[wallLength, 0.076, 0.089]} />
                 <meshStandardMaterial color={frameColor} roughness={0.8} />
-              </mesh>
-            );
-          }
-          return null;
-        }
+            </mesh>
 
-        // Skip studs where window opening is
-        if (hasWindow) {
-          const windowX = windowPosition === 'front' ? wallLength / 4 : -wallLength / 4;
-          if (Math.abs(xPos - windowX) < 0.3) {
-            // Window header
-            if (Math.abs(xPos - windowX) < 0.05) {
-              return (
-                <mesh key={`stud-${i}`} position={[xPos, wallHeight / 2 - 0.4, 0]} castShadow receiveShadow>
-                  <boxGeometry args={[0.038, 0.089, 0.089]} />
-                  <meshStandardMaterial color={frameColor} roughness={0.8} />
-                </mesh>
-              );
-            }
-            return null;
-          }
-        }
+            {/* Studs */}
+            {Array.from({ length: studCount }).map((_, i) => {
+                const xPos = -wallLength / 2 + 0.089 / 2 + i * studSpacing;
 
-        return (
-          <mesh key={`stud-${i}`} position={[xPos, 0, 0]} castShadow receiveShadow>
-            <boxGeometry args={[0.038, wallHeight, 0.089]} />
-            <meshStandardMaterial color={frameColor} roughness={0.8} />
-          </mesh>
-        );
-      })}
+                // Skip studs where door opening is (centered on wall)
+                if (hasDoor && Math.abs(xPos) < 0.95) {
+                    // Door header
+                    if (i === Math.floor(studCount / 2) - 1 || i === Math.floor(studCount / 2)) {
+                        return (
+                            <mesh key={`stud-${i}`} position={[xPos, wallHeight / 2 - 0.3, 0]} castShadow receiveShadow>
+                                <boxGeometry args={[0.038, 0.089, 0.089]} />
+                                <meshStandardMaterial color={frameColor} roughness={0.8} />
+                            </mesh>
+                        );
+                    }
+                    // Door jack studs
+                    if (Math.abs(xPos - 0.95) < 0.05 || Math.abs(xPos + 0.95) < 0.05) {
+                        return (
+                            <mesh key={`stud-${i}`} position={[xPos, 0, 0]} castShadow receiveShadow>
+                                <boxGeometry args={[0.038, wallHeight - 0.6, 0.089]} />
+                                <meshStandardMaterial color={frameColor} roughness={0.8} />
+                            </mesh>
+                        );
+                    }
+                    return null;
+                }
 
-      {/* OSB Sheathing */}
-      <mesh position={[0, 0, -0.048]} castShadow receiveShadow>
-        <boxGeometry args={[wallLength, wallHeight + 0.1, 0.011]} />
-        <meshStandardMaterial color={sheathingColor} roughness={0.9} />
-      </mesh>
-    </group>
-  );
+                // Window opening framing
+                if (hasWindow) {
+                    const windowHalfWidth = 0.2;
+                    // King studs at edges of opening (full height)
+                    if (Math.abs(Math.abs(xPos - windowOffset) - windowHalfWidth) < 0.05) {
+                        return (
+                            <mesh key={`stud-${i}`} position={[xPos, 0, 0]} castShadow receiveShadow>
+                                <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                                <meshStandardMaterial color={frameColor} roughness={0.8} />
+                            </mesh>
+                        );
+                    }
+                    // Skip studs in the middle of the opening
+                    if (Math.abs(xPos - windowOffset) < windowHalfWidth) {
+                        return null;
+                    }
+                }
+
+                return (
+                    <mesh key={`stud-${i}`} position={[xPos, 0, 0]} castShadow receiveShadow>
+                        <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                        <meshStandardMaterial color={frameColor} roughness={0.8} />
+                    </mesh>
+                );
+            })}
+
+            {/* Window header and sill (if wall has window) */}
+            {hasWindow && (
+                <>
+                    {/* Window header ( lintel ) - spans the width of window + extra on each side */}
+                    <mesh position={[windowOffset, wallHeight / 2 - 0.4, 0.048]} castShadow receiveShadow>
+                        <boxGeometry args={[0.45 + 0.089, 0.089]} />
+                        <meshStandardMaterial color={frameColor} roughness={0.8} />
+                    </mesh>
+                    {/* Window sill (bottom of opening) */}
+                    <mesh position={[windowOffset, -wallHeight / 2 + 0.6, 0.048]} castShadow receiveShadow>
+                        <boxGeometry args={[0.45 + 0.089, 0.089]} />
+                        <meshStandardMaterial color={frameColor} roughness={0.8} />
+                    </mesh>
+                </>
+            )}
+
+            {/* OSB Sheathing- on EXTERIOR side (positive Z in local coords) */}
+            <mesh position={[0, 0, 0.048]} castShadow receiveShadow>
+                <boxGeometry args={[wallLength, wallHeight + 0.1, 0.011]} />
+                <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+            </mesh>
+        </group>
+    );
 }

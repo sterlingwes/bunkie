@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Mesh } from 'three';
+import { Group, Mesh } from 'three';
 import type { Component } from '../../schemas/bunkie.schema';
 import { useBunkieStore } from '../../store/useBunkieStore';
 
@@ -8,6 +8,7 @@ interface DoorProps {
 }
 
 export function Door({ component }: DoorProps) {
+  const groupRef = useRef<Group>(null);
   const meshRef = useRef<Mesh>(null);
   const { selectedComponentId, hoveredComponentId, hoverComponent, selectComponent } = useBunkieStore();
 
@@ -31,8 +32,16 @@ export function Door({ component }: DoorProps) {
   const frameColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#f5f5f4';
   const doorColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#8b7355';
 
+  // Door is on the west wall (front), which faces +Z
+  // Rotate 180° to face outward (+Z direction)
+  const rotation: [number, number, number] = [0, Math.PI, 0];
+
   return (
-    <group position={[component.position.x, component.position.y, component.position.z]}>
+    <group
+      ref={groupRef}
+      position={[component.position.x, component.position.y, component.position.z]}
+      rotation={rotation}
+    >
       {/* Door frame - vertical */}
       <mesh position={[-component.dimensions.width / 2, 0, 0]} castShadow>
         <boxGeometry args={[0.04, component.dimensions.height, 0.08]} />
