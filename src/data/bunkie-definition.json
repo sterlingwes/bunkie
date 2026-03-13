@@ -1,0 +1,517 @@
+{
+  "meta": {
+    "name": "Ontario Bunkie",
+    "description": "3.0m x 3.28m backyard bunkie on Canadian Shield bedrock with wood stove heating",
+    "totalArea": 9.84,
+    "totalCost": 8280,
+    "currency": "CAD",
+    "created": "2024-01-15",
+    "modified": "2024-01-20"
+  },
+  "site": {
+    "orientation": "west-facing",
+    "terrain": "bedrock",
+    "frostDepth": 1200,
+    "slope": 0,
+    "accessNotes": "Canadian Shield bedrock - minimal excavation required"
+  },
+  "components": [
+    {
+      "id": "foundation-group",
+      "name": "Sonotube Pier Foundation",
+      "category": "foundation",
+      "phase": "foundation",
+      "dimensions": { "width": 3.0, "height": 0.4, "depth": 3.28 },
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "materials": [
+        { "id": "sonotube-8", "name": "8\" Sonotube", "quantity": 6, "unit": "pieces", "unitCost": 15, "totalCost": 90, "specs": "8\" diameter x 4' length" },
+        { "id": "concrete-mix", "name": "Concrete Mix", "quantity": 12, "unit": "bags", "unitCost": 8, "totalCost": 96, "specs": "30kg bags, high-strength" },
+        { "id": "rebar-1-2", "name": "1/2\" Rebar", "quantity": 12, "unit": "pieces", "unitCost": 6, "totalCost": 72, "specs": "For pinning to bedrock" },
+        { "id": "epoxy-anchor", "name": "Epoxy Anchor System", "quantity": 6, "unit": "sets", "unitCost": 18, "totalCost": 108, "specs": "Hilti HIT-RE 500" },
+        { "id": "post-base", "name": "Post Base Connector", "quantity": 6, "unit": "pieces", "unitCost": 14, "totalCost": 84, "specs": "Simpson ABU44" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.15.3", "description": "Pier foundations - spacing, diameter, and depth requirements" }
+      ],
+      "estimatedCost": { "materials": 450, "labor": 0, "hardware": 0, "total": 450, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-f1", "type": "note", "text": "6 piers pinned to bedrock", "position": { "x": 0, "y": 0.5, "z": 0 } }
+      ],
+      "children": ["pier-fl", "pier-ml", "pier-bl", "pier-fr", "pier-mr", "pier-br"]
+    },
+    {
+      "id": "pier-fl",
+      "name": "Front Left Pier",
+      "category": "foundation",
+      "phase": "foundation",
+      "dimensions": { "width": 0.2, "height": 0.4, "depth": 0.2 },
+      "position": { "x": -1.3, "y": -0.2, "z": 1.44 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "pier-ml",
+      "name": "Middle Left Pier",
+      "category": "foundation",
+      "phase": "foundation",
+      "dimensions": { "width": 0.2, "height": 0.4, "depth": 0.2 },
+      "position": { "x": -1.3, "y": -0.2, "z": 0 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "pier-bl",
+      "name": "Back Left Pier",
+      "category": "foundation",
+      "phase": "foundation",
+      "dimensions": { "width": 0.2, "height": 0.4, "depth": 0.2 },
+      "position": { "x": -1.3, "y": -0.2, "z": -1.44 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "pier-fr",
+      "name": "Front Right Pier",
+      "category": "foundation",
+      "phase": "foundation",
+      "dimensions": { "width": 0.2, "height": 0.4, "depth": 0.2 },
+      "position": { "x": 1.3, "y": -0.2, "z": 1.44 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "pier-mr",
+      "name": "Middle Right Pier",
+      "category": "foundation",
+      "phase": "foundation",
+      "dimensions": { "width": 0.2, "height": 0.4, "depth": 0.2 },
+      "position": { "x": 1.3, "y": -0.2, "z": 0 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "pier-br",
+      "name": "Back Right Pier",
+      "category": "foundation",
+      "phase": "foundation",
+      "dimensions": { "width": 0.2, "height": 0.4, "depth": 0.2 },
+      "position": { "x": 1.3, "y": -0.2, "z": -1.44 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "floor-assembly",
+      "name": "Floor Assembly",
+      "category": "floor",
+      "phase": "framing",
+      "dimensions": { "width": 3.0, "height": 0.2, "depth": 3.28 },
+      "position": { "x": 0, "y": 0.1, "z": 0 },
+      "materials": [
+        { "id": "rim-joist", "name": "2x8 SPF Rim Joist", "quantity": 12.56, "unit": "linear m", "unitCost": 8, "totalCost": 100, "specs": "SPF #2 or better" },
+        { "id": "floor-joist", "name": "2x8 SPF Floor Joist", "quantity": 15, "unit": "linear m", "unitCost": 8, "totalCost": 120, "specs": "@ 16\" OC" },
+        { "id": "subfloor", "name": "5/8\" Plywood Subfloor", "quantity": 4, "unit": "sheets", "unitCost": 55, "totalCost": 220, "specs": "Tongue & groove, exterior grade" },
+        { "id": "insulation-floor", "name": "R-22 Fiberglass Batts", "quantity": 10, "unit": "m²", "unitCost": 12, "totalCost": 120, "specs": "23\" width for 16\" OC" },
+        { "id": "joist-hangers", "name": "Joist Hangers", "quantity": 12, "unit": "pieces", "unitCost": 2, "totalCost": 24, "specs": "Simpson LU28" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.23.4", "description": "Floor joist spans and sizes" },
+        { "code": "OBC", "section": "9.23.13", "description": "Subfloor requirements" }
+      ],
+      "estimatedCost": { "materials": 584, "labor": 0, "hardware": 24, "total": 608, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-fl1", "type": "dimension", "text": "3.0m", "position": { "x": -1.5, "y": 0.1, "z": 0 }, "endPosition": { "x": 1.5, "y": 0.1, "z": 0 } },
+        { "id": "ann-fl2", "type": "dimension", "text": "3.28m", "position": { "x": 0, "y": 0.1, "z": 1.79 }, "endPosition": { "x": 0, "y": 0.1, "z": -1.79 } }
+      ],
+      "children": ["rim-joist-perimeter", "floor-joists", "subfloor"]
+    },
+    {
+      "id": "wall-west",
+      "name": "West Wall (Front)",
+      "category": "wall",
+      "phase": "framing",
+      "dimensions": { "width": 0.14, "height": 2.4, "depth": 3.0 },
+      "position": { "x": 0, "y": 1.4, "z": 1.64 },
+      "materials": [
+        { "id": "stud-2x4", "name": "2x4 SPF Studs", "quantity": 8, "unit": "pieces", "unitCost": 6, "totalCost": 48, "specs": "@ 16\" OC" },
+        { "id": "plate-2x4", "name": "2x4 Plates", "quantity": 3, "unit": "pieces", "unitCost": 8, "totalCost": 24, "specs": "Top and bottom plates" },
+        { "id": "header", "name": "Header LVL", "quantity": 1, "unit": "piece", "unitCost": 45, "totalCost": 45, "specs": "For door opening" },
+        { "id": "osb-sheathing", "name": "7/16\" OSB Sheathing", "quantity": 2, "unit": "sheets", "unitCost": 28, "totalCost": 56, "specs": "Exposure 1" },
+        { "id": "tyvek", "name": "Tyvek Housewrap", "quantity": 1, "unit": "roll", "unitCost": 85, "totalCost": 85, "specs": "50' x 9' roll" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.23.10", "description": "Exterior wall framing" },
+        { "code": "OBC", "section": "9.23.6", "description": "Stud size and spacing" }
+      ],
+      "estimatedCost": { "materials": 258, "labor": 0, "hardware": 30, "total": 288, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-w1", "type": "label", "text": "Front - Sunset View", "position": { "x": 0, "y": 2.5, "z": 1.8 } }
+      ],
+      "children": ["sliding-door"]
+    },
+    {
+      "id": "wall-east",
+      "name": "East Wall (Back)",
+      "category": "wall",
+      "phase": "framing",
+      "dimensions": { "width": 0.14, "height": 2.1, "depth": 3.0 },
+      "position": { "x": 0, "y": 1.25, "z": -1.64 },
+      "materials": [
+        { "id": "stud-2x4-e", "name": "2x4 SPF Studs", "quantity": 8, "unit": "pieces", "unitCost": 6, "totalCost": 48, "specs": "@ 16\" OC" },
+        { "id": "plate-2x4-e", "name": "2x4 Plates", "quantity": 3, "unit": "pieces", "unitCost": 8, "totalCost": 24, "specs": "Top and bottom plates" },
+        { "id": "osb-sheathing-e", "name": "7/16\" OSB Sheathing", "quantity": 2, "unit": "sheets", "unitCost": 28, "totalCost": 56, "specs": "Exposure 1" },
+        { "id": "tyvek-e", "name": "Tyvek Housewrap", "quantity": 0.2, "unit": "roll", "unitCost": 85, "totalCost": 17, "specs": "Shared from roll" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.23.10", "description": "Exterior wall framing" }
+      ],
+      "estimatedCost": { "materials": 145, "labor": 0, "hardware": 20, "total": 165, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-w2", "type": "label", "text": "Back - No Windows (Privacy)", "position": { "x": 0, "y": 2.2, "z": -1.7 } }
+      ],
+      "children": []
+    },
+    {
+      "id": "wall-south",
+      "name": "South Wall",
+      "category": "wall",
+      "phase": "framing",
+      "dimensions": { "width": 3.28, "height": 2.25, "depth": 0.14 },
+      "position": { "x": 1.5, "y": 1.325, "z": 0 },
+      "materials": [
+        { "id": "stud-2x4-s", "name": "2x4 SPF Studs", "quantity": 9, "unit": "pieces", "unitCost": 6, "totalCost": 54, "specs": "@ 16\" OC" },
+        { "id": "plate-2x4-s", "name": "2x4 Plates", "quantity": 3, "unit": "pieces", "unitCost": 8, "totalCost": 24, "specs": "Top and bottom plates" },
+        { "id": "header-s", "name": "Header", "quantity": 1, "unit": "piece", "unitCost": 25, "totalCost": 25, "specs": "For window opening" },
+        { "id": "osb-sheathing-s", "name": "7/16\" OSB Sheathing", "quantity": 2, "unit": "sheets", "unitCost": 28, "totalCost": 56, "specs": "Exposure 1" },
+        { "id": "tyvek-s", "name": "Tyvek Housewrap", "quantity": 0.2, "unit": "roll", "unitCost": 85, "totalCost": 17, "specs": "Shared from roll" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.23.10", "description": "Exterior wall framing" }
+      ],
+      "estimatedCost": { "materials": 176, "labor": 0, "hardware": 25, "total": 201, "currency": "CAD" },
+      "annotations": [],
+      "children": ["window-south"]
+    },
+    {
+      "id": "wall-north",
+      "name": "North Wall",
+      "category": "wall",
+      "phase": "framing",
+      "dimensions": { "width": 3.28, "height": 2.25, "depth": 0.14 },
+      "position": { "x": -1.5, "y": 1.325, "z": 0 },
+      "materials": [
+        { "id": "stud-2x4-n", "name": "2x4 SPF Studs", "quantity": 9, "unit": "pieces", "unitCost": 6, "totalCost": 54, "specs": "@ 16\" OC" },
+        { "id": "plate-2x4-n", "name": "2x4 Plates", "quantity": 3, "unit": "pieces", "unitCost": 8, "totalCost": 24, "specs": "Top and bottom plates" },
+        { "id": "header-n", "name": "Header", "quantity": 1, "unit": "piece", "unitCost": 25, "totalCost": 25, "specs": "For window opening" },
+        { "id": "osb-sheathing-n", "name": "7/16\" OSB Sheathing", "quantity": 2, "unit": "sheets", "unitCost": 28, "totalCost": 56, "specs": "Exposure 1" },
+        { "id": "tyvek-n", "name": "Tyvek Housewrap", "quantity": 0.2, "unit": "roll", "unitCost": 85, "totalCost": 17, "specs": "Shared from roll" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.23.10", "description": "Exterior wall framing" }
+      ],
+      "estimatedCost": { "materials": 176, "labor": 0, "hardware": 25, "total": 201, "currency": "CAD" },
+      "annotations": [],
+      "children": ["window-north"]
+    },
+    {
+      "id": "sliding-door",
+      "name": "Sliding Patio Door",
+      "category": "door",
+      "phase": "envelope",
+      "dimensions": { "width": 1.8, "height": 2.1, "depth": 0.08 },
+      "position": { "x": 0, "y": 1.25, "z": 1.68 },
+      "materials": [
+        { "id": "door-unit", "name": "Sliding Patio Door", "quantity": 1, "unit": "unit", "unitCost": 750, "totalCost": 750, "specs": "6' x 6'10\" vinyl, dual pane Low-E" },
+        { "id": "door-trim", "name": "Door Trim Kit", "quantity": 1, "unit": "kit", "unitCost": 45, "totalCost": 45, "specs": "Vinyl brickmold" },
+        { "id": "door-flashing", "name": "Flashing Tape", "quantity": 1, "unit": "roll", "unitCost": 25, "totalCost": 25, "specs": "Grace Vycor Plus" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.7.1", "description": "Door requirements" },
+        { "code": "OBC", "section": "9.25.3", "description": "Air barrier at openings" }
+      ],
+      "estimatedCost": { "materials": 820, "labor": 0, "hardware": 30, "total": 850, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-d1", "type": "label", "text": "1.8m x 2.1m Sliding Door", "position": { "x": 0, "y": 0.5, "z": 1.9 } }
+      ]
+    },
+    {
+      "id": "window-south",
+      "name": "South Window",
+      "category": "window",
+      "phase": "envelope",
+      "dimensions": { "width": 0.45, "height": 1.2, "depth": 0.08 },
+      "position": { "x": 1.55, "y": 1.4, "z": 0.6 },
+      "materials": [
+        { "id": "window-unit-s", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 180, "totalCost": 180, "specs": "18\" x 48\" vinyl, dual pane" },
+        { "id": "window-flashing-s", "name": "Flashing Tape", "quantity": 0.2, "unit": "roll", "unitCost": 25, "totalCost": 5, "specs": "Grace Vycor Plus" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.7.2", "description": "Window requirements" },
+        { "code": "OBC", "section": "9.7.4", "description": "Egress requirements (if applicable)" }
+      ],
+      "estimatedCost": { "materials": 185, "labor": 0, "hardware": 15, "total": 200, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-ws1", "type": "label", "text": "0.45m x 1.2m", "position": { "x": 1.65, "y": 1.4, "z": 0.6 } }
+      ]
+    },
+    {
+      "id": "window-north",
+      "name": "North Window",
+      "category": "window",
+      "phase": "envelope",
+      "dimensions": { "width": 0.45, "height": 1.2, "depth": 0.08 },
+      "position": { "x": -1.55, "y": 1.4, "z": 0.6 },
+      "materials": [
+        { "id": "window-unit-n", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 180, "totalCost": 180, "specs": "18\" x 48\" vinyl, dual pane" },
+        { "id": "window-flashing-n", "name": "Flashing Tape", "quantity": 0.2, "unit": "roll", "unitCost": 25, "totalCost": 5, "specs": "Grace Vycor Plus" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.7.2", "description": "Window requirements" }
+      ],
+      "estimatedCost": { "materials": 185, "labor": 0, "hardware": 15, "total": 200, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-wn1", "type": "label", "text": "0.45m x 1.2m", "position": { "x": -1.65, "y": 1.4, "z": 0.6 } }
+      ]
+    },
+    {
+      "id": "roof-assembly",
+      "name": "Shed Roof",
+      "category": "roof",
+      "phase": "framing",
+      "dimensions": { "width": 3.2, "height": 0.15, "depth": 3.48 },
+      "position": { "x": 0, "y": 2.35, "z": 0.1 },
+      "materials": [
+        { "id": "rafter-2x6", "name": "2x6 SPF Rafters", "quantity": 12, "unit": "linear m", "unitCost": 8, "totalCost": 96, "specs": "@ 16\" OC" },
+        { "id": "roof-sheathing", "name": "5/8\" Plywood Sheathing", "quantity": 3, "unit": "sheets", "unitCost": 65, "totalCost": 195, "specs": "CDX exterior" },
+        { "id": "drip-edge", "name": "Drip Edge", "quantity": 14, "unit": "linear m", "unitCost": 3, "totalCost": 42, "specs": "Aluminum" },
+        { "id": "underlayment", "name": "Roofing Underlayment", "quantity": 1, "unit": "roll", "unitCost": 45, "totalCost": 45, "specs": "Synthetic" },
+        { "id": "shingles", "name": "Architectural Shingles", "quantity": 4, "unit": "bundles", "unitCost": 45, "totalCost": 180, "specs": "30-year architectural" },
+        { "id": "ridge-cap", "name": "Ridge Cap Shingles", "quantity": 1, "unit": "bundle", "unitCost": 45, "totalCost": 45, "specs": "Matching" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.23.14", "description": "Roof framing" },
+        { "code": "OBC", "section": "9.26", "description": "Roof coverings" }
+      ],
+      "estimatedCost": { "materials": 603, "labor": 0, "hardware": 40, "total": 643, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-r1", "type": "dimension", "text": "5° slope", "position": { "x": 0, "y": 2.5, "z": 0 }, "endPosition": { "x": 0, "y": 2.2, "z": -0.5 } }
+      ],
+      "children": []
+    },
+    {
+      "id": "wood-stove",
+      "name": "Wood Stove System",
+      "category": "appliance",
+      "phase": "finishing",
+      "dimensions": { "width": 0.5, "height": 0.7, "depth": 0.4 },
+      "position": { "x": 0, "y": 0.55, "z": -0.5 },
+      "materials": [
+        { "id": "stove-unit", "name": "EPA Certified Wood Stove", "quantity": 1, "unit": "unit", "unitCost": 1500, "totalCost": 1500, "specs": "Drolet, US Stove, or equivalent, 2020 EPA certified" },
+        { "id": "hearth", "name": "Non-combustible Hearth", "quantity": 1, "unit": "unit", "unitCost": 200, "totalCost": 200, "specs": "Slate or tile, 900mm x 900mm minimum" },
+        { "id": "chimney", "name": "Double-wall Chimney Kit", "quantity": 1, "unit": "kit", "unitCost": 500, "totalCost": 500, "specs": "Class A, through-roof installation" },
+        { "id": "stove-pipe", "name": "Stove Pipe", "quantity": 1, "unit": "kit", "unitCost": 120, "totalCost": 120, "specs": "6\" double-wall, adjustable length" },
+        { "id": "co-detector", "name": "CO Detector", "quantity": 1, "unit": "unit", "unitCost": 40, "totalCost": 40, "specs": "Battery backup required" }
+      ],
+      "codeReferences": [
+        { "code": "CSA B365", "section": "5.2", "description": "Floor protection requirements - non-combustible hearth" },
+        { "code": "CSA B365", "section": "6.2", "description": "Clearance to combustibles - 18\" minimum, check manufacturer label" },
+        { "code": "CSA B365", "section": "7", "description": "Chimney installation requirements" },
+        { "code": "OBC", "section": "9.21", "description": "Solid fuel burning appliances" }
+      ],
+      "estimatedCost": { "materials": 2360, "labor": 0, "hardware": 40, "total": 2400, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-s1", "type": "clearance", "text": "18\" Clearance Zone", "position": { "x": 0, "y": 0.55, "z": -0.5 }, "color": "#ff000055" },
+        { "id": "ann-s2", "type": "note", "text": "CSA B365 compliant installation", "position": { "x": 0, "y": 1.5, "z": -0.5 } }
+      ],
+      "children": ["stove-hearth", "stove-clearance"]
+    },
+    {
+      "id": "stove-hearth",
+      "name": "Stove Hearth",
+      "category": "appliance",
+      "phase": "finishing",
+      "dimensions": { "width": 0.9, "height": 0.02, "depth": 0.9 },
+      "position": { "x": 0, "y": 0.21, "z": -0.5 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "stove-clearance",
+      "name": "Stove Clearance Zone",
+      "category": "appliance",
+      "phase": "finishing",
+      "dimensions": { "width": 1.2, "height": 1.5, "depth": 1.2 },
+      "position": { "x": 0, "y": 0.75, "z": -0.5 },
+      "materials": [],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 0, "labor": 0, "hardware": 0, "total": 0, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "exterior-siding",
+      "name": "Board and Batten Siding",
+      "category": "wall",
+      "phase": "finishing",
+      "dimensions": { "width": 3.0, "height": 2.25, "depth": 0.025 },
+      "position": { "x": 0, "y": 1.325, "z": 0 },
+      "materials": [
+        { "id": "pine-boards", "name": "Rough-sawn Pine Boards", "quantity": 30, "unit": "linear m", "unitCost": 8, "totalCost": 240, "specs": "1x8 rough-sawn, kiln-dried" },
+        { "id": "battens", "name": "Batten Strips", "quantity": 20, "unit": "linear m", "unitCost": 4, "totalCost": 80, "specs": "1x3 rough-sawn" },
+        { "id": "stain", "name": "Clear Wood Stain", "quantity": 2, "unit": "gallons", "unitCost": 50, "totalCost": 100, "specs": "UV protective clear coat" },
+        { "id": "caulk", "name": "Exterior Caulk", "quantity": 3, "unit": "tubes", "unitCost": 8, "totalCost": 24, "specs": "Paintable silicone" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.27", "description": "Exterior cladding" }
+      ],
+      "estimatedCost": { "materials": 444, "labor": 0, "hardware": 6, "total": 450, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "insulation-walls",
+      "name": "Wall Insulation",
+      "category": "wall",
+      "phase": "finishing",
+      "dimensions": { "width": 3.0, "height": 2.25, "depth": 0.089 },
+      "position": { "x": 0, "y": 1.325, "z": 0 },
+      "materials": [
+        { "id": "r14-batts", "name": "R-14 Fiberglass Batts", "quantity": 25, "unit": "m²", "unitCost": 5, "totalCost": 125, "specs": "15\" width for 16\" OC studs" },
+        { "id": "vapor-barrier", "name": "6mil Poly Vapor Barrier", "quantity": 1, "unit": "roll", "unitCost": 45, "totalCost": 45, "specs": "10' x 100'" },
+        { "id": "acoustic-sealant", "name": "Acoustic Sealant", "quantity": 2, "unit": "tubes", "unitCost": 8, "totalCost": 16, "specs": "For vapor barrier edges" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.25", "description": "Insulation and vapor barriers" }
+      ],
+      "estimatedCost": { "materials": 186, "labor": 0, "hardware": 0, "total": 186, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "interior-finish",
+      "name": "Interior Finish",
+      "category": "wall",
+      "phase": "finishing",
+      "dimensions": { "width": 3.0, "height": 2.25, "depth": 0.012 },
+      "position": { "x": 0, "y": 1.325, "z": 0 },
+      "materials": [
+        { "id": "tongue-groove", "name": "Tongue & Groove Pine", "quantity": 35, "unit": "m²", "unitCost": 10, "totalCost": 350, "specs": "1x6 Eastern White Pine, knotty grade" },
+        { "id": "trim", "name": "Interior Trim", "quantity": 20, "unit": "linear m", "unitCost": 4, "totalCost": 80, "specs": "Pine casing and baseboard" },
+        { "id": "finish-nails", "name": "Finish Nails", "quantity": 1, "unit": "box", "unitCost": 15, "totalCost": 15, "specs": "2\" 18ga brad nails" }
+      ],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 445, "labor": 0, "hardware": 15, "total": 460, "currency": "CAD" },
+      "annotations": []
+    },
+    {
+      "id": "fasteners-hardware",
+      "name": "Fasteners & Hardware",
+      "category": "floor",
+      "phase": "framing",
+      "dimensions": { "width": 0.1, "height": 0.1, "depth": 0.1 },
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "materials": [
+        { "id": "framing-nails", "name": "Framing Nails", "quantity": 2, "unit": "boxes", "unitCost": 40, "totalCost": 80, "specs": "3-1/4\" hot-dipped galvanized" },
+        { "id": "deck-screws", "name": "Deck Screws", "quantity": 2, "unit": "boxes", "unitCost": 35, "totalCost": 70, "specs": "3\" exterior grade" },
+        { "id": "roofing-nails", "name": "Roofing Nails", "quantity": 1, "unit": "box", "unitCost": 25, "totalCost": 25, "specs": "1-1/4\" coil roofing nails" },
+        { "id": "hex-screws", "name": "Hex Head Structural Screws", "quantity": 1, "unit": "box", "unitCost": 45, "totalCost": 45, "specs": "GRK or equivalent" },
+        { "id": "misc-hardware", "name": "Misc Hardware", "quantity": 1, "unit": "lot", "unitCost": 60, "totalCost": 60, "specs": "Hurricane ties, straps, etc." }
+      ],
+      "codeReferences": [],
+      "estimatedCost": { "materials": 280, "labor": 0, "hardware": 0, "total": 280, "currency": "CAD" },
+      "annotations": []
+    }
+  ],
+  "phases": {
+    "foundation": {
+      "name": "Foundation",
+      "description": "Site preparation and sonotube pier installation on bedrock",
+      "order": 1,
+      "components": ["foundation-group", "pier-fl", "pier-ml", "pier-bl", "pier-fr", "pier-mr", "pier-br"],
+      "tasks": [
+        "Clear and level site",
+        "Mark pier locations per floor joist layout",
+        "Drill bedrock for rebar pins (1/2\" x 6\" min)",
+        "Install epoxy anchors in bedrock",
+        "Cut sonotubes to length (~400mm above grade)",
+        "Place rebar in sonotubes, pin to bedrock",
+        "Pour concrete, vibrate to remove air",
+        "Install post base connectors while wet",
+        "Allow cure (7 days minimum)",
+        "Attach rim joist to post bases"
+      ],
+      "estimatedHours": 16
+    },
+    "framing": {
+      "name": "Framing",
+      "description": "Floor, wall, and roof framing structure",
+      "order": 2,
+      "components": ["floor-assembly", "wall-west", "wall-east", "wall-south", "wall-north", "roof-assembly", "fasteners-hardware"],
+      "tasks": [
+        "Install rim joist perimeter on post bases",
+        "Cut and install floor joists @ 16\" OC",
+        "Apply subfloor plywood (glue + screw)",
+        "Frame all four walls flat on subfloor",
+        "Cut openings for door and windows",
+        "Raise walls, brace plumb and square",
+        "Install double top plates",
+        "Cut rafters with birdsmouth cuts",
+        "Install rafters @ 16\" OC",
+        "Apply roof sheathing",
+        "Install fascia and soffit"
+      ],
+      "estimatedHours": 40
+    },
+    "envelope": {
+      "name": "Envelope",
+      "description": "Windows, door, weatherproofing, and roofing",
+      "order": 3,
+      "components": ["sliding-door", "window-south", "window-north"],
+      "tasks": [
+        "Apply Tyvek housewrap to all walls",
+        "Flash window openings (sill, jambs, head)",
+        "Install windows, plumb and square",
+        "Apply window flashing tape",
+        "Install sliding door with proper drainage",
+        "Apply door flashing",
+        "Install drip edge on roof edges",
+        "Apply roofing underlayment",
+        "Install architectural shingles",
+        "Apply ridge cap",
+        "Caulk all exterior penetrations"
+      ],
+      "estimatedHours": 24
+    },
+    "finishing": {
+      "name": "Finishing",
+      "description": "Exterior cladding, insulation, interior finish, and wood stove installation",
+      "order": 4,
+      "components": ["wood-stove", "stove-hearth", "stove-clearance", "exterior-siding", "insulation-walls", "interior-finish"],
+      "tasks": [
+        "Install board and batten siding",
+        "Apply clear stain to exterior",
+        "Install fiberglass insulation in walls",
+        "Install vapor barrier (6mil poly)",
+        "Seal all vapor barrier edges with acoustic sealant",
+        "Install tongue & groove interior",
+        "Install interior trim around windows/door",
+        "Build non-combustible hearth (900mm x 900mm min)",
+        "Install wood stove per manufacturer instructions",
+        "Install chimney through roof with proper flashing",
+        "Install CO detector",
+        "Final inspection and cleanup"
+      ],
+      "estimatedHours": 48
+    }
+  }
+}

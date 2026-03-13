@@ -1,0 +1,88 @@
+import { useRef } from 'react';
+import { Mesh } from 'three';
+import type { Component } from '../../schemas/bunkie.schema';
+import { useBunkieStore } from '../../store/useBunkieStore';
+
+interface DoorProps {
+  component: Component;
+}
+
+export function Door({ component }: DoorProps) {
+  const meshRef = useRef<Mesh>(null);
+  const { selectedComponentId, hoveredComponentId, hoverComponent, selectComponent } = useBunkieStore();
+
+  const isSelected = selectedComponentId === component.id;
+  const isHovered = hoveredComponentId === component.id;
+
+  const handlePointerOver = () => {
+    hoverComponent(component.id);
+    document.body.style.cursor = 'pointer';
+  };
+
+  const handlePointerOut = () => {
+    hoverComponent(null);
+    document.body.style.cursor = 'auto';
+  };
+
+  const handleClick = () => {
+    selectComponent(isSelected ? null : component.id);
+  };
+
+  const frameColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#f5f5f4';
+  const doorColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#8b7355';
+
+  return (
+    <group position={[component.position.x, component.position.y, component.position.z]}>
+      {/* Door frame - vertical */}
+      <mesh position={[-component.dimensions.width / 2, 0, 0]} castShadow>
+        <boxGeometry args={[0.04, component.dimensions.height, 0.08]} />
+        <meshStandardMaterial color={frameColor} roughness={0.3} />
+      </mesh>
+      <mesh position={[component.dimensions.width / 2, 0, 0]} castShadow>
+        <boxGeometry args={[0.04, component.dimensions.height, 0.08]} />
+        <meshStandardMaterial color={frameColor} roughness={0.3} />
+      </mesh>
+
+      {/* Door frame - top */}
+      <mesh position={[0, component.dimensions.height / 2, 0]} castShadow>
+        <boxGeometry args={[component.dimensions.width + 0.08, 0.04, 0.08]} />
+        <meshStandardMaterial color={frameColor} roughness={0.3} />
+      </mesh>
+
+      {/* Door panels - left side (fixed) */}
+      <mesh
+        ref={meshRef}
+        position={[-component.dimensions.width / 4, 0, 0]}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
+        castShadow
+      >
+        <boxGeometry args={[component.dimensions.width / 2 - 0.02, component.dimensions.height - 0.04, 0.04]} />
+        <meshStandardMaterial color={doorColor} roughness={0.4} />
+      </mesh>
+
+      {/* Door panels - right side (sliding) */}
+      <mesh position={[component.dimensions.width / 4, 0, 0.01]} castShadow>
+        <boxGeometry args={[component.dimensions.width / 2 - 0.02, component.dimensions.height - 0.04, 0.04]} />
+        <meshStandardMaterial color={doorColor} roughness={0.4} />
+      </mesh>
+
+      {/* Glass in both panels */}
+      <mesh position={[-component.dimensions.width / 4, 0.1, 0.015]}>
+        <boxGeometry args={[component.dimensions.width / 2 - 0.1, component.dimensions.height - 0.3, 0.005]} />
+        <meshStandardMaterial color="#87ceeb" transparent opacity={0.4} roughness={0.1} />
+      </mesh>
+      <mesh position={[component.dimensions.width / 4, 0.1, 0.025]}>
+        <boxGeometry args={[component.dimensions.width / 2 - 0.1, component.dimensions.height - 0.3, 0.005]} />
+        <meshStandardMaterial color="#87ceeb" transparent opacity={0.4} roughness={0.1} />
+      </mesh>
+
+      {/* Handle */}
+      <mesh position={[component.dimensions.width / 4 - 0.15, 0, 0.04]}>
+        <boxGeometry args={[0.03, 0.15, 0.02]} />
+        <meshStandardMaterial color="#71717a" metalness={0.8} roughness={0.2} />
+      </mesh>
+    </group>
+  );
+}
