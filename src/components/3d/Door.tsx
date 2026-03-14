@@ -78,7 +78,7 @@ export function Door({ component }: DoorProps) {
       </mesh>
 
       {/* Handle */}
-      <mesh position={[component.dimensions.width / 4 - 0.15, 0, 0.04]}>
+      <mesh position={[component.dimensions.width / 4 - 1.25, 0, 0.04]}>
         <boxGeometry args={[0.03, 0.15, 0.02]} />
         <meshStandardMaterial color="#71717a" metalness={0.8} roughness={0.2} />
       </mesh>
