@@ -139,7 +139,7 @@ export function PlanView({
   const padding = 0.5; // 0.5m padding
   const viewBoxWidth = FRONT_WALL_LENGTH + padding * 2;
   const viewBoxHeight = SIDE_WALL_LENGTH + padding * 2;
-  const viewBox = `${-viewBoxWidth / 2 * scale} ${-viewBoxHeight / 2 * scale} ${viewBoxWidth * scale} ${viewBoxHeight * scale}`;
+  const viewBox = `${(-viewBoxWidth / 2) * scale} ${(-viewBoxHeight / 2) * scale} ${viewBoxWidth * scale} ${viewBoxHeight * scale}`;
 
   return (
     <svg
@@ -166,8 +166,8 @@ export function PlanView({
         </pattern>
       </defs>
       <rect
-        x={-viewBoxWidth / 2 * scale}
-        y={-viewBoxHeight / 2 * scale}
+        x={(-viewBoxWidth / 2) * scale}
+        y={(-viewBoxHeight / 2) * scale}
         width={viewBoxWidth * scale}
         height={viewBoxHeight * scale}
         fill="url(#plan-grid)"
@@ -302,7 +302,7 @@ export function PlanView({
           />
           {/* Window opening */}
           <rect
-            x={(-halfWidth) * scale}
+            x={-halfWidth * scale}
             y={(-WINDOW_WIDTH / 2 - 0.02) * scale}
             width={wallThickness * scale}
             height={(WINDOW_WIDTH + 0.04) * scale}
@@ -402,14 +402,47 @@ export function PlanView({
       )}
 
       {/* Legend */}
-      <g transform={`translate(${(-viewBoxWidth / 2 + 0.05) * scale}, ${(viewBoxHeight / 2 - 0.05) * scale})`}>
-        <rect x="0" y="-50" width="70" height="50" fill="white" stroke={DRAWING_COLORS.outline} strokeWidth="0.5" rx="2" />
+      <g
+        transform={`translate(${(-viewBoxWidth / 2 + 0.05) * scale}, ${(viewBoxHeight / 2 - 0.05) * scale})`}
+      >
+        <rect
+          x="0"
+          y="-50"
+          width="70"
+          height="50"
+          fill="white"
+          stroke={DRAWING_COLORS.outline}
+          strokeWidth="0.5"
+          rx="2"
+        />
         <circle cx="10" cy="-40" r="5" fill={DRAWING_COLORS.pier} />
-        <text x="20" y="-37" fontSize="6" fill={DRAWING_COLORS.outline}>Pier</text>
-        <rect x="5" y="-28" width="10" height="4" fill="#D1D5DB" stroke={DRAWING_COLORS.outline} strokeWidth="0.3" />
-        <text x="20" y="-24" fontSize="6" fill={DRAWING_COLORS.outline}>Joist</text>
-        <rect x="5" y="-16" width="10" height="4" fill={DRAWING_COLORS.fill} stroke={DRAWING_COLORS.outline} strokeWidth="0.3" />
-        <text x="20" y="-12" fontSize="6" fill={DRAWING_COLORS.outline}>Wall</text>
+        <text x="20" y="-37" fontSize="6" fill={DRAWING_COLORS.outline}>
+          Pier
+        </text>
+        <rect
+          x="5"
+          y="-28"
+          width="10"
+          height="4"
+          fill="#D1D5DB"
+          stroke={DRAWING_COLORS.outline}
+          strokeWidth="0.3"
+        />
+        <text x="20" y="-24" fontSize="6" fill={DRAWING_COLORS.outline}>
+          Joist
+        </text>
+        <rect
+          x="5"
+          y="-16"
+          width="10"
+          height="4"
+          fill={DRAWING_COLORS.fill}
+          stroke={DRAWING_COLORS.outline}
+          strokeWidth="0.3"
+        />
+        <text x="20" y="-12" fontSize="6" fill={DRAWING_COLORS.outline}>
+          Wall
+        </text>
       </g>
     </svg>
   );

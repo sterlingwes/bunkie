@@ -8,6 +8,7 @@
 import { useBunkieStore } from "../../store/useBunkieStore";
 import { ChevronLeft, ChevronRight, BookOpen, Box } from "lucide-react";
 import { PlanView } from "./drawing/PlanView";
+import { ElevationView } from "./drawing/ElevationView";
 import type { ViewType } from "../../schemas/bunkie.schema";
 
 /**
@@ -27,9 +28,17 @@ function DrawingRenderer({
   const primaryView = views[0];
 
   // Show different drawings based on phase and view type
-  const showPiers = step.phase === "foundation" || step.componentIds.some(id => id.includes("pier"));
-  const showJoists = step.phase === "framing" && step.componentIds.some(id => id.includes("floor"));
+  const showPiers =
+    step.phase === "foundation" ||
+    step.componentIds.some((id) => id.includes("pier"));
+  const showJoists =
+    step.phase === "framing" &&
+    step.componentIds.some((id) => id.includes("floor"));
   const showWalls = step.phase !== "foundation";
+  const showFraming =
+    step.phase === "framing" ||
+    step.componentIds.some((id) => id.includes("wall"));
+  const showOpenings = step.phase !== "foundation";
 
   switch (primaryView) {
     case "plan":
@@ -43,13 +52,43 @@ function DrawingRenderer({
         />
       );
     case "elevation-front":
+      return (
+        <ElevationView
+          direction="front"
+          showFraming={showFraming}
+          showDimensions={true}
+          showOpenings={showOpenings}
+          showRoof={true}
+          scale={100}
+        />
+      );
     case "elevation-back":
+      return (
+        <ElevationView
+          direction="back"
+          showFraming={showFraming}
+          showDimensions={true}
+          showOpenings={false}
+          showRoof={true}
+          scale={100}
+        />
+      );
     case "elevation-side":
+      return (
+        <ElevationView
+          direction="side"
+          showFraming={showFraming}
+          showDimensions={true}
+          showOpenings={showOpenings}
+          showRoof={true}
+          scale={100}
+        />
+      );
     case "section":
-      // These will be implemented in Phase 3b
+      // Section view to be implemented
       return (
         <div className="text-zinc-500 p-8 text-center">
-          <p className="text-lg mb-2">{primaryView.charAt(0).toUpperCase() + primaryView.slice(1)} View</p>
+          <p className="text-lg mb-2">Section View</p>
           <p className="text-sm">(Coming soon)</p>
         </div>
       );
@@ -63,7 +102,8 @@ function DrawingRenderer({
 }
 
 export function InstructionsPage() {
-  const { currentStepIndex, nextStep, prevStep, bunkieDefinition } = useBunkieStore();
+  const { currentStepIndex, nextStep, prevStep, bunkieDefinition } =
+    useBunkieStore();
 
   const instructions = bunkieDefinition?.instructions ?? [];
   const currentStep = instructions[currentStepIndex];
@@ -117,19 +157,26 @@ export function InstructionsPage() {
             <>
               {/* Phase badge */}
               <div className="inline-block px-2 py-1 rounded text-xs font-medium bg-zinc-700 text-zinc-300 mb-4">
-                {currentStep.phase.charAt(0).toUpperCase() + currentStep.phase.slice(1)}
+                {currentStep.phase.charAt(0).toUpperCase() +
+                  currentStep.phase.slice(1)}
               </div>
 
               {/* Title */}
-              <h2 className="text-lg font-semibold mb-3">{currentStep.title}</h2>
+              <h2 className="text-lg font-semibold mb-3">
+                {currentStep.title}
+              </h2>
 
               {/* Description */}
-              <p className="text-zinc-400 text-sm mb-4">{currentStep.description}</p>
+              <p className="text-zinc-400 text-sm mb-4">
+                {currentStep.description}
+              </p>
 
               {/* Tips */}
               {currentStep.tips && currentStep.tips.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="text-sm font-medium text-zinc-300 mb-2">Tips</h3>
+                  <h3 className="text-sm font-medium text-zinc-300 mb-2">
+                    Tips
+                  </h3>
                   <ul className="space-y-1">
                     {currentStep.tips.map((tip, i) => (
                       <li
@@ -147,7 +194,9 @@ export function InstructionsPage() {
               {/* Warnings */}
               {currentStep.warnings && currentStep.warnings.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="text-sm font-medium text-amber-400 mb-2">Warnings</h3>
+                  <h3 className="text-sm font-medium text-amber-400 mb-2">
+                    Warnings
+                  </h3>
                   <ul className="space-y-1">
                     {currentStep.warnings.map((warning, i) => (
                       <li
@@ -209,9 +258,10 @@ export function InstructionsPage() {
             <div
               className="h-full bg-blue-500 transition-all duration-300"
               style={{
-                width: totalSteps > 0
-                  ? `${((currentStepIndex + 1) / totalSteps) * 100}%`
-                  : "0%",
+                width:
+                  totalSteps > 0
+                    ? `${((currentStepIndex + 1) / totalSteps) * 100}%`
+                    : "0%",
               }}
             />
           </div>

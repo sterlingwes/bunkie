@@ -24,7 +24,8 @@ export function DrawingCanvas({
   className = "",
   showGrid = true,
 }: DrawingCanvasProps) {
-  const defaultViewBox = viewBox || `${-width / 2} ${-height / 2} ${width} ${height}`;
+  const defaultViewBox =
+    viewBox || `${-width / 2} ${-height / 2} ${width} ${height}`;
 
   return (
     <svg

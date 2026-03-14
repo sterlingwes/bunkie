@@ -138,14 +138,42 @@ export function DimensionLineSVG({
       {/* End ticks */}
       {!isHorizontal && (
         <>
-          <line x1={x1 - 4} y1={y1} x2={x1 + 4} y2={y1} stroke={color} strokeWidth="1" />
-          <line x1={x2 - 4} y1={y2} x2={x2 + 4} y2={y2} stroke={color} strokeWidth="1" />
+          <line
+            x1={x1 - 4}
+            y1={y1}
+            x2={x1 + 4}
+            y2={y1}
+            stroke={color}
+            strokeWidth="1"
+          />
+          <line
+            x1={x2 - 4}
+            y1={y2}
+            x2={x2 + 4}
+            y2={y2}
+            stroke={color}
+            strokeWidth="1"
+          />
         </>
       )}
       {isHorizontal && (
         <>
-          <line x1={x1} y1={y1 - 4} x2={x1} y2={y1 + 4} stroke={color} strokeWidth="1" />
-          <line x1={x2} y1={y2 - 4} x2={x2} y2={y2 + 4} stroke={color} strokeWidth="1" />
+          <line
+            x1={x1}
+            y1={y1 - 4}
+            x2={x1}
+            y2={y1 + 4}
+            stroke={color}
+            strokeWidth="1"
+          />
+          <line
+            x1={x2}
+            y1={y2 - 4}
+            x2={x2}
+            y2={y2 + 4}
+            stroke={color}
+            strokeWidth="1"
+          />
         </>
       )}
 

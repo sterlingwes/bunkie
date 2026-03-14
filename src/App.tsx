@@ -102,9 +102,15 @@ function App() {
         {/* View toggle header */}
         <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-700">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-400 text-sm font-medium">Bunkie Builder</span>
+            <span className="text-zinc-400 text-sm font-medium">
+              Bunkie Builder
+            </span>
           </div>
-          <ViewToggle currentView={currentView} setView={setView} variant="full" />
+          <ViewToggle
+            currentView={currentView}
+            setView={setView}
+            variant="full"
+          />
         </div>
         <InstructionsPage />
       </div>
@@ -115,7 +121,11 @@ function App() {
     <div className="w-full h-full flex bg-zinc-900">
       {/* View toggle - top left */}
       <div className="absolute top-4 left-4 z-10">
-        <ViewToggle currentView={currentView} setView={setView} variant="compact" />
+        <ViewToggle
+          currentView={currentView}
+          setView={setView}
+          variant="compact"
+        />
       </div>
       {/* Sidebar */}
       <Sidebar definition={bunkieDefinition as BunkieDefinition} />

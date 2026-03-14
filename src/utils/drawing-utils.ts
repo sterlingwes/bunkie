@@ -7,7 +7,11 @@
  * All dimensions come from constants/framing.ts - the single source of truth.
  */
 
-import type { Dimensions3D, Position3D, DimensionLine2D } from "../schemas/bunkie.schema";
+import type {
+  Dimensions3D,
+  Position3D,
+  DimensionLine2D,
+} from "../schemas/bunkie.schema";
 import {
   SIDE_WALL_LENGTH,
   FRONT_WALL_LENGTH,
@@ -72,7 +76,7 @@ export function projectToElevation(
     position: Position3D;
     dimensions: Dimensions3D;
   },
-  direction: "front" | "back" | "side"
+  direction: "front" | "back" | "side",
 ) {
   const { position, dimensions } = component;
 
@@ -134,7 +138,7 @@ export interface BoundingBox2D {
  */
 export function calculateDimensionLines(
   bounds: BoundingBox2D,
-  offset: number = 0.2
+  offset: number = 0.2,
 ): DimensionLine2D[] {
   const width = bounds.right - bounds.left;
   const height = bounds.bottom - bounds.top;
@@ -287,7 +291,7 @@ export function generateStudLayout(
   opening?: {
     centerX: number;
     width: number;
-  }
+  },
 ): StudLayout[] {
   const studs: StudLayout[] = [];
   const startX = -wallWidth / 2;

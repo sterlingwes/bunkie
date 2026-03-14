@@ -19,7 +19,15 @@ export const instructionSteps: InstructionStep[] = [
     description:
       "Clear the building site and establish the pier layout. Mark the corners and center points for all 6 sonotube piers on the bedrock surface.",
     views: ["plan"],
-    componentIds: ["foundation-group", "pier-fl", "pier-ml", "pier-bl", "pier-fr", "pier-mr", "pier-br"],
+    componentIds: [
+      "foundation-group",
+      "pier-fl",
+      "pier-ml",
+      "pier-bl",
+      "pier-fr",
+      "pier-mr",
+      "pier-br",
+    ],
     tips: [
       "Use batter boards and string lines to establish square corners",
       "Verify diagonal measurements are equal for square layout",
@@ -36,9 +44,16 @@ export const instructionSteps: InstructionStep[] = [
     order: 2,
     title: "Drill Bedrock & Install Anchors",
     description:
-      "Drill 1/2\" holes 6\" deep into bedrock at each pier location. Install epoxy-set rebar pins to anchor the sonotubes to the bedrock.",
+      'Drill 1/2" holes 6" deep into bedrock at each pier location. Install epoxy-set rebar pins to anchor the sonotubes to the bedrock.',
     views: ["plan", "section"],
-    componentIds: ["pier-fl", "pier-ml", "pier-bl", "pier-fr", "pier-mr", "pier-br"],
+    componentIds: [
+      "pier-fl",
+      "pier-ml",
+      "pier-bl",
+      "pier-fr",
+      "pier-mr",
+      "pier-br",
+    ],
     tips: [
       "Use a rotary hammer drill with carbide masonry bit",
       "Clean dust from holes with compressed air before epoxy",
@@ -57,7 +72,14 @@ export const instructionSteps: InstructionStep[] = [
     description:
       "Cut sonotubes to length (~400mm above grade) and position over rebar pins. Brace forms plumb and level at the top.",
     views: ["plan", "elevation-front", "elevation-side"],
-    componentIds: ["pier-fl", "pier-ml", "pier-bl", "pier-fr", "pier-mr", "pier-br"],
+    componentIds: [
+      "pier-fl",
+      "pier-ml",
+      "pier-bl",
+      "pier-fr",
+      "pier-mr",
+      "pier-br",
+    ],
     tips: [
       "Top of all piers must be level within 3mm",
       "Use a laser level for accurate height setting",
@@ -75,7 +97,14 @@ export const instructionSteps: InstructionStep[] = [
     description:
       "Pour concrete into sonotubes, vibrating to remove air pockets. Install post base connectors while concrete is still wet, aligned with the floor joist layout.",
     views: ["plan"],
-    componentIds: ["pier-fl", "pier-ml", "pier-bl", "pier-fr", "pier-mr", "pier-br"],
+    componentIds: [
+      "pier-fl",
+      "pier-ml",
+      "pier-bl",
+      "pier-fr",
+      "pier-mr",
+      "pier-br",
+    ],
     tips: [
       "Use 4000 PSI concrete mix rated for exterior exposure",
       "Screed tops of piers smooth and level",
@@ -100,9 +129,7 @@ export const instructionSteps: InstructionStep[] = [
       "Use hot-dipped galvanized connectors for corrosion resistance",
       "Rim joist must be level before proceeding to floor framing",
     ],
-    warnings: [
-      "Do not backfill against piers until concrete is fully cured",
-    ],
+    warnings: ["Do not backfill against piers until concrete is fully cured"],
   },
 
   // =============================================================================
@@ -114,7 +141,7 @@ export const instructionSteps: InstructionStep[] = [
     order: 6,
     title: "Install Floor Joists",
     description:
-      "Cut and install 2x8 floor joists at 16\" OC spacing between rim joists. Crown all lumber up and secure with joist hangers.",
+      'Cut and install 2x8 floor joists at 16" OC spacing between rim joists. Crown all lumber up and secure with joist hangers.',
     views: ["plan"],
     componentIds: ["floor-assembly"],
     tips: [
@@ -122,9 +149,7 @@ export const instructionSteps: InstructionStep[] = [
       "Use a framing square to ensure joists are perpendicular",
       "Stagger joints if using multiple pieces",
     ],
-    warnings: [
-      "Verify joist spacing does not exceed 16\" OC per OBC",
-    ],
+    warnings: ['Verify joist spacing does not exceed 16" OC per OBC'],
   },
   {
     id: "step-framing-2",
@@ -132,7 +157,7 @@ export const instructionSteps: InstructionStep[] = [
     order: 7,
     title: "Apply Subfloor",
     description:
-      "Glue and screw 5/8\" plywood subfloor to joists. Stagger seams and leave 1/8\" gap between sheets for expansion.",
+      'Glue and screw 5/8" plywood subfloor to joists. Stagger seams and leave 1/8" gap between sheets for expansion.',
     views: ["plan"],
     componentIds: ["floor-assembly"],
     tips: [
@@ -140,9 +165,7 @@ export const instructionSteps: InstructionStep[] = [
       "Use deck screws, not nails, for better hold",
       "Cut subfloor flush with exterior of rim joist",
     ],
-    warnings: [
-      "Do not allow glue to skin over before placing plywood",
-    ],
+    warnings: ["Do not allow glue to skin over before placing plywood"],
   },
 
   // =============================================================================
@@ -154,7 +177,7 @@ export const instructionSteps: InstructionStep[] = [
     order: 8,
     title: "Frame Back Wall (East)",
     description:
-      "Frame the back wall flat on the subfloor using 2x4 studs at 16\" OC. This is the low wall at 2.1m height with no openings.",
+      'Frame the back wall flat on the subfloor using 2x4 studs at 16" OC. This is the low wall at 2.1m height with no openings.',
     views: ["elevation-back", "plan"],
     componentIds: ["wall-east"],
     tips: [
@@ -162,9 +185,7 @@ export const instructionSteps: InstructionStep[] = [
       "Install double top plate with staggered joints",
       "Square the wall before sheathing",
     ],
-    warnings: [
-      "Verify wall height matches plan - affects roof slope",
-    ],
+    warnings: ["Verify wall height matches plan - affects roof slope"],
   },
   {
     id: "step-framing-4",
@@ -178,11 +199,9 @@ export const instructionSteps: InstructionStep[] = [
     tips: [
       "Header must be sized for the 1.84m door opening span",
       "Rough opening should be 12.5mm wider than door unit",
-      "Install cripple studs above header at 16\" OC",
+      'Install cripple studs above header at 16" OC',
     ],
-    warnings: [
-      "Verify header is adequately sized per OBC span tables",
-    ],
+    warnings: ["Verify header is adequately sized per OBC span tables"],
   },
   {
     id: "step-framing-5",
@@ -198,9 +217,7 @@ export const instructionSteps: InstructionStep[] = [
       "Window rough opening: 610mm + 40mm shim allowance",
       "Use full-height king studs at window openings",
     ],
-    warnings: [
-      "Rake angle must match roof slope exactly",
-    ],
+    warnings: ["Rake angle must match roof slope exactly"],
   },
   {
     id: "step-framing-6",
@@ -216,9 +233,7 @@ export const instructionSteps: InstructionStep[] = [
       "Check plumb at each corner and midpoint",
       "Diagonal measurements must be equal",
     ],
-    warnings: [
-      "Never work under a raised but unbraced wall",
-    ],
+    warnings: ["Never work under a raised but unbraced wall"],
   },
 
   // =============================================================================
@@ -230,7 +245,7 @@ export const instructionSteps: InstructionStep[] = [
     order: 12,
     title: "Cut & Install Rafters",
     description:
-      "Cut 2x6 rafters with birdsmouth notches to sit on wall top plates. Install at 16\" OC matching wall stud positions.",
+      'Cut 2x6 rafters with birdsmouth notches to sit on wall top plates. Install at 16" OC matching wall stud positions.',
     views: ["elevation-side", "section"],
     componentIds: ["roof-assembly"],
     tips: [
@@ -238,9 +253,7 @@ export const instructionSteps: InstructionStep[] = [
       "Birdsmouth cut should not exceed 1/3 of rafter depth",
       "Use hurricane ties at rafter-to-wall connections",
     ],
-    warnings: [
-      "Verify rafter length accounts for overhang",
-    ],
+    warnings: ["Verify rafter length accounts for overhang"],
   },
   {
     id: "step-framing-8",
@@ -248,17 +261,15 @@ export const instructionSteps: InstructionStep[] = [
     order: 13,
     title: "Apply Roof Sheathing",
     description:
-      "Install 5/8\" plywood roof sheathing perpendicular to rafters. Stagger joints and use H-clips at unsupported edges.",
+      'Install 5/8" plywood roof sheathing perpendicular to rafters. Stagger joints and use H-clips at unsupported edges.',
     views: ["plan", "section"],
     componentIds: ["roof-assembly"],
     tips: [
       "Start from bottom edge and work up",
-      "Nail at 6\" OC on edges, 12\" OC in field",
+      'Nail at 6" OC on edges, 12" OC in field',
       "Leave gap at ridge for ridge vent if using",
     ],
-    warnings: [
-      "Do not exceed 24\" unsupported span for 5/8\" plywood",
-    ],
+    warnings: ['Do not exceed 24" unsupported span for 5/8" plywood'],
   },
   {
     id: "step-framing-9",
@@ -286,7 +297,7 @@ export const instructionSteps: InstructionStep[] = [
     order: 15,
     title: "Apply Housewrap",
     description:
-      "Cover exterior walls with Tyvek or similar housewrap. Lap joints 6\" and tape all seams.",
+      'Cover exterior walls with Tyvek or similar housewrap. Lap joints 6" and tape all seams.',
     views: ["elevation-front", "elevation-side"],
     componentIds: ["wall-west", "wall-east", "wall-south", "wall-north"],
     tips: [
@@ -294,9 +305,7 @@ export const instructionSteps: InstructionStep[] = [
       "Seal around all penetrations",
       "Use cap nails for attachment",
     ],
-    warnings: [
-      "Do not leave housewrap exposed for extended periods",
-    ],
+    warnings: ["Do not leave housewrap exposed for extended periods"],
   },
   {
     id: "step-envelope-2",
@@ -312,9 +321,7 @@ export const instructionSteps: InstructionStep[] = [
       "Shim windows at corners and midpoint",
       "Check operation before final fastening",
     ],
-    warnings: [
-      "Improper flashing is a leading cause of water damage",
-    ],
+    warnings: ["Improper flashing is a leading cause of water damage"],
   },
   {
     id: "step-envelope-3",
@@ -330,9 +337,7 @@ export const instructionSteps: InstructionStep[] = [
       "Ensure weep holes are not blocked",
       "Adjust rollers for smooth operation",
     ],
-    warnings: [
-      "Door must be installed level for proper drainage",
-    ],
+    warnings: ["Door must be installed level for proper drainage"],
   },
   {
     id: "step-envelope-4",
@@ -348,9 +353,7 @@ export const instructionSteps: InstructionStep[] = [
       "Starter strip goes first, then shingles from bottom up",
       "Use proper nail placement in shingle nailing strip",
     ],
-    warnings: [
-      "Do not install shingles in high winds or extreme cold",
-    ],
+    warnings: ["Do not install shingles in high winds or extreme cold"],
   },
 
   // =============================================================================
@@ -366,13 +369,11 @@ export const instructionSteps: InstructionStep[] = [
     views: ["elevation-front", "elevation-side", "section"],
     componentIds: ["exterior-siding"],
     tips: [
-      "Use 1\" XPS or polyiso for R-5",
+      'Use 1" XPS or polyiso for R-5',
       "Seal all gaps with tape or spray foam",
       "Extend foam down to cover rim joist",
     ],
-    warnings: [
-      "Rigid foam is flammable - check local codes",
-    ],
+    warnings: ["Rigid foam is flammable - check local codes"],
   },
   {
     id: "step-finishing-2",
@@ -385,12 +386,10 @@ export const instructionSteps: InstructionStep[] = [
     componentIds: ["exterior-siding"],
     tips: [
       "Prime all sides of boards before installation",
-      "Space boards 1/4\" for expansion",
+      'Space boards 1/4" for expansion',
       "Fasten into studs, not just sheathing",
     ],
-    warnings: [
-      "Maintain clearance from ground (min 6\")",
-    ],
+    warnings: ['Maintain clearance from ground (min 6")'],
   },
   {
     id: "step-finishing-3",
@@ -406,9 +405,7 @@ export const instructionSteps: InstructionStep[] = [
       "Use unfaced batts if exterior foam is present",
       "Cut batts with utility knife, not scissors",
     ],
-    warnings: [
-      "Wear long sleeves, gloves, and dust mask",
-    ],
+    warnings: ["Wear long sleeves, gloves, and dust mask"],
   },
   {
     id: "step-finishing-4",
@@ -424,9 +421,7 @@ export const instructionSteps: InstructionStep[] = [
       "Do not block ventilation if using vented roof",
       "Use faced batts with vapor barrier toward interior",
     ],
-    warnings: [
-      "Do not compress insulation - reduces R-value",
-    ],
+    warnings: ["Do not compress insulation - reduces R-value"],
   },
   {
     id: "step-finishing-5",
@@ -439,12 +434,10 @@ export const instructionSteps: InstructionStep[] = [
     componentIds: ["insulation-walls", "insulation-ceiling"],
     tips: [
       "Use acoustic sealant at all edges",
-      "Overlap seams by 12\" and tape",
+      'Overlap seams by 12" and tape',
       "Seal around electrical boxes with special boxes or tape",
     ],
-    warnings: [
-      "Vapor barrier must be continuous - no gaps",
-    ],
+    warnings: ["Vapor barrier must be continuous - no gaps"],
   },
   {
     id: "step-finishing-6",
@@ -476,9 +469,7 @@ export const instructionSteps: InstructionStep[] = [
       "Hearth must extend 450mm in front of stove door",
       "Check stove manufacturer requirements",
     ],
-    warnings: [
-      "Hearth must be non-combustible per CSA B365",
-    ],
+    warnings: ["Hearth must be non-combustible per CSA B365"],
   },
   {
     id: "step-finishing-8",
@@ -513,9 +504,7 @@ export const instructionSteps: InstructionStep[] = [
       "Check for any gaps in exterior sealing",
       "Document with photos for future reference",
     ],
-    warnings: [
-      "Keep CO detector at least 5m from stove for accurate reading",
-    ],
+    warnings: ["Keep CO detector at least 5m from stove for accurate reading"],
   },
 ];
 
