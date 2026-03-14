@@ -30,7 +30,7 @@ export function Door({ component }: DoorProps) {
   };
 
   const frameColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#f5f5f4';
-  const doorColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#8b7355';
+  const glassColor = '#87ceeb';
 
   // Door is on the west wall (front), which faces +Z
   // Rotate 180° to face outward (+Z direction)
@@ -58,7 +58,7 @@ export function Door({ component }: DoorProps) {
         <meshStandardMaterial color={frameColor} roughness={0.3} />
       </mesh>
 
-      {/* Door panels - left side (fixed) */}
+      {/* Door panels - left side (fixed) - glass */}
       <mesh
         ref={meshRef}
         position={[-component.dimensions.width / 4, 0, 0]}
@@ -67,24 +67,14 @@ export function Door({ component }: DoorProps) {
         onClick={handleClick}
         castShadow
       >
-        <boxGeometry args={[component.dimensions.width / 2 - 0.02, component.dimensions.height - 0.04, 0.04]} />
-        <meshStandardMaterial color={doorColor} roughness={0.4} />
+        <boxGeometry args={[component.dimensions.width / 2 - 0.02, component.dimensions.height - 0.04, 0.005]} />
+        <meshStandardMaterial color={glassColor} transparent opacity={0.4} roughness={0.1} />
       </mesh>
 
-      {/* Door panels - right side (sliding) */}
+      {/* Door panels - right side (sliding) - glass */}
       <mesh position={[component.dimensions.width / 4, 0, 0.01]} castShadow>
-        <boxGeometry args={[component.dimensions.width / 2 - 0.02, component.dimensions.height - 0.04, 0.04]} />
-        <meshStandardMaterial color={doorColor} roughness={0.4} />
-      </mesh>
-
-      {/* Glass in both panels */}
-      <mesh position={[-component.dimensions.width / 4, 0.1, 0.015]}>
-        <boxGeometry args={[component.dimensions.width / 2 - 0.1, component.dimensions.height - 0.3, 0.005]} />
-        <meshStandardMaterial color="#87ceeb" transparent opacity={0.4} roughness={0.1} />
-      </mesh>
-      <mesh position={[component.dimensions.width / 4, 0.1, 0.025]}>
-        <boxGeometry args={[component.dimensions.width / 2 - 0.1, component.dimensions.height - 0.3, 0.005]} />
-        <meshStandardMaterial color="#87ceeb" transparent opacity={0.4} roughness={0.1} />
+        <boxGeometry args={[component.dimensions.width / 2 - 0.02, component.dimensions.height - 0.04, 0.005]} />
+        <meshStandardMaterial color={glassColor} transparent opacity={0.4} roughness={0.1} />
       </mesh>
 
       {/* Handle */}

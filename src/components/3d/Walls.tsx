@@ -400,7 +400,168 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             })()}
 
             {/* OSB Sheathing- on EXTERIOR side (positive Z in local coords) */}
-            {isSideWall && rakeSheathingGeometry ? (
+            {hasWindow && isSideWall ? (
+                // Side wall with window - split sheathing around window opening
+                <>
+                    {/* Window opening dimensions */}
+                    {(() => {
+                        const windowWidth = 0.61;
+                        const windowHalfWidth = windowWidth / 2;
+                        const roHalfWidth = windowHalfWidth + 0.02; // 0.325m
+
+                        // Window vertical bounds - match framing code exactly
+                        // sillY and headerY are centers of sill and header beams
+                        const headerHeight = 0.089;
+                        const sillY = bottomPlateHeight + headerHeight / 2; // Center of sill
+                        const headerY = sillY + 1.83 + headerHeight / 2; // Center of header
+
+                        // Window horizontal bounds
+                        const windowLeft = windowOffset - roHalfWidth;
+                        const windowRight = windowOffset + roHalfWidth;
+                        const halfLength = wallLength / 2;
+
+                        return (
+                            <>
+                                {/* Below window - full width, covers bottom plate and sill */}
+                                <mesh
+                                    position={[0, sillY / 2, 0.048]}
+                                    castShadow
+                                    receiveShadow
+                                >
+                                    <boxGeometry args={[wallLength, sillY, 0.011]} />
+                                    <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                </mesh>
+
+                                {/* Left of window - from wall left to window left, sill to header */}
+                                <mesh
+                                    position={[(windowLeft - halfLength) / 2, (sillY + headerY) / 2, 0.048]}
+                                    castShadow
+                                    receiveShadow
+                                >
+                                    <boxGeometry args={[windowLeft + halfLength, headerY - sillY, 0.011]} />
+                                    <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                </mesh>
+
+                                {/* Right of window - from window right to wall right, sill to header */}
+                                <mesh
+                                    position={[(windowRight + halfLength) / 2, (sillY + headerY) / 2, 0.048]}
+                                    castShadow
+                                    receiveShadow
+                                >
+                                    <boxGeometry args={[halfLength - windowRight, headerY - sillY, 0.011]} />
+                                    <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                </mesh>
+
+                                {/* Above header - full width trapezoidal section */}
+                                {/* For rake walls, we need to create a custom trapezoidal geometry */}
+                                {(() => {
+                                    const sheathingThickness = 0.011;
+                                    // Heights at each end for the section above header
+                                    const heightAtPlusX = isSouthWall ? FRONT_WALL_HEIGHT : BACK_WALL_HEIGHT;
+                                    const heightAtMinusX = isSouthWall ? BACK_WALL_HEIGHT : FRONT_WALL_HEIGHT;
+
+                                    // Create trapezoidal geometry from headerY to wall top
+                                    const vertices = new Float32Array([
+                                        // Front face (X = +halfLength)
+                                        +halfLength, headerY, -sheathingThickness / 2,
+                                        +halfLength, headerY, +sheathingThickness / 2,
+                                        +halfLength, heightAtPlusX, +sheathingThickness / 2,
+                                        +halfLength, heightAtPlusX, -sheathingThickness / 2,
+                                        // Back face (X = -halfLength)
+                                        -halfLength, headerY, -sheathingThickness / 2,
+                                        -halfLength, headerY, +sheathingThickness / 2,
+                                        -halfLength, heightAtMinusX, +sheathingThickness / 2,
+                                        -halfLength, heightAtMinusX, -sheathingThickness / 2,
+                                    ]);
+
+                                    const indices = [
+                                        // Front face
+                                        0, 1, 2,  0, 2, 3,
+                                        // Back face
+                                        5, 4, 7,  5, 7, 6,
+                                        // Top face (angled)
+                                        7, 6, 2,  7, 2, 3,
+                                        // Bottom face (flat at headerY)
+                                        4, 5, 1,  4, 1, 0,
+                                        // Right face (+Z)
+                                        1, 5, 6,  1, 6, 2,
+                                        // Left face (-Z)
+                                        4, 0, 3,  4, 3, 7,
+                                    ];
+
+                                    const geometry = new BufferGeometry();
+                                    geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
+                                    geometry.setIndex(indices);
+                                    geometry.computeVertexNormals();
+
+                                    return (
+                                        <mesh
+                                            geometry={geometry}
+                                            position={[0, 0, 0.048]}
+                                            castShadow
+                                            receiveShadow
+                                        >
+                                            <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                        </mesh>
+                                    );
+                                })()}
+                            </>
+                        );
+                    })()}
+                </>
+            ) : hasDoor && !isSideWall ? (
+                // Front/back wall with door - split sheathing around door opening
+                <>
+                    {(() => {
+                        const doorWidth = 1.84;
+                        const doorHeight = 2.03;
+                        const roHalfWidth = doorWidth / 2 + 0.0125; // 0.9325m
+                        const halfLength = wallLength / 2;
+
+                        // Door vertical bounds (centered geometry)
+                        const headerTop = -wallHeight / 2 + doorHeight + 0.038 + 0.089;
+
+                        // Door horizontal bounds
+                        const doorLeft = -roHalfWidth;
+                        const doorRight = roHalfWidth;
+
+                        return (
+                            <>
+                                {/* Left of door - from floor to header top only (no overlap with above section) */}
+                                <mesh
+                                    position={[(doorLeft - halfLength) / 2, (-wallHeight / 2 + headerTop) / 2, 0.048]}
+                                    castShadow
+                                    receiveShadow
+                                >
+                                    <boxGeometry args={[doorLeft + halfLength, headerTop + wallHeight / 2, 0.011]} />
+                                    <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                </mesh>
+
+                                {/* Right of door - from floor to header top only */}
+                                <mesh
+                                    position={[(doorRight + halfLength) / 2, (-wallHeight / 2 + headerTop) / 2, 0.048]}
+                                    castShadow
+                                    receiveShadow
+                                >
+                                    <boxGeometry args={[halfLength - doorRight, headerTop + wallHeight / 2, 0.011]} />
+                                    <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                </mesh>
+
+                                {/* Above door - full width from header top to wall top */}
+                                <mesh
+                                    position={[0, (headerTop + wallHeight / 2 + 0.05) / 2, 0.048]}
+                                    castShadow
+                                    receiveShadow
+                                >
+                                    <boxGeometry args={[wallLength, wallHeight / 2 + 0.05 - headerTop, 0.011]} />
+                                    <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                </mesh>
+                            </>
+                        );
+                    })()}
+                </>
+            ) : isSideWall && rakeSheathingGeometry ? (
+                // Side wall without opening - solid trapezoidal sheathing
                 <mesh
                     geometry={rakeSheathingGeometry}
                     position={[0, 0, 0.048]}
@@ -410,6 +571,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                 </mesh>
             ) : (
+                // Front/back wall without opening - solid rectangular sheathing
                 <mesh position={[0, 0, 0.048]} castShadow receiveShadow>
                     <boxGeometry args={[wallLength, wallHeight + 0.1, 0.011]} />
                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
