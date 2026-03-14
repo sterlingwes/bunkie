@@ -9,7 +9,7 @@ interface CollapsiblePanelProps {
   badge?: string;
 }
 
-export function CollapsiblePanel({ title, icon, children, defaultOpen = true, badge }: CollapsiblePanelProps) {
+export function CollapsiblePanel({ title, icon, children, defaultOpen = false, badge }: CollapsiblePanelProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
