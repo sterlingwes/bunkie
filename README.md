@@ -80,7 +80,7 @@ All building components are defined in `bunkie-definition.json` with:
 The test suite validates physical properties:
 
 - **Gravity Support**: Walls rest on floor, roof rests on walls, piers at ground level
-- **Non-Overlap**: Windows within wall bounds, door within front wall
+- **Non-Overlap**: Windows within wall bounds, door within front wall, correct attachment points
 - **Dimensions**: Floor area < 10m², window sizes match spec, wall heights reasonable
 
 Run tests with:
@@ -116,21 +116,3 @@ Key Ontario Building Code sections referenced:
 - **OBC 9.23.14**: Roof framing
 - **OBC 9.7.2**: Window requirements
 - **CSA B365**: Wood stove installation
-
-## Cost Estimate
-
-Total estimated cost: ~$8,280 CAD (materials only, labor not included)
-
-## TODOs
-
-- missing finishing elements
-  - flooring
-  - external siding
-- fix position of the wood burning stove
-  - back corner for more living space
-  - stove pipe should fit between roof joists (I think?)
-  - stove pipe should extend past roof with cut-outs and flashing to code
-- house wrap is missing?
-- costs seem low? don’t account for waste?
-- report should account for actual material sizes and expected waste so we can work to minimize
-- sheating, etc. should resemble realistic cuts not solid boards of unrealistic size
