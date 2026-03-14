@@ -5,6 +5,21 @@ import { useBunkieStore } from '../../store/useBunkieStore';
 import {
   BACK_WALL_HEIGHT,
   FRONT_WALL_HEIGHT,
+  STUD_WIDTH,
+  STUD_DEPTH,
+  STUD_SPACING,
+  BOTTOM_PLATE_HEIGHT,
+  TOP_PLATE_HEIGHT,
+  PLATE_DEPTH,
+  HEADER_HEIGHT,
+  WINDOW_WIDTH,
+  WINDOW_HEIGHT,
+  WINDOW_SHIM_ALLOWANCE,
+  DOOR_HEIGHT,
+  DOOR_RO_HALF_WIDTH,
+  SHEATHING_THICKNESS,
+  SHEATHING_OFFSET,
+  STUD_HALF_WIDTH,
 } from '../../constants/framing';
 
 interface WallProps {
@@ -83,7 +98,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             rotation = [0, 0, 0];
     }
 
-    const studSpacing = 0.406; // 16" OC in meters
+    const studSpacing = STUD_SPACING;
     const studCount = Math.floor(wallLength / studSpacing) + 1;
 
     // Wall color based on selection state
@@ -96,7 +111,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
     const rakeSheathingGeometry = useMemo(() => {
         if (!isSideWall) return null;
 
-        const sheathingThickness = 0.011;
+        const sheathingThickness = SHEATHING_THICKNESS;
         const halfLength = wallLength / 2;
 
         // Heights at each end based on wall direction
@@ -147,8 +162,8 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
     const rakeTopPlateGeometry = useMemo(() => {
         if (!isSideWall) return null;
 
-        const plateHeight = 0.076; // Double top plate
-        const plateDepth = 0.089;
+        const plateHeight = TOP_PLATE_HEIGHT;
+        const plateDepth = PLATE_DEPTH;
         const halfLength = wallLength / 2;
 
         // Heights at each end (top of wall, so we use the full heights)
@@ -195,14 +210,15 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
     }, [isSideWall, isSouthWall, wallLength]);
 
     // Bottom plate height constant (needed early for window calculations)
-    const bottomPlateHeight = 0.038;
+    // Bottom plate height constant (needed early for window calculations)
+    const bottomPlateHeight = BOTTOM_PLATE_HEIGHT;
 
     // Window opening position along wall
     const windowOffset = windowPosition === 'front' ? wallLength / 4 : -wallLength / 4;
 
     // Calculate header Y position for window (needed for sheathing with cutout)
     // These values are used by both framing and sheathing
-    const headerHeight = 0.089;
+    const headerHeight = HEADER_HEIGHT;
     const windowSillY = bottomPlateHeight + headerHeight / 2; // Center of sill
     const windowHeaderY = windowSillY + 1.83 + headerHeight / 2; // Center of header
 
@@ -211,7 +227,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
     const aboveHeaderSheathingGeometry = useMemo(() => {
         if (!isSideWall || !hasWindow) return null;
 
-        const sheathingThickness = 0.011;
+        const sheathingThickness = SHEATHING_THICKNESS;
         const halfLength = wallLength / 2;
 
         // Heights at each end based on wall direction
@@ -271,7 +287,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
         >
             {/* Bottom plate */}
             <mesh position={[0, bottomPlateY, 0]} castShadow receiveShadow>
-                <boxGeometry args={[wallLength, 0.038, 0.089]} />
+                <boxGeometry args={[wallLength, STUD_WIDTH, STUD_DEPTH]} />
                 <meshStandardMaterial color={frameColor} roughness={0.8} />
             </mesh>
 
@@ -281,24 +297,22 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                     <meshStandardMaterial color={frameColor} roughness={0.8} />
                 </mesh>
             ) : (
-                <mesh position={[0, wallHeight / 2 + 0.019, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[wallLength, 0.076, 0.089]} />
+                <mesh position={[0, wallHeight / 2 + STUD_HALF_WIDTH, 0]} castShadow receiveShadow>
+                    <boxGeometry args={[wallLength, 0.076, STUD_DEPTH]} />
                     <meshStandardMaterial color={frameColor} roughness={0.8} />
                 </mesh>
             )}
 
             {/* Studs */}
             {Array.from({ length: studCount }).map((_, i) => {
-                const xPos = -wallLength / 2 + 0.089 / 2 + i * studSpacing;
+                const xPos = -wallLength / 2 + STUD_DEPTH / 2 + i * studSpacing;
 
                 // Door opening framing (centered on wall)
-                // Door dimensions: 1.84m x 2.03m (72.5" x 80")
                 if (hasDoor) {
-                    const doorWidth = 1.84;
-                    const doorHeight = 2.03;
+                    const doorHeight = DOOR_HEIGHT;
                     // Rough opening (RO) - slightly larger than door for shims (12.5mm each side)
-                    const roHalfWidth = doorWidth / 2 + 0.0125; // 0.9325m
-                    const studHalfWidth = 0.019; // half of 0.038m (2x4 actual width)
+                    const roHalfWidth = DOOR_RO_HALF_WIDTH;
+                    const studHalfWidth = STUD_HALF_WIDTH; // half of STUD_WIDTHm (2x4 actual width)
 
                     // King stud positions (at rough opening edges)
                     const kingStudLeftX = -roHalfWidth - studHalfWidth;
@@ -311,10 +325,10 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
 
                     // Jack studs (short studs supporting header) at king stud positions
                     if (Math.abs(xPos - kingStudRightX) < 0.02 || Math.abs(xPos - kingStudLeftX) < 0.02) {
-                        const jackStudHeight = doorHeight - 0.089; // door height minus sill/threshold
+                        const jackStudHeight = doorHeight - STUD_DEPTH; // door height minus sill/threshold
                         return (
-                            <mesh key={`stud-${i}`} position={[xPos, -wallHeight / 2 + jackStudHeight / 2 + 0.038, 0]} castShadow receiveShadow>
-                                <boxGeometry args={[0.038, jackStudHeight, 0.089]} />
+                            <mesh key={`stud-${i}`} position={[xPos, -wallHeight / 2 + jackStudHeight / 2 + STUD_WIDTH, 0]} castShadow receiveShadow>
+                                <boxGeometry args={[STUD_WIDTH, jackStudHeight, STUD_DEPTH]} />
                                 <meshStandardMaterial color={frameColor} roughness={0.8} />
                             </mesh>
                         );
@@ -324,7 +338,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 // Window opening - skip regular studs in the rough opening area
                 if (hasWindow) {
                     // Window dimensions: 0.61m x 1.83m (24" x 72")
-                    const windowWidth = 0.61;
+                    const windowWidth = WINDOW_WIDTH;
                     const windowHalfWidth = windowWidth / 2; // 0.305m
                     // Rough opening (RO) - slightly larger than window for shims (20mm each side)
                     const roHalfWidth = windowHalfWidth + 0.02; // 0.325m
@@ -346,7 +360,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
 
                 return (
                     <mesh key={`stud-${i}`} position={[xPos, studY, 0]} castShadow receiveShadow>
-                        <boxGeometry args={[0.038, studHeight, 0.089]} />
+                        <boxGeometry args={[STUD_WIDTH, studHeight, STUD_DEPTH]} />
                         <meshStandardMaterial color={frameColor} roughness={0.8} />
                     </mesh>
                 );
@@ -355,28 +369,28 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             {/* Window framing - explicit king studs, header, and sill */}
             {hasWindow && (() => {
                 // Window dimensions: 0.61m x 1.83m (24" x 72")
-                const windowWidth = 0.61;
-                const windowHeight = 1.83;
+                const windowWidth = WINDOW_WIDTH;
+                const windowHeight = WINDOW_HEIGHT;
                 const windowHalfWidth = windowWidth / 2; // 0.305m
 
                 // Rough opening (RO) - slightly larger than window for shims (20mm each side)
                 const roHalfWidth = windowHalfWidth + 0.02; // 0.325m
 
                 // King stud positions (centered at rough opening edges)
-                const studHalfWidth = 0.019; // half of 0.038m (2x4 actual width)
+                const studHalfWidth = STUD_HALF_WIDTH; // half of STUD_WIDTHm (2x4 actual width)
                 const kingStudLeftX = windowOffset - roHalfWidth - studHalfWidth;
                 const kingStudRightX = windowOffset + roHalfWidth + studHalfWidth;
 
                 // Header spans rough opening + king studs on each side
-                const headerWidth = roHalfWidth * 2 + 0.038 * 2; // RO + one king stud width on each side
+                const headerWidth = roHalfWidth * 2 + STUD_WIDTH * 2; // RO + one king stud width on each side
 
                 // Header and sill Y positions
                 // For flat-bottom geometry: sill sits just above bottom plate
                 // For centered geometry: sill is relative to wall center
-                const headerHeight = 0.089;
+                const headerHeight = HEADER_HEIGHT;
                 const sillY = isSideWall
                     ? bottomPlateHeight + headerHeight / 2  // Floor + bottom plate + half sill
-                    : -wallHeight / 2 + 0.089 / 2 + 0.038;   // Original centered calculation
+                    : -wallHeight / 2 + STUD_DEPTH / 2 + STUD_WIDTH;   // Original centered calculation
                 const headerY = sillY + windowHeight + headerHeight / 2;
 
                 // For rake walls, get the height at each king stud position
@@ -391,23 +405,23 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                     <>
                         {/* King studs at window edges - full height */}
                         <mesh position={[kingStudLeftX, leftKingStudY, 0]} castShadow receiveShadow>
-                            <boxGeometry args={[0.038, leftKingStudHeight, 0.089]} />
+                            <boxGeometry args={[STUD_WIDTH, leftKingStudHeight, STUD_DEPTH]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
                         <mesh position={[kingStudRightX, rightKingStudY, 0]} castShadow receiveShadow>
-                            <boxGeometry args={[0.038, rightKingStudHeight, 0.089]} />
+                            <boxGeometry args={[STUD_WIDTH, rightKingStudHeight, STUD_DEPTH]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
 
                         {/* Header - spans rough opening, sits on king studs */}
                         <mesh position={[windowOffset, headerY, 0]} castShadow receiveShadow>
-                            <boxGeometry args={[headerWidth, 0.089, 0.089]} />
+                            <boxGeometry args={[headerWidth, STUD_DEPTH, STUD_DEPTH]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
 
                         {/* Sill - bottom of rough opening */}
                         <mesh position={[windowOffset, sillY, 0]} castShadow receiveShadow>
-                            <boxGeometry args={[roHalfWidth * 2, 0.089, 0.089]} />
+                            <boxGeometry args={[roHalfWidth * 2, STUD_DEPTH, STUD_DEPTH]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
                     </>
@@ -416,38 +430,36 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
 
             {/* Door framing - explicit king studs and header */}
             {hasDoor && (() => {
-                // Door dimensions: 1.84m x 2.03m (72.5" x 80")
-                const doorWidth = 1.84;
-                const doorHeight = 2.03;
+                const doorHeight = DOOR_HEIGHT;
                 // Rough opening (RO) - slightly larger than door for shims (12.5mm each side)
-                const roHalfWidth = doorWidth / 2 + 0.0125; // 0.9325m
+                const roHalfWidth = DOOR_RO_HALF_WIDTH;
 
                 // King stud positions (at rough opening edges)
-                const studHalfWidth = 0.019; // half of 0.038m (2x4 actual width)
+                const studHalfWidth = STUD_HALF_WIDTH; // half of STUD_WIDTHm (2x4 actual width)
                 const kingStudLeftX = -roHalfWidth - studHalfWidth;
                 const kingStudRightX = roHalfWidth + studHalfWidth;
 
                 // Header spans rough opening + king studs on each side
-                const headerWidth = roHalfWidth * 2 + 0.038 * 2; // RO + one king stud width on each side
+                const headerWidth = roHalfWidth * 2 + STUD_WIDTH * 2; // RO + one king stud width on each side
 
                 // Header Y position (top of door opening)
-                const headerY = -wallHeight / 2 + doorHeight + 0.038 + 0.089 / 2; // above bottom plate + door height
+                const headerY = -wallHeight / 2 + doorHeight + STUD_WIDTH + STUD_DEPTH / 2; // above bottom plate + door height
 
                 return (
                     <>
                         {/* King studs at door edges - full height */}
                         <mesh position={[kingStudLeftX, 0, 0]} castShadow receiveShadow>
-                            <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                            <boxGeometry args={[STUD_WIDTH, wallHeight, STUD_DEPTH]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
                         <mesh position={[kingStudRightX, 0, 0]} castShadow receiveShadow>
-                            <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                            <boxGeometry args={[STUD_WIDTH, wallHeight, STUD_DEPTH]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
 
                         {/* Header - spans rough opening, sits on jack studs */}
                         <mesh position={[0, headerY, 0]} castShadow receiveShadow>
-                            <boxGeometry args={[headerWidth, 0.089, 0.089]} />
+                            <boxGeometry args={[headerWidth, STUD_DEPTH, STUD_DEPTH]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
                     </>
@@ -459,8 +471,8 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 // Side wall with window - split sheathing around window opening
                 <>
                     {(() => {
-                        const windowWidth = 0.61;
-                        const roHalfWidth = windowWidth / 2 + 0.02; // 0.325m
+                        const windowWidth = WINDOW_WIDTH;
+                        const roHalfWidth = windowWidth / 2 + WINDOW_SHIM_ALLOWANCE;
 
                         // Window horizontal bounds
                         const windowLeft = windowOffset - roHalfWidth;
@@ -471,31 +483,31 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                             <>
                                 {/* Below window - full width, covers bottom plate and sill */}
                                 <mesh
-                                    position={[0, windowSillY / 2, 0.048]}
+                                    position={[0, windowSillY / 2, SHEATHING_OFFSET]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[wallLength, windowSillY, 0.011]} />
+                                    <boxGeometry args={[wallLength, windowSillY, SHEATHING_THICKNESS]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
                                 {/* Left of window - from wall left to window left, sill to header */}
                                 <mesh
-                                    position={[(windowLeft - halfLength) / 2, (windowSillY + windowHeaderY) / 2, 0.048]}
+                                    position={[(windowLeft - halfLength) / 2, (windowSillY + windowHeaderY) / 2, SHEATHING_OFFSET]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[windowLeft + halfLength, windowHeaderY - windowSillY, 0.011]} />
+                                    <boxGeometry args={[windowLeft + halfLength, windowHeaderY - windowSillY, SHEATHING_THICKNESS]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
                                 {/* Right of window - from window right to wall right, sill to header */}
                                 <mesh
-                                    position={[(windowRight + halfLength) / 2, (windowSillY + windowHeaderY) / 2, 0.048]}
+                                    position={[(windowRight + halfLength) / 2, (windowSillY + windowHeaderY) / 2, SHEATHING_OFFSET]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[halfLength - windowRight, windowHeaderY - windowSillY, 0.011]} />
+                                    <boxGeometry args={[halfLength - windowRight, windowHeaderY - windowSillY, SHEATHING_THICKNESS]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
@@ -503,7 +515,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                                 {aboveHeaderSheathingGeometry && (
                                     <mesh
                                         geometry={aboveHeaderSheathingGeometry}
-                                        position={[0, 0, 0.048]}
+                                        position={[0, 0, SHEATHING_OFFSET]}
                                         castShadow
                                         receiveShadow
                                     >
@@ -518,13 +530,12 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 // Front/back wall with door - split sheathing around door opening
                 <>
                     {(() => {
-                        const doorWidth = 1.84;
-                        const doorHeight = 2.03;
-                        const roHalfWidth = doorWidth / 2 + 0.0125; // 0.9325m
+                        const doorHeight = DOOR_HEIGHT;
+                        const roHalfWidth = DOOR_RO_HALF_WIDTH;
                         const halfLength = wallLength / 2;
 
                         // Door vertical bounds (centered geometry)
-                        const headerTop = -wallHeight / 2 + doorHeight + 0.038 + 0.089;
+                        const headerTop = -wallHeight / 2 + doorHeight + STUD_WIDTH + STUD_DEPTH;
 
                         // Door horizontal bounds
                         const doorLeft = -roHalfWidth;
@@ -534,31 +545,31 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                             <>
                                 {/* Left of door - from floor to header top only (no overlap with above section) */}
                                 <mesh
-                                    position={[(doorLeft - halfLength) / 2, (-wallHeight / 2 + headerTop) / 2, 0.048]}
+                                    position={[(doorLeft - halfLength) / 2, (-wallHeight / 2 + headerTop) / 2, SHEATHING_OFFSET]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[doorLeft + halfLength, headerTop + wallHeight / 2, 0.011]} />
+                                    <boxGeometry args={[doorLeft + halfLength, headerTop + wallHeight / 2, SHEATHING_THICKNESS]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
                                 {/* Right of door - from floor to header top only */}
                                 <mesh
-                                    position={[(doorRight + halfLength) / 2, (-wallHeight / 2 + headerTop) / 2, 0.048]}
+                                    position={[(doorRight + halfLength) / 2, (-wallHeight / 2 + headerTop) / 2, SHEATHING_OFFSET]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[halfLength - doorRight, headerTop + wallHeight / 2, 0.011]} />
+                                    <boxGeometry args={[halfLength - doorRight, headerTop + wallHeight / 2, SHEATHING_THICKNESS]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
                                 {/* Above door - full width from header top to wall top */}
                                 <mesh
-                                    position={[0, (headerTop + wallHeight / 2 + 0.05) / 2, 0.048]}
+                                    position={[0, (headerTop + wallHeight / 2 + 0.05) / 2, SHEATHING_OFFSET]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[wallLength, wallHeight / 2 + 0.05 - headerTop, 0.011]} />
+                                    <boxGeometry args={[wallLength, wallHeight / 2 + 0.05 - headerTop, SHEATHING_THICKNESS]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
                             </>
@@ -569,7 +580,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 // Side wall without opening - solid trapezoidal sheathing
                 <mesh
                     geometry={rakeSheathingGeometry}
-                    position={[0, 0, 0.048]}
+                    position={[0, 0, SHEATHING_OFFSET]}
                     castShadow
                     receiveShadow
                 >
@@ -577,8 +588,8 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 </mesh>
             ) : (
                 // Front/back wall without opening - solid rectangular sheathing
-                <mesh position={[0, 0, 0.048]} castShadow receiveShadow>
-                    <boxGeometry args={[wallLength, wallHeight + 0.1, 0.011]} />
+                <mesh position={[0, 0, SHEATHING_OFFSET]} castShadow receiveShadow>
+                    <boxGeometry args={[wallLength, wallHeight + 0.1, SHEATHING_THICKNESS]} />
                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                 </mesh>
             )}
