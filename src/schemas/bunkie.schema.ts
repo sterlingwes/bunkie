@@ -134,6 +134,9 @@ export interface BunkieStore {
   // Phase visibility
   visiblePhases: BuildPhase[];
 
+  // Wall visibility (for inspecting interior)
+  hiddenWalls: string[];
+
   // View options
   showAnnotations: boolean;
   showClearances: boolean;
@@ -148,6 +151,8 @@ export interface BunkieStore {
   selectComponent: (id: string | null) => void;
   hoverComponent: (id: string | null) => void;
   togglePhase: (phase: BuildPhase) => void;
+  toggleWall: (wallId: string) => void;
+  showAllWalls: () => void;
   setAnnotationsVisible: (visible: boolean) => void;
   setClearancesVisible: (visible: boolean) => void;
   setDimensionsVisible: (visible: boolean) => void;

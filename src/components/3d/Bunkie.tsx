@@ -16,7 +16,7 @@ interface BunkieProps {
 }
 
 export function Bunkie({ definition }: BunkieProps) {
-  const { visiblePhases, selectedComponentId } = useBunkieStore();
+  const { visiblePhases, hiddenWalls, selectedComponentId } = useBunkieStore();
 
   // Group components by category and phase
   const components = useMemo(() => {
@@ -100,6 +100,9 @@ export function Bunkie({ definition }: BunkieProps) {
             const hasDoor = wall.id === 'wall-west';
             const hasWindow = wall.id === 'wall-south' || wall.id === 'wall-north';
             const windowPosition = wall.id === 'wall-south' ? 'front' : 'back';
+            const isHidden = hiddenWalls.includes(wall.id);
+
+            if (isHidden) return null;
 
             return (
               <Wall

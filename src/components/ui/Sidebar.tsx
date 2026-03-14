@@ -1,5 +1,6 @@
 import { useBunkieStore } from '../../store/useBunkieStore';
 import { PhasesPanel } from './PhasesPanel';
+import { WallsPanel } from './WallsPanel';
 import { ComponentDetails } from './ComponentDetails';
 import type { BunkieDefinition } from '../../schemas/bunkie.schema';
 
@@ -31,6 +32,9 @@ export function Sidebar({ definition }: SidebarProps) {
 
       {/* Phases Panel */}
       <PhasesPanel phases={definition.phases} />
+
+      {/* Wall Visibility Panel */}
+      <WallsPanel />
 
       {/* Component Details */}
       {selectedComponent ? (

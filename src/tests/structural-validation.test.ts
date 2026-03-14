@@ -340,6 +340,9 @@ describe('Structural Validation Tests', () => {
         // Door should fit within wall height (with room for header)
         expect(doorBox.minY).toBeGreaterThan(wallBox.minY);
         expect(doorBox.maxY).toBeLessThan(wallBox.maxY);
+
+        // Rough opening should be reasonable size
+        expect(roughOpeningWidth).toBeLessThan(wallBox.maxX - wallBox.minX);
       }
     });
 

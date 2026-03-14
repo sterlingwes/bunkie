@@ -17,6 +17,9 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
   // Phase visibility - all phases visible by default
   visiblePhases: ['foundation', 'framing', 'envelope', 'finishing'],
 
+  // Wall visibility - no walls hidden by default
+  hiddenWalls: [],
+
   // View options
   showAnnotations: true,
   showClearances: true,
@@ -46,6 +49,19 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
         : [...state.visiblePhases, phase];
       return { visiblePhases };
     });
+  },
+
+  toggleWall: (wallId: string) => {
+    set((state) => {
+      const hiddenWalls = state.hiddenWalls.includes(wallId)
+        ? state.hiddenWalls.filter((id) => id !== wallId)
+        : [...state.hiddenWalls, wallId];
+      return { hiddenWalls };
+    });
+  },
+
+  showAllWalls: () => {
+    set({ hiddenWalls: [] });
   },
 
   setAnnotationsVisible: (visible: boolean) => {

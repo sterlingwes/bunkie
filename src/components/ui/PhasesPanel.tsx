@@ -1,5 +1,6 @@
 import { Layers, Check } from 'lucide-react';
 import { useBunkieStore } from '../../store/useBunkieStore';
+import { CollapsiblePanel } from './CollapsiblePanel';
 import type { BuildPhase, PhaseDefinition } from '../../schemas/bunkie.schema';
 
 interface PhasesPanelProps {
@@ -17,13 +18,14 @@ const phaseOrder: BuildPhase[] = ['foundation', 'framing', 'envelope', 'finishin
 
 export function PhasesPanel({ phases }: PhasesPanelProps) {
   const { visiblePhases, togglePhase } = useBunkieStore();
+  const visibleCount = visiblePhases.length;
 
   return (
-    <div className="border-b border-zinc-800">
-      <div className="p-3 flex items-center gap-2 border-b border-zinc-800">
-        <Layers size={16} className="text-zinc-400" />
-        <span className="text-sm font-medium text-zinc-300">Build Phases</span>
-      </div>
+    <CollapsiblePanel
+      title="Build Phases"
+      icon={<Layers size={16} className="text-zinc-400" />}
+      badge={`${visibleCount}/${phaseOrder.length}`}
+    >
       <div className="p-2 space-y-1">
         {phaseOrder.map((phaseKey) => {
           const phase = phases[phaseKey];
@@ -52,6 +54,6 @@ export function PhasesPanel({ phases }: PhasesPanelProps) {
           );
         })}
       </div>
-    </div>
+    </CollapsiblePanel>
   );
 }
