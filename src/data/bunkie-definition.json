@@ -251,7 +251,7 @@
       "category": "window",
       "phase": "envelope",
       "dimensions": { "width": 0.61, "height": 1.83, "depth": 0.08 },
-      "position": { "x": 1.5, "y": 1.2, "z": 0.6 },
+      "position": { "x": 1.5, "y": 1.2, "z": 0.82 },
       "materials": [
         { "id": "window-unit-s", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 280, "totalCost": 280, "specs": "24\" x 72\" vinyl, dual pane Low-E" },
         { "id": "window-flashing-s", "name": "Flashing Tape", "quantity": 0.2, "unit": "roll", "unitCost": 25, "totalCost": 5, "specs": "Grace Vycor Plus" }
@@ -271,7 +271,7 @@
       "category": "window",
       "phase": "envelope",
       "dimensions": { "width": 0.61, "height": 1.83, "depth": 0.08 },
-      "position": { "x": -1.5, "y": 1.2, "z": 0.6 },
+      "position": { "x": -1.5, "y": 1.2, "z": 0.82 },
       "materials": [
         { "id": "window-unit-n", "name": "Vertical Window", "quantity": 1, "unit": "unit", "unitCost": 280, "totalCost": 280, "specs": "24\" x 72\" vinyl, dual pane Low-E" },
         { "id": "window-flashing-n", "name": "Flashing Tape", "quantity": 0.2, "unit": "roll", "unitCost": 25, "totalCost": 5, "specs": "Grace Vycor Plus" }
