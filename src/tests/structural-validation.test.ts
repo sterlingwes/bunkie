@@ -72,9 +72,15 @@ describe('Structural Validation Tests', () => {
       if (floor) {
         const floorBox = getBoundingBox(floor);
         walls.forEach(wall => {
-          const wallBox = getBoundingBox(wall);
+          // Side walls (south/north) use flat-bottom geometry where position.y is the wall bottom
+          // Front/back walls use centered geometry where minY = position.y - height/2
+          const isSideWall = wall.id === 'wall-south' || wall.id === 'wall-north';
+          const wallBottomY = isSideWall
+            ? wall.position.y  // Flat-bottom: position.y is the bottom
+            : wall.position.y - wall.dimensions.height / 2;  // Centered geometry
+
           // Wall bottom should be at or just above floor top
-          expect(wallBox.minY).toBeGreaterThanOrEqual(floorBox.maxY - 0.15);
+          expect(wallBottomY).toBeGreaterThanOrEqual(floorBox.maxY - 0.15);
         });
       }
     });
