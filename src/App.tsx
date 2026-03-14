@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
+import { PerspectiveCamera, Environment } from '@react-three/drei';
 import { Sidebar } from './components/ui/Sidebar';
 import { Bunkie } from './components/3d/Bunkie';
+import { CameraControls } from './components/3d/CameraControls';
 import { useBunkieStore } from './store/useBunkieStore';
 import type { BunkieDefinition } from './schemas/bunkie.schema';
 import bunkieDefinition from './data/bunkie-definition.json';
-import { Eye, EyeOff, Box, Camera, RotateCcw } from 'lucide-react';
+import { Eye, EyeOff, Camera, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 
 function App() {
   const [loaded, setLoaded] = useState(false);
@@ -43,14 +44,7 @@ function App() {
       <div className="flex-1 relative">
         <Canvas shadows>
           <PerspectiveCamera makeDefault position={[5, 4, 5]} fov={50} />
-          <OrbitControls
-            makeDefault
-            enableDamping
-            dampingFactor={0.05}
-            minDistance={2}
-            maxDistance={20}
-            maxPolarAngle={Math.PI / 2}
-          />
+          <CameraControls />
 
           {/* Lighting */}
           <ambientLight intensity={0.4} />
@@ -124,9 +118,20 @@ function App() {
               <Camera size={12} />
               <span>Drag to rotate</span>
             </div>
+            <div className="flex items-center gap-1.5 mb-1">
+              <div className="flex gap-0.5">
+                <ArrowUp size={10} className="text-zinc-500" />
+              </div>
+              <div className="flex gap-0.5">
+                <ArrowLeft size={10} className="text-zinc-500" />
+                <ArrowDown size={10} className="text-zinc-500" />
+                <ArrowRight size={10} className="text-zinc-500" />
+              </div>
+              <span>Move camera</span>
+            </div>
             <div className="flex items-center gap-1.5">
-              <Box size={12} />
-              <span>Click to select</span>
+              <span className="text-zinc-500 text-[10px] px-1 bg-zinc-700 rounded">Shift</span>
+              <span>Faster movement</span>
             </div>
           </div>
         </div>
