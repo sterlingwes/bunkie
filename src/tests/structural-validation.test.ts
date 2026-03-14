@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import bunkieDefinition from '../data/bunkie-definition.json';
-import type { BunkieDefinition, Component } from '../schemas/bunkie.schema';
+import { describe, it, expect } from "vitest";
+import bunkieDefinition from "../data/bunkie-definition.json";
+import type { BunkieDefinition, Component } from "../schemas/bunkie.schema";
 
 const bunkie = bunkieDefinition as BunkieDefinition;
 const components = bunkie.components;
 
 // Helper to get component by ID
 function getComponentById(id: string): Component | undefined {
-  return components.find(c => c.id === id);
+  return components.find((c) => c.id === id);
 }
 
 // Bounding box interface
@@ -33,19 +33,19 @@ function getBoundingBox(comp: Component): BoundingBox {
   };
 }
 
-describe('Structural Validation Tests', () => {
-  describe('Gravity Support Tests', () => {
-    it('Foundation piers must be at ground level', () => {
-      const piers = components.filter(c => c.id.startsWith('pier-'));
-      piers.forEach(pier => {
+describe("Structural Validation Tests", () => {
+  describe("Gravity Support Tests", () => {
+    it("Foundation piers must be at ground level", () => {
+      const piers = components.filter((c) => c.id.startsWith("pier-"));
+      piers.forEach((pier) => {
         // Piers should have their top at y=0 or extend below
         expect(pier.position.y).toBeLessThanOrEqual(0);
       });
     });
 
-    it('Floor must rest on foundation', () => {
-      const floor = getComponentById('floor-assembly');
-      const piers = components.filter(c => c.id.startsWith('pier-'));
+    it("Floor must rest on foundation", () => {
+      const floor = getComponentById("floor-assembly");
+      const piers = components.filter((c) => c.id.startsWith("pier-"));
 
       expect(floor).toBeDefined();
       expect(piers.length).toBeGreaterThan(0);
@@ -53,7 +53,7 @@ describe('Structural Validation Tests', () => {
       if (floor) {
         const floorBox = getBoundingBox(floor);
         // Piers should support the floor
-        const pierTops = piers.map(p => getBoundingBox(p).maxY);
+        const pierTops = piers.map((p) => getBoundingBox(p).maxY);
         const highestPierTop = Math.max(...pierTops);
 
         // Floor bottom should be at or just above highest pier top
@@ -62,22 +62,25 @@ describe('Structural Validation Tests', () => {
       }
     });
 
-    it('Walls must rest on floor', () => {
-      const floor = getComponentById('floor-assembly');
-      const walls = components.filter(c => c.category === 'wall' && c.id.startsWith('wall-'));
+    it("Walls must rest on floor", () => {
+      const floor = getComponentById("floor-assembly");
+      const walls = components.filter(
+        (c) => c.category === "wall" && c.id.startsWith("wall-"),
+      );
 
       expect(floor).toBeDefined();
       expect(walls.length).toBeGreaterThan(0);
 
       if (floor) {
         const floorBox = getBoundingBox(floor);
-        walls.forEach(wall => {
+        walls.forEach((wall) => {
           // Side walls (south/north) use flat-bottom geometry where position.y is the wall bottom
           // Front/back walls use centered geometry where minY = position.y - height/2
-          const isSideWall = wall.id === 'wall-south' || wall.id === 'wall-north';
+          const isSideWall =
+            wall.id === "wall-south" || wall.id === "wall-north";
           const wallBottomY = isSideWall
-            ? wall.position.y  // Flat-bottom: position.y is the bottom
-            : wall.position.y - wall.dimensions.height / 2;  // Centered geometry
+            ? wall.position.y // Flat-bottom: position.y is the bottom
+            : wall.position.y - wall.dimensions.height / 2; // Centered geometry
 
           // Wall bottom should be at or just above floor top
           expect(wallBottomY).toBeGreaterThanOrEqual(floorBox.maxY - 0.15);
@@ -85,16 +88,18 @@ describe('Structural Validation Tests', () => {
       }
     });
 
-    it('Roof must rest on walls', () => {
-      const roof = getComponentById('roof-assembly');
-      const walls = components.filter(c => c.category === 'wall' && c.id.startsWith('wall-'));
+    it("Roof must rest on walls", () => {
+      const roof = getComponentById("roof-assembly");
+      const walls = components.filter(
+        (c) => c.category === "wall" && c.id.startsWith("wall-"),
+      );
 
       expect(roof).toBeDefined();
       expect(walls.length).toBeGreaterThan(0);
 
       if (roof) {
         const roofBox = getBoundingBox(roof);
-        const wallTops = walls.map(w => getBoundingBox(w).maxY);
+        const wallTops = walls.map((w) => getBoundingBox(w).maxY);
         const highestWallTop = Math.max(...wallTops);
 
         // Roof bottom should be at or just above highest wall top
@@ -103,11 +108,11 @@ describe('Structural Validation Tests', () => {
     });
   });
 
-  describe('Non-Overlap Tests', () => {
-    it('Windows should be within wall bounds (with rough opening tolerance)', () => {
-      const windows = components.filter(c => c.category === 'window');
+  describe("Non-Overlap Tests", () => {
+    it("Windows should be within wall bounds (with rough opening tolerance)", () => {
+      const windows = components.filter((c) => c.category === "window");
 
-      windows.forEach(window => {
+      windows.forEach((window) => {
         // Find the parent wall (windows have position relative to their wall)
         const windowBox = getBoundingBox(window);
 
@@ -121,9 +126,9 @@ describe('Structural Validation Tests', () => {
       });
     });
 
-    it('Door should be within front wall bounds', () => {
-      const door = getComponentById('sliding-door');
-      const frontWall = getComponentById('wall-west');
+    it("Door should be within front wall bounds", () => {
+      const door = getComponentById("sliding-door");
+      const frontWall = getComponentById("wall-west");
 
       expect(door).toBeDefined();
       expect(frontWall).toBeDefined();
@@ -139,9 +144,9 @@ describe('Structural Validation Tests', () => {
     });
   });
 
-  describe('Dimension Validation', () => {
-    it('Floor area should be under 10m² (permitless limit)', () => {
-      const floor = getComponentById('floor-assembly');
+  describe("Dimension Validation", () => {
+    it("Floor area should be under 10m² (permitless limit)", () => {
+      const floor = getComponentById("floor-assembly");
       expect(floor).toBeDefined();
 
       if (floor) {
@@ -152,14 +157,14 @@ describe('Structural Validation Tests', () => {
     });
 
     it('Window dimensions should match specification (24" x 72")', () => {
-      const southWindow = getComponentById('window-south');
-      const northWindow = getComponentById('window-north');
+      const southWindow = getComponentById("window-south");
+      const northWindow = getComponentById("window-north");
 
       // 24" = 0.61m, 72" = 1.83m
       const expectedWidth = 0.61;
       const expectedHeight = 1.83;
 
-      [southWindow, northWindow].forEach(window => {
+      [southWindow, northWindow].forEach((window) => {
         expect(window).toBeDefined();
         if (window) {
           expect(window.dimensions.width).toBeCloseTo(expectedWidth, 1);
@@ -168,37 +173,41 @@ describe('Structural Validation Tests', () => {
       });
     });
 
-    it('Window rough opening should be larger than window dimensions', () => {
+    it("Window rough opening should be larger than window dimensions", () => {
       // This is validated in the framing code, but we check the window fits
-      const southWindow = getComponentById('window-south');
-      const southWall = getComponentById('wall-south');
+      const southWindow = getComponentById("window-south");
+      const southWall = getComponentById("wall-south");
 
       expect(southWindow).toBeDefined();
       expect(southWall).toBeDefined();
 
       if (southWindow && southWall) {
         // Window width should be less than wall width
-        expect(southWindow.dimensions.width).toBeLessThan(southWall.dimensions.width);
+        expect(southWindow.dimensions.width).toBeLessThan(
+          southWall.dimensions.width,
+        );
       }
     });
 
-    it('Wall heights should be reasonable (between 2m and 3m)', () => {
-      const walls = components.filter(c => c.category === 'wall' && c.id.startsWith('wall-'));
+    it("Wall heights should be reasonable (between 2m and 3m)", () => {
+      const walls = components.filter(
+        (c) => c.category === "wall" && c.id.startsWith("wall-"),
+      );
 
-      walls.forEach(wall => {
+      walls.forEach((wall) => {
         expect(wall.dimensions.height).toBeGreaterThanOrEqual(2);
         expect(wall.dimensions.height).toBeLessThanOrEqual(3);
       });
     });
 
-    it('Total cost should be tracked in metadata', () => {
+    it("Total cost should be tracked in metadata", () => {
       expect(bunkie.meta.totalCost).toBeGreaterThan(0);
       expect(bunkie.meta.totalArea).toBeGreaterThan(0);
     });
   });
 
-  describe('Window Framing Alignment', () => {
-    it('Windows must be centered in their framing openings', () => {
+  describe("Window Framing Alignment", () => {
+    it("Windows must be centered in their framing openings", () => {
       // The framing logic in Walls.tsx places windows at:
       // - windowOffset = wallLength / 4 for 'front' position
       // - windowOffset = -wallLength / 4 for 'back' position
@@ -211,10 +220,10 @@ describe('Structural Validation Tests', () => {
       // - wall-south (front): windowOffset = 0.82 → world z = 0 + 0.82 = 0.82
       // - wall-north (back): windowOffset = -0.82 → world z = 0 - (-0.82) = 0.82
 
-      const southWindow = getComponentById('window-south');
-      const northWindow = getComponentById('window-north');
-      const southWall = getComponentById('wall-south');
-      const northWall = getComponentById('wall-north');
+      const southWindow = getComponentById("window-south");
+      const northWindow = getComponentById("window-north");
+      const southWall = getComponentById("wall-south");
+      const northWall = getComponentById("wall-north");
 
       expect(southWindow).toBeDefined();
       expect(northWindow).toBeDefined();
@@ -235,21 +244,21 @@ describe('Structural Validation Tests', () => {
       // South window should be at z ≈ 0.82
       expect(
         Math.abs(southWindow.position.z - expectedZ),
-        `South window z=${southWindow.position.z.toFixed(2)}m should be at framing position z=${expectedZ.toFixed(2)}m`
+        `South window z=${southWindow.position.z.toFixed(2)}m should be at framing position z=${expectedZ.toFixed(2)}m`,
       ).toBeLessThan(tolerance);
 
       // North window should be at z ≈ 0.82
       expect(
         Math.abs(northWindow.position.z - expectedZ),
-        `North window z=${northWindow.position.z.toFixed(2)}m should be at framing position z=${expectedZ.toFixed(2)}m`
+        `North window z=${northWindow.position.z.toFixed(2)}m should be at framing position z=${expectedZ.toFixed(2)}m`,
       ).toBeLessThan(tolerance);
     });
 
-    it('Windows must have correct X position (on their respective walls)', () => {
-      const southWindow = getComponentById('window-south');
-      const northWindow = getComponentById('window-north');
-      const southWall = getComponentById('wall-south');
-      const northWall = getComponentById('wall-north');
+    it("Windows must have correct X position (on their respective walls)", () => {
+      const southWindow = getComponentById("window-south");
+      const northWindow = getComponentById("window-north");
+      const southWall = getComponentById("wall-south");
+      const northWall = getComponentById("wall-north");
 
       if (!southWindow || !northWindow || !southWall || !northWall) return;
 
@@ -258,9 +267,9 @@ describe('Structural Validation Tests', () => {
       expect(northWindow.position.x).toBeCloseTo(northWall.position.x, 1);
     });
 
-    it('Windows must have correct Y position (centered vertically in opening)', () => {
-      const southWindow = getComponentById('window-south');
-      const northWindow = getComponentById('window-north');
+    it("Windows must have correct Y position (centered vertically in opening)", () => {
+      const southWindow = getComponentById("window-south");
+      const northWindow = getComponentById("window-north");
 
       if (!southWindow || !northWindow) return;
 
@@ -272,19 +281,19 @@ describe('Structural Validation Tests', () => {
 
       expect(
         Math.abs(southWindow.position.y - expectedY),
-        `South window y=${southWindow.position.y.toFixed(2)}m should be near expected y=${expectedY.toFixed(2)}m`
+        `South window y=${southWindow.position.y.toFixed(2)}m should be near expected y=${expectedY.toFixed(2)}m`,
       ).toBeLessThan(tolerance);
 
       expect(
         Math.abs(northWindow.position.y - expectedY),
-        `North window y=${northWindow.position.y.toFixed(2)}m should be near expected y=${expectedY.toFixed(2)}m`
+        `North window y=${northWindow.position.y.toFixed(2)}m should be near expected y=${expectedY.toFixed(2)}m`,
       ).toBeLessThan(tolerance);
     });
   });
 
-  describe('Door Framing Alignment', () => {
+  describe("Door Framing Alignment", () => {
     it('Door dimensions should match specification (72.5" x 80")', () => {
-      const door = getComponentById('sliding-door');
+      const door = getComponentById("sliding-door");
 
       // 72.5" = 1.8415m, 80" = 2.032m
       const expectedWidth = 1.84;
@@ -295,18 +304,18 @@ describe('Structural Validation Tests', () => {
       if (door) {
         expect(
           Math.abs(door.dimensions.width - expectedWidth),
-          `Door width ${door.dimensions.width}m should be ${expectedWidth}m`
+          `Door width ${door.dimensions.width}m should be ${expectedWidth}m`,
         ).toBeLessThan(tolerance);
         expect(
           Math.abs(door.dimensions.height - expectedHeight),
-          `Door height ${door.dimensions.height}m should be ${expectedHeight}m`
+          `Door height ${door.dimensions.height}m should be ${expectedHeight}m`,
         ).toBeLessThan(tolerance);
       }
     });
 
-    it('Door should be centered on front wall', () => {
-      const door = getComponentById('sliding-door');
-      const frontWall = getComponentById('wall-west');
+    it("Door should be centered on front wall", () => {
+      const door = getComponentById("sliding-door");
+      const frontWall = getComponentById("wall-west");
 
       expect(door).toBeDefined();
       expect(frontWall).toBeDefined();
@@ -319,9 +328,9 @@ describe('Structural Validation Tests', () => {
       }
     });
 
-    it('Door should fit snugly in rough opening', () => {
-      const door = getComponentById('sliding-door');
-      const frontWall = getComponentById('wall-west');
+    it("Door should fit snugly in rough opening", () => {
+      const door = getComponentById("sliding-door");
+      const frontWall = getComponentById("wall-west");
 
       expect(door).toBeDefined();
       expect(frontWall).toBeDefined();
@@ -352,8 +361,8 @@ describe('Structural Validation Tests', () => {
       }
     });
 
-    it('Door rough opening should leave adequate shim space', () => {
-      const door = getComponentById('sliding-door');
+    it("Door rough opening should leave adequate shim space", () => {
+      const door = getComponentById("sliding-door");
 
       expect(door).toBeDefined();
 
@@ -363,25 +372,25 @@ describe('Structural Validation Tests', () => {
         const doorHeight = door.dimensions.height;
 
         // Rough opening should be door + 12.5mm each side for shims
-        const minShimAllowance = 0.010; // 10mm minimum each side
-        const maxShimAllowance = 0.020; // 20mm maximum each side
+        const minShimAllowance = 0.01; // 10mm minimum each side
+        const maxShimAllowance = 0.02; // 20mm maximum each side
 
-        const roughOpeningWidth = doorWidth + (minShimAllowance * 2);
-        const roughOpeningHeight = doorHeight + (minShimAllowance * 2);
+        const roughOpeningWidth = doorWidth + minShimAllowance * 2;
+        const roughOpeningHeight = doorHeight + minShimAllowance * 2;
 
         // Verify rough opening is larger than door
         expect(roughOpeningWidth).toBeGreaterThan(doorWidth);
         expect(roughOpeningHeight).toBeGreaterThan(doorHeight);
 
         // Verify rough opening isn't excessively large
-        const maxRoughOpeningWidth = doorWidth + (maxShimAllowance * 2);
+        const maxRoughOpeningWidth = doorWidth + maxShimAllowance * 2;
         expect(roughOpeningWidth).toBeLessThanOrEqual(maxRoughOpeningWidth);
       }
     });
 
-    it('Door should have correct Y position (sill at floor level)', () => {
-      const door = getComponentById('sliding-door');
-      const floor = getComponentById('floor-assembly');
+    it("Door should have correct Y position (sill at floor level)", () => {
+      const door = getComponentById("sliding-door");
+      const floor = getComponentById("floor-assembly");
 
       expect(door).toBeDefined();
       expect(floor).toBeDefined();
@@ -396,35 +405,39 @@ describe('Structural Validation Tests', () => {
     });
   });
 
-  describe('Insulation Requirements (Canadian Climate)', () => {
-    it('Floor insulation should be R-28 or better', () => {
-      const floor = getComponentById('floor-assembly');
+  describe("Insulation Requirements (Canadian Climate)", () => {
+    it("Floor insulation should be R-28 or better", () => {
+      const floor = getComponentById("floor-assembly");
       expect(floor).toBeDefined();
 
       if (floor) {
-        const floorInsulation = floor.materials.find(m => m.id === 'insulation-floor');
+        const floorInsulation = floor.materials.find(
+          (m) => m.id === "insulation-floor",
+        );
         expect(floorInsulation).toBeDefined();
         expect(floorInsulation?.name).toMatch(/R-2[89]|R-3[0-9]/);
       }
     });
 
-    it('Wall insulation component should exist and be in finishing phase', () => {
-      const wallInsulation = getComponentById('insulation-walls');
+    it("Wall insulation component should exist and be in finishing phase", () => {
+      const wallInsulation = getComponentById("insulation-walls");
       expect(wallInsulation).toBeDefined();
 
       if (wallInsulation) {
-        expect(wallInsulation.phase).toBe('finishing');
+        expect(wallInsulation.phase).toBe("finishing");
         expect(wallInsulation.materials.length).toBeGreaterThan(0);
       }
     });
 
-    it('Wall insulation should include R-20 batts and R-5 continuous', () => {
-      const wallInsulation = getComponentById('insulation-walls');
+    it("Wall insulation should include R-20 batts and R-5 continuous", () => {
+      const wallInsulation = getComponentById("insulation-walls");
       expect(wallInsulation).toBeDefined();
 
       if (wallInsulation) {
-        const batts = wallInsulation.materials.find(m => m.id === 'r20-batts');
-        const rigid = wallInsulation.materials.find(m => m.id === 'r5-rigid');
+        const batts = wallInsulation.materials.find(
+          (m) => m.id === "r20-batts",
+        );
+        const rigid = wallInsulation.materials.find((m) => m.id === "r5-rigid");
 
         expect(batts).toBeDefined();
         expect(rigid).toBeDefined();
@@ -433,72 +446,85 @@ describe('Structural Validation Tests', () => {
       }
     });
 
-    it('Wall insulation should include vapor barrier for Canadian climate', () => {
-      const wallInsulation = getComponentById('insulation-walls');
+    it("Wall insulation should include vapor barrier for Canadian climate", () => {
+      const wallInsulation = getComponentById("insulation-walls");
       expect(wallInsulation).toBeDefined();
 
       if (wallInsulation) {
-        const vaporBarrier = wallInsulation.materials.find(m => m.id === 'vapor-barrier');
-        const sealant = wallInsulation.materials.find(m => m.id === 'acoustic-sealant');
+        const vaporBarrier = wallInsulation.materials.find(
+          (m) => m.id === "vapor-barrier",
+        );
+        const sealant = wallInsulation.materials.find(
+          (m) => m.id === "acoustic-sealant",
+        );
 
         expect(vaporBarrier).toBeDefined();
         expect(sealant).toBeDefined();
       }
     });
 
-    it('Ceiling insulation should exist for heated space', () => {
-      const ceilingInsulation = getComponentById('insulation-ceiling');
+    it("Ceiling insulation should exist for heated space", () => {
+      const ceilingInsulation = getComponentById("insulation-ceiling");
       expect(ceilingInsulation).toBeDefined();
 
       if (ceilingInsulation) {
-        expect(ceilingInsulation.phase).toBe('finishing');
-        expect(ceilingInsulation.category).toBe('roof');
+        expect(ceilingInsulation.phase).toBe("finishing");
+        expect(ceilingInsulation.category).toBe("roof");
       }
     });
 
-    it('Ceiling insulation should be R-40 or better for Canadian climate', () => {
-      const ceilingInsulation = getComponentById('insulation-ceiling');
+    it("Ceiling insulation should be R-40 or better for Canadian climate", () => {
+      const ceilingInsulation = getComponentById("insulation-ceiling");
       expect(ceilingInsulation).toBeDefined();
 
       if (ceilingInsulation) {
-        const batts = ceilingInsulation.materials.find(m => m.id === 'r40-batts');
+        const batts = ceilingInsulation.materials.find(
+          (m) => m.id === "r40-batts",
+        );
         expect(batts).toBeDefined();
         expect(batts?.name).toMatch(/R-4[0-9]/);
       }
     });
 
-    it('Finishing phase should include all insulation components', () => {
+    it("Finishing phase should include all insulation components", () => {
       const finishingPhase = bunkie.phases.finishing;
-      expect(finishingPhase.components).toContain('insulation-walls');
-      expect(finishingPhase.components).toContain('insulation-ceiling');
+      expect(finishingPhase.components).toContain("insulation-walls");
+      expect(finishingPhase.components).toContain("insulation-ceiling");
     });
 
-    it('Insulation materials should have OBC code references', () => {
-      const wallInsulation = getComponentById('insulation-walls');
-      const ceilingInsulation = getComponentById('insulation-ceiling');
+    it("Insulation materials should have OBC code references", () => {
+      const wallInsulation = getComponentById("insulation-walls");
+      const ceilingInsulation = getComponentById("insulation-ceiling");
 
-      expect(wallInsulation?.codeReferences.some(ref => ref.code === 'OBC')).toBe(true);
-      expect(ceilingInsulation?.codeReferences.some(ref => ref.code === 'OBC')).toBe(true);
+      expect(
+        wallInsulation?.codeReferences.some((ref) => ref.code === "OBC"),
+      ).toBe(true);
+      expect(
+        ceilingInsulation?.codeReferences.some((ref) => ref.code === "OBC"),
+      ).toBe(true);
     });
   });
 
-  describe('Component Relationships', () => {
-    it('Walls should reference their windows/doors as children', () => {
-      const frontWall = getComponentById('wall-west');
-      const southWall = getComponentById('wall-south');
-      const northWall = getComponentById('wall-north');
+  describe("Component Relationships", () => {
+    it("Walls should reference their windows/doors as children", () => {
+      const frontWall = getComponentById("wall-west");
+      const southWall = getComponentById("wall-south");
+      const northWall = getComponentById("wall-north");
 
-      expect(frontWall?.children).toContain('sliding-door');
-      expect(southWall?.children).toContain('window-south');
-      expect(northWall?.children).toContain('window-north');
+      expect(frontWall?.children).toContain("sliding-door");
+      expect(southWall?.children).toContain("window-south");
+      expect(northWall?.children).toContain("window-north");
     });
 
-    it('All phases should have valid component references', () => {
-      const componentIds = new Set(components.map(c => c.id));
+    it("All phases should have valid component references", () => {
+      const componentIds = new Set(components.map((c) => c.id));
 
-      Object.values(bunkie.phases).forEach(phase => {
-        phase.components.forEach(compId => {
-          expect(componentIds.has(compId), `Phase references unknown component: ${compId}`).toBe(true);
+      Object.values(bunkie.phases).forEach((phase) => {
+        phase.components.forEach((compId) => {
+          expect(
+            componentIds.has(compId),
+            `Phase references unknown component: ${compId}`,
+          ).toBe(true);
         });
       });
     });

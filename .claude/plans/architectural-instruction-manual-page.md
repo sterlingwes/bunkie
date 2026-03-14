@@ -192,7 +192,7 @@ function projectFloorPlan(floor: Component, spacing: number = 0.406) {
 // Wall elevation - studs, header, sill, opening
 function projectWallElevation(
   wall: Component,
-  opening?: { width; height; sillHeight }
+  opening?: { width; height; sillHeight },
 ) {
   const studs = [];
   const studSpacing = 0.406; // 16" OC
@@ -222,14 +222,12 @@ function projectWallElevation(
 ## Verification
 
 1. **Manual Testing:**
-
    - Switch between Builder and Instructions views
    - Navigate through all instruction steps
    - Verify dimensions match 3D model measurements
    - Check all 4 phases have complete steps
 
 2. **Dimension Accuracy:**
-
    - Foundation: 6 piers at correct positions
    - Floor: 3.0m x 3.28m, joists at 16" OC
    - Walls: heights 2.1m-2.4m, openings correct

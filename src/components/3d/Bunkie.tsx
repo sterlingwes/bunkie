@@ -1,15 +1,19 @@
-import { useMemo } from 'react';
-import { Grid } from '@react-three/drei';
-import type { BunkieDefinition, Component, BuildPhase } from '../../schemas/bunkie.schema';
-import { useBunkieStore } from '../../store/useBunkieStore';
-import { Foundation } from './Foundation';
-import { Floor } from './Floor';
-import { Wall } from './Walls';
-import { Window } from './Windows';
-import { Door } from './Door';
-import { Roof } from './Roof';
-import { WoodStove, ClearanceZone } from './WoodStove';
-import { Annotations } from './Annotations';
+import { useMemo } from "react";
+import { Grid } from "@react-three/drei";
+import type {
+  BunkieDefinition,
+  Component,
+  BuildPhase,
+} from "../../schemas/bunkie.schema";
+import { useBunkieStore } from "../../store/useBunkieStore";
+import { Foundation } from "./Foundation";
+import { Floor } from "./Floor";
+import { Wall } from "./Walls";
+import { Window } from "./Windows";
+import { Door } from "./Door";
+import { Roof } from "./Roof";
+import { WoodStove, ClearanceZone } from "./WoodStove";
+import { Annotations } from "./Annotations";
 
 interface BunkieProps {
   definition: BunkieDefinition;
@@ -43,27 +47,33 @@ export function Bunkie({ definition }: BunkieProps) {
   const isPhaseVisible = (phase: BuildPhase) => visiblePhases.includes(phase);
 
   // Get foundation piers
-  const foundationGroup = components.foundation.find((c) => c.id === 'foundation-group');
-  const piers = components.foundation.filter((c) => c.id !== 'foundation-group');
+  const foundationGroup = components.foundation.find(
+    (c) => c.id === "foundation-group",
+  );
+  const piers = components.foundation.filter(
+    (c) => c.id !== "foundation-group",
+  );
 
   // Get floor assembly
-  const floorAssembly = components.floor.find((c) => c.id === 'floor-assembly');
+  const floorAssembly = components.floor.find((c) => c.id === "floor-assembly");
 
   // Get walls
   const walls = components.wall.filter((c) =>
-    ['wall-west', 'wall-east', 'wall-north', 'wall-south'].includes(c.id)
+    ["wall-west", "wall-east", "wall-north", "wall-south"].includes(c.id),
   );
 
   // Get windows and door
   const windows = components.window;
-  const door = components.door.find((c) => c.id === 'sliding-door');
+  const door = components.door.find((c) => c.id === "sliding-door");
 
   // Get roof
-  const roof = components.roof.find((c) => c.id === 'roof-assembly');
+  const roof = components.roof.find((c) => c.id === "roof-assembly");
 
   // Get wood stove and clearance zone
-  const woodStove = components.appliance.find((c) => c.id === 'wood-stove');
-  const clearanceZone = components.appliance.find((c) => c.id === 'stove-clearance');
+  const woodStove = components.appliance.find((c) => c.id === "wood-stove");
+  const clearanceZone = components.appliance.find(
+    (c) => c.id === "stove-clearance",
+  );
 
   // Collect all annotations
   const allAnnotations = useMemo(() => {
@@ -88,18 +98,19 @@ export function Bunkie({ definition }: BunkieProps) {
       />
 
       {/* Foundation phase */}
-      {isPhaseVisible('foundation') && foundationGroup && (
+      {isPhaseVisible("foundation") && foundationGroup && (
         <Foundation component={foundationGroup} piers={piers} />
       )}
 
       {/* Framing phase */}
-      {isPhaseVisible('framing') && (
+      {isPhaseVisible("framing") && (
         <>
           {floorAssembly && <Floor component={floorAssembly} />}
           {walls.map((wall) => {
-            const hasDoor = wall.id === 'wall-west';
-            const hasWindow = wall.id === 'wall-south' || wall.id === 'wall-north';
-            const windowPosition = wall.id === 'wall-south' ? 'front' : 'back';
+            const hasDoor = wall.id === "wall-west";
+            const hasWindow =
+              wall.id === "wall-south" || wall.id === "wall-north";
+            const windowPosition = wall.id === "wall-south" ? "front" : "back";
             const isHidden = hiddenWalls.includes(wall.id);
 
             if (isHidden) return null;
@@ -119,7 +130,7 @@ export function Bunkie({ definition }: BunkieProps) {
       )}
 
       {/* Envelope phase */}
-      {isPhaseVisible('envelope') && (
+      {isPhaseVisible("envelope") && (
         <>
           {windows.map((win) => (
             <Window key={win.id} component={win} />
@@ -129,7 +140,7 @@ export function Bunkie({ definition }: BunkieProps) {
       )}
 
       {/* Finishing phase */}
-      {isPhaseVisible('finishing') && (
+      {isPhaseVisible("finishing") && (
         <>
           {woodStove && <WoodStove component={woodStove} />}
           {clearanceZone && <ClearanceZone component={clearanceZone} />}

@@ -5,15 +5,18 @@ All raw measurement values must be defined in constants files, not in applicatio
 ## Guidelines
 
 ### Application Code
+
 - All raw measurement values (dimensions, spacing, offsets, etc.) must be in `src/constants/` files
 - Components, hooks, and utilities must import from constants
 - No magic numbers in application code
 
 ### Tests
+
 - Tests may contain raw values only for their assertions (expected values)
 - Tests should import from constants for values being tested
 
 ### Benefits
+
 - Ensures consistency across the codebase
 - Makes dimension changes easier (single source of truth)
 - Self-documenting code with named constants

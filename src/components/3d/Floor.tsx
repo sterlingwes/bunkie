@@ -1,7 +1,7 @@
-import { useRef } from 'react';
-import { Group } from 'three';
-import type { Component } from '../../schemas/bunkie.schema';
-import { useBunkieStore } from '../../store/useBunkieStore';
+import { useRef } from "react";
+import { Group } from "three";
+import type { Component } from "../../schemas/bunkie.schema";
+import { useBunkieStore } from "../../store/useBunkieStore";
 
 interface FloorProps {
   component: Component;
@@ -9,19 +9,24 @@ interface FloorProps {
 
 export function Floor({ component }: FloorProps) {
   const groupRef = useRef<Group>(null);
-  const { selectedComponentId, hoveredComponentId, hoverComponent, selectComponent } = useBunkieStore();
+  const {
+    selectedComponentId,
+    hoveredComponentId,
+    hoverComponent,
+    selectComponent,
+  } = useBunkieStore();
 
   const isSelected = selectedComponentId === component.id;
   const isHovered = hoveredComponentId === component.id;
 
   const handlePointerOver = () => {
     hoverComponent(component.id);
-    document.body.style.cursor = 'pointer';
+    document.body.style.cursor = "pointer";
   };
 
   const handlePointerOut = () => {
     hoverComponent(null);
-    document.body.style.cursor = 'auto';
+    document.body.style.cursor = "auto";
   };
 
   const handleClick = () => {
@@ -34,7 +39,11 @@ export function Floor({ component }: FloorProps) {
   return (
     <group
       ref={groupRef}
-      position={[component.position.x, component.position.y, component.position.z]}
+      position={[
+        component.position.x,
+        component.position.y,
+        component.position.z,
+      ]}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
       onClick={handleClick}
@@ -43,39 +52,79 @@ export function Floor({ component }: FloorProps) {
       {Array.from({ length: joistCount }).map((_, i) => (
         <mesh
           key={`joist-${i}`}
-          position={[0, -0.05, -component.dimensions.depth / 2 + i * joistSpacing]}
+          position={[
+            0,
+            -0.05,
+            -component.dimensions.depth / 2 + i * joistSpacing,
+          ]}
           castShadow
           receiveShadow
         >
           <boxGeometry args={[component.dimensions.width, 0.184, 0.038]} />
-          <meshStandardMaterial color={isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#c4a574'} roughness={0.8} />
+          <meshStandardMaterial
+            color={isSelected ? "#60a5fa" : isHovered ? "#93c5fd" : "#c4a574"}
+            roughness={0.8}
+          />
         </mesh>
       ))}
 
       {/* Rim joists - front and back */}
-      <mesh position={[0, -0.05, component.dimensions.depth / 2]} castShadow receiveShadow>
+      <mesh
+        position={[0, -0.05, component.dimensions.depth / 2]}
+        castShadow
+        receiveShadow
+      >
         <boxGeometry args={[component.dimensions.width, 0.184, 0.038]} />
-        <meshStandardMaterial color={isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#b8956e'} roughness={0.8} />
+        <meshStandardMaterial
+          color={isSelected ? "#60a5fa" : isHovered ? "#93c5fd" : "#b8956e"}
+          roughness={0.8}
+        />
       </mesh>
-      <mesh position={[0, -0.05, -component.dimensions.depth / 2]} castShadow receiveShadow>
+      <mesh
+        position={[0, -0.05, -component.dimensions.depth / 2]}
+        castShadow
+        receiveShadow
+      >
         <boxGeometry args={[component.dimensions.width, 0.184, 0.038]} />
-        <meshStandardMaterial color={isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#b8956e'} roughness={0.8} />
+        <meshStandardMaterial
+          color={isSelected ? "#60a5fa" : isHovered ? "#93c5fd" : "#b8956e"}
+          roughness={0.8}
+        />
       </mesh>
 
       {/* Rim joists - sides */}
-      <mesh position={[component.dimensions.width / 2, -0.05, 0]} castShadow receiveShadow>
+      <mesh
+        position={[component.dimensions.width / 2, -0.05, 0]}
+        castShadow
+        receiveShadow
+      >
         <boxGeometry args={[0.038, 0.184, component.dimensions.depth]} />
-        <meshStandardMaterial color={isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#b8956e'} roughness={0.8} />
+        <meshStandardMaterial
+          color={isSelected ? "#60a5fa" : isHovered ? "#93c5fd" : "#b8956e"}
+          roughness={0.8}
+        />
       </mesh>
-      <mesh position={[-component.dimensions.width / 2, -0.05, 0]} castShadow receiveShadow>
+      <mesh
+        position={[-component.dimensions.width / 2, -0.05, 0]}
+        castShadow
+        receiveShadow
+      >
         <boxGeometry args={[0.038, 0.184, component.dimensions.depth]} />
-        <meshStandardMaterial color={isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#b8956e'} roughness={0.8} />
+        <meshStandardMaterial
+          color={isSelected ? "#60a5fa" : isHovered ? "#93c5fd" : "#b8956e"}
+          roughness={0.8}
+        />
       </mesh>
 
       {/* Subfloor - 5/8" plywood (16mm) */}
       <mesh position={[0, 0.008, 0]} castShadow receiveShadow>
-        <boxGeometry args={[component.dimensions.width, 0.016, component.dimensions.depth]} />
-        <meshStandardMaterial color={isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#d4a574'} roughness={0.7} />
+        <boxGeometry
+          args={[component.dimensions.width, 0.016, component.dimensions.depth]}
+        />
+        <meshStandardMaterial
+          color={isSelected ? "#60a5fa" : isHovered ? "#93c5fd" : "#d4a574"}
+          roughness={0.7}
+        />
       </mesh>
     </group>
   );

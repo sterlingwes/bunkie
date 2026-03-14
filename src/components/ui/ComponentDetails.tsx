@@ -1,22 +1,22 @@
-import { useState } from 'react';
-import { X, DollarSign, FileText, Wrench, ExternalLink } from 'lucide-react';
-import { useBunkieStore } from '../../store/useBunkieStore';
-import type { Component } from '../../schemas/bunkie.schema';
+import { useState } from "react";
+import { X, DollarSign, FileText, Wrench, ExternalLink } from "lucide-react";
+import { useBunkieStore } from "../../store/useBunkieStore";
+import type { Component } from "../../schemas/bunkie.schema";
 
 interface ComponentDetailsProps {
   component: Component;
 }
 
-type Tab = 'materials' | 'costs' | 'codes';
+type Tab = "materials" | "costs" | "codes";
 
 export function ComponentDetails({ component }: ComponentDetailsProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('materials');
+  const [activeTab, setActiveTab] = useState<Tab>("materials");
   const { selectComponent } = useBunkieStore();
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: 'materials', label: 'Materials', icon: <Wrench size={14} /> },
-    { id: 'costs', label: 'Costs', icon: <DollarSign size={14} /> },
-    { id: 'codes', label: 'Codes', icon: <FileText size={14} /> },
+    { id: "materials", label: "Materials", icon: <Wrench size={14} /> },
+    { id: "costs", label: "Costs", icon: <DollarSign size={14} /> },
+    { id: "codes", label: "Codes", icon: <FileText size={14} /> },
   ];
 
   return (
@@ -46,7 +46,8 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
       <div className="px-3 py-2 border-b border-zinc-800 text-xs">
         <span className="text-zinc-500">Dimensions: </span>
         <span className="text-zinc-300">
-          {component.dimensions.width}m × {component.dimensions.height}m × {component.dimensions.depth}m
+          {component.dimensions.width}m × {component.dimensions.height}m ×{" "}
+          {component.dimensions.depth}m
         </span>
       </div>
 
@@ -58,8 +59,8 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
               activeTab === tab.id
-                ? 'text-white border-b-2 border-blue-500 bg-zinc-800/50'
-                : 'text-zinc-500 hover:text-zinc-300'
+                ? "text-white border-b-2 border-blue-500 bg-zinc-800/50"
+                : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             {tab.icon}
@@ -70,7 +71,7 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
 
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto p-3">
-        {activeTab === 'materials' && (
+        {activeTab === "materials" && (
           <div className="space-y-2">
             {component.materials.length === 0 ? (
               <p className="text-sm text-zinc-500">No materials listed</p>
@@ -81,7 +82,9 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
                     <div>
                       <div className="text-sm text-white">{material.name}</div>
                       {material.specs && (
-                        <div className="text-xs text-zinc-500 mt-0.5">{material.specs}</div>
+                        <div className="text-xs text-zinc-500 mt-0.5">
+                          {material.specs}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -90,8 +93,12 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
                       {material.quantity} {material.unit}
                     </span>
                     <span className="text-zinc-500">@</span>
-                    <span className="text-emerald-400">${material.unitCost}</span>
-                    <span className="text-zinc-500 ml-auto">= ${material.totalCost}</span>
+                    <span className="text-emerald-400">
+                      ${material.unitCost}
+                    </span>
+                    <span className="text-zinc-500 ml-auto">
+                      = ${material.totalCost}
+                    </span>
                   </div>
                 </div>
               ))
@@ -99,7 +106,7 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
           </div>
         )}
 
-        {activeTab === 'costs' && (
+        {activeTab === "costs" && (
           <div className="space-y-3">
             <div className="bg-zinc-800/50 rounded p-3">
               <div className="text-xs text-zinc-500 mb-2">Cost Breakdown</div>
@@ -107,31 +114,40 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
                 {component.estimatedCost.materials > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-zinc-400">Materials</span>
-                    <span className="text-white">${component.estimatedCost.materials}</span>
+                    <span className="text-white">
+                      ${component.estimatedCost.materials}
+                    </span>
                   </div>
                 )}
                 {component.estimatedCost.hardware > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-zinc-400">Hardware</span>
-                    <span className="text-white">${component.estimatedCost.hardware}</span>
+                    <span className="text-white">
+                      ${component.estimatedCost.hardware}
+                    </span>
                   </div>
                 )}
                 {component.estimatedCost.labor > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-zinc-400">Labor</span>
-                    <span className="text-white">${component.estimatedCost.labor}</span>
+                    <span className="text-white">
+                      ${component.estimatedCost.labor}
+                    </span>
                   </div>
                 )}
                 <div className="border-t border-zinc-700 pt-1.5 mt-1.5 flex justify-between text-sm font-medium">
                   <span className="text-zinc-300">Total</span>
-                  <span className="text-emerald-400">${component.estimatedCost.total} {component.estimatedCost.currency}</span>
+                  <span className="text-emerald-400">
+                    ${component.estimatedCost.total}{" "}
+                    {component.estimatedCost.currency}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {activeTab === 'codes' && (
+        {activeTab === "codes" && (
           <div className="space-y-2">
             {component.codeReferences.length === 0 ? (
               <p className="text-sm text-zinc-500">No code references</p>
@@ -153,7 +169,9 @@ export function ComponentDetails({ component }: ComponentDetailsProps) {
                       </a>
                     )}
                   </div>
-                  <div className="text-sm text-zinc-300 mt-1.5">{code.description}</div>
+                  <div className="text-sm text-zinc-300 mt-1.5">
+                    {code.description}
+                  </div>
                 </div>
               ))
             )}

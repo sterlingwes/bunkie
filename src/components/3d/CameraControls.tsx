@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { useThree, useFrame } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
-import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+import { useEffect, useRef } from "react";
+import { useThree, useFrame } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import * as THREE from "three";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 const MOVE_SPEED = 0.05;
 const SHIFT_MULTIPLIER = 3;
@@ -15,7 +15,10 @@ export function CameraControls() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if user is typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
         return;
       }
       keysPressed.current.add(e.key);
@@ -25,12 +28,12 @@ export function CameraControls() {
       keysPressed.current.delete(e.key);
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
@@ -38,22 +41,22 @@ export function CameraControls() {
     if (!controlsRef.current) return;
 
     const keys = keysPressed.current;
-    const shift = keys.has('Shift');
+    const shift = keys.has("Shift");
 
     // Calculate movement direction based on arrow keys
     let moveX = 0;
     let moveZ = 0;
 
-    if (keys.has('ArrowUp') || keys.has('w') || keys.has('W')) {
+    if (keys.has("ArrowUp") || keys.has("w") || keys.has("W")) {
       moveZ -= 1;
     }
-    if (keys.has('ArrowDown') || keys.has('s') || keys.has('S')) {
+    if (keys.has("ArrowDown") || keys.has("s") || keys.has("S")) {
       moveZ += 1;
     }
-    if (keys.has('ArrowLeft') || keys.has('a') || keys.has('A')) {
+    if (keys.has("ArrowLeft") || keys.has("a") || keys.has("A")) {
       moveX -= 1;
     }
-    if (keys.has('ArrowRight') || keys.has('d') || keys.has('D')) {
+    if (keys.has("ArrowRight") || keys.has("d") || keys.has("D")) {
       moveX += 1;
     }
 

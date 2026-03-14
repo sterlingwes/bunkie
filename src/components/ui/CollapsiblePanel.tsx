@@ -1,5 +1,5 @@
-import { ChevronDown, ChevronRight } from 'lucide-react';
-import { useState, ReactNode } from 'react';
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { useState, ReactNode } from "react";
 
 interface CollapsiblePanelProps {
   title: string;
@@ -9,7 +9,13 @@ interface CollapsiblePanelProps {
   badge?: string;
 }
 
-export function CollapsiblePanel({ title, icon, children, defaultOpen = false, badge }: CollapsiblePanelProps) {
+export function CollapsiblePanel({
+  title,
+  icon,
+  children,
+  defaultOpen = false,
+  badge,
+}: CollapsiblePanelProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -22,16 +28,16 @@ export function CollapsiblePanel({ title, icon, children, defaultOpen = false, b
           {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
         </span>
         {icon}
-        <span className="text-sm font-medium text-zinc-300 flex-1 text-left">{title}</span>
+        <span className="text-sm font-medium text-zinc-300 flex-1 text-left">
+          {title}
+        </span>
         {badge && (
-          <span className="text-xs text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">{badge}</span>
+          <span className="text-xs text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">
+            {badge}
+          </span>
         )}
       </button>
-      {isOpen && (
-        <div className="pb-1">
-          {children}
-        </div>
-      )}
+      {isOpen && <div className="pb-1">{children}</div>}
     </div>
   );
 }

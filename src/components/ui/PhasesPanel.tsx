@@ -1,20 +1,25 @@
-import { Layers, Check } from 'lucide-react';
-import { useBunkieStore } from '../../store/useBunkieStore';
-import { CollapsiblePanel } from './CollapsiblePanel';
-import type { BuildPhase, PhaseDefinition } from '../../schemas/bunkie.schema';
+import { Layers, Check } from "lucide-react";
+import { useBunkieStore } from "../../store/useBunkieStore";
+import { CollapsiblePanel } from "./CollapsiblePanel";
+import type { BuildPhase, PhaseDefinition } from "../../schemas/bunkie.schema";
 
 interface PhasesPanelProps {
   phases: Record<BuildPhase, PhaseDefinition>;
 }
 
 const phaseColors: Record<BuildPhase, string> = {
-  foundation: 'bg-amber-600',
-  framing: 'bg-orange-600',
-  envelope: 'bg-blue-600',
-  finishing: 'bg-emerald-600',
+  foundation: "bg-amber-600",
+  framing: "bg-orange-600",
+  envelope: "bg-blue-600",
+  finishing: "bg-emerald-600",
 };
 
-const phaseOrder: BuildPhase[] = ['foundation', 'framing', 'envelope', 'finishing'];
+const phaseOrder: BuildPhase[] = [
+  "foundation",
+  "framing",
+  "envelope",
+  "finishing",
+];
 
 export function PhasesPanel({ phases }: PhasesPanelProps) {
   const { visiblePhases, togglePhase } = useBunkieStore();
@@ -37,11 +42,13 @@ export function PhasesPanel({ phases }: PhasesPanelProps) {
               onClick={() => togglePhase(phaseKey)}
               className={`w-full flex items-center gap-3 p-2 rounded-md transition-colors ${
                 isVisible
-                  ? 'bg-zinc-800 text-white'
-                  : 'bg-transparent text-zinc-500 hover:bg-zinc-800/50'
+                  ? "bg-zinc-800 text-white"
+                  : "bg-transparent text-zinc-500 hover:bg-zinc-800/50"
               }`}
             >
-              <div className={`w-3 h-3 rounded-full ${phaseColors[phaseKey]} ${!isVisible && 'opacity-30'}`} />
+              <div
+                className={`w-3 h-3 rounded-full ${phaseColors[phaseKey]} ${!isVisible && "opacity-30"}`}
+              />
               <div className="flex-1 text-left">
                 <div className="text-sm font-medium">{phase.name}</div>
                 <div className="text-xs text-zinc-500">

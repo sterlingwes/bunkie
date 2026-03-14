@@ -7,16 +7,23 @@ export interface Position3D {
 
 // 3D dimensions
 export interface Dimensions3D {
-  width: number;  // X axis
+  width: number; // X axis
   height: number; // Y axis
-  depth: number;  // Z axis
+  depth: number; // Z axis
 }
 
 // Build phases
-export type BuildPhase = 'foundation' | 'framing' | 'envelope' | 'finishing';
+export type BuildPhase = "foundation" | "framing" | "envelope" | "finishing";
 
 // Component categories
-export type ComponentCategory = 'foundation' | 'floor' | 'wall' | 'window' | 'door' | 'roof' | 'appliance';
+export type ComponentCategory =
+  | "foundation"
+  | "floor"
+  | "wall"
+  | "window"
+  | "door"
+  | "roof"
+  | "appliance";
 
 // Cost breakdown
 export interface CostBreakdown {
@@ -47,7 +54,7 @@ export interface CodeReference {
 }
 
 // Annotation types
-export type AnnotationType = 'dimension' | 'label' | 'clearance' | 'note';
+export type AnnotationType = "dimension" | "label" | "clearance" | "note";
 
 export interface Annotation {
   id: string;
@@ -79,7 +86,7 @@ export interface Component {
 // Site information
 export interface SiteInfo {
   orientation: string;
-  terrain: 'bedrock' | 'soil' | 'concrete';
+  terrain: "bedrock" | "soil" | "concrete";
   frostDepth: number; // in mm
   slope?: number;
   accessNotes?: string;

@@ -1,10 +1,10 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 import type {
   BunkieStore,
   BunkieDefinition,
   BuildPhase,
   Component,
-} from '../schemas/bunkie.schema';
+} from "../schemas/bunkie.schema";
 
 export const useBunkieStore = create<BunkieStore>((set, get) => ({
   // Data
@@ -15,7 +15,7 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
   hoveredComponentId: null,
 
   // Phase visibility - all phases visible by default
-  visiblePhases: ['foundation', 'framing', 'envelope', 'finishing'],
+  visiblePhases: ["foundation", "framing", "envelope", "finishing"],
 
   // Wall visibility - no walls hidden by default
   hiddenWalls: [],
@@ -27,7 +27,7 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
   wireframe: false,
 
   // Camera
-  activeView: 'perspective',
+  activeView: "perspective",
 
   // Actions
   loadBunkie: (definition: BunkieDefinition) => {

@@ -1,6 +1,6 @@
-import { Eye, EyeOff, RotateCcw } from 'lucide-react';
-import { useBunkieStore } from '../../store/useBunkieStore';
-import { CollapsiblePanel } from './CollapsiblePanel';
+import { Eye, EyeOff, RotateCcw } from "lucide-react";
+import { useBunkieStore } from "../../store/useBunkieStore";
+import { CollapsiblePanel } from "./CollapsiblePanel";
 
 interface WallInfo {
   id: string;
@@ -9,10 +9,14 @@ interface WallInfo {
 }
 
 const walls: WallInfo[] = [
-  { id: 'wall-west', name: 'Front (West)', description: 'Door wall - sunset view' },
-  { id: 'wall-east', name: 'Back (East)', description: 'No windows - privacy' },
-  { id: 'wall-south', name: 'Right (South)', description: 'Window wall' },
-  { id: 'wall-north', name: 'Left (North)', description: 'Window wall' },
+  {
+    id: "wall-west",
+    name: "Front (West)",
+    description: "Door wall - sunset view",
+  },
+  { id: "wall-east", name: "Back (East)", description: "No windows - privacy" },
+  { id: "wall-south", name: "Right (South)", description: "Window wall" },
+  { id: "wall-north", name: "Left (North)", description: "Window wall" },
 ];
 
 export function WallsPanel() {
@@ -51,8 +55,8 @@ export function WallsPanel() {
                 onClick={() => toggleWall(wall.id)}
                 className={`w-full flex items-center gap-3 p-2 rounded-md transition-colors ${
                   !isHidden
-                    ? 'bg-zinc-800 text-white'
-                    : 'bg-transparent text-zinc-500 hover:bg-zinc-800/50'
+                    ? "bg-zinc-800 text-white"
+                    : "bg-transparent text-zinc-500 hover:bg-zinc-800/50"
                 }`}
               >
                 <div className="flex-shrink-0">
@@ -64,7 +68,9 @@ export function WallsPanel() {
                 </div>
                 <div className="flex-1 text-left">
                   <div className="text-sm font-medium">{wall.name}</div>
-                  <div className="text-xs text-zinc-500">{wall.description}</div>
+                  <div className="text-xs text-zinc-500">
+                    {wall.description}
+                  </div>
                 </div>
               </button>
             );

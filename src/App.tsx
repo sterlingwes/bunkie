@@ -1,17 +1,34 @@
-import { useEffect, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { PerspectiveCamera, Environment } from '@react-three/drei';
-import { Sidebar } from './components/ui/Sidebar';
-import { Bunkie } from './components/3d/Bunkie';
-import { CameraControls } from './components/3d/CameraControls';
-import { useBunkieStore } from './store/useBunkieStore';
-import type { BunkieDefinition } from './schemas/bunkie.schema';
-import bunkieDefinition from './data/bunkie-definition.json';
-import { Eye, EyeOff, Camera, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { PerspectiveCamera, Environment } from "@react-three/drei";
+import { Sidebar } from "./components/ui/Sidebar";
+import { Bunkie } from "./components/3d/Bunkie";
+import { CameraControls } from "./components/3d/CameraControls";
+import { useBunkieStore } from "./store/useBunkieStore";
+import type { BunkieDefinition } from "./schemas/bunkie.schema";
+import bunkieDefinition from "./data/bunkie-definition.json";
+import {
+  Eye,
+  EyeOff,
+  Camera,
+  RotateCcw,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 
 function App() {
   const [loaded, setLoaded] = useState(false);
-  const { loadBunkie, showClearances, showDimensions, showAnnotations, setClearancesVisible, setDimensionsVisible, setAnnotationsVisible } = useBunkieStore();
+  const {
+    loadBunkie,
+    showClearances,
+    showDimensions,
+    showAnnotations,
+    setClearancesVisible,
+    setDimensionsVisible,
+    setAnnotationsVisible,
+  } = useBunkieStore();
 
   useEffect(() => {
     // Load bunkie definition
@@ -21,9 +38,9 @@ function App() {
 
   const resetCamera = () => {
     // Trigger camera reset by re-rendering
-    const canvas = document.querySelector('canvas');
+    const canvas = document.querySelector("canvas");
     if (canvas) {
-      canvas.dispatchEvent(new CustomEvent('resetCamera'));
+      canvas.dispatchEvent(new CustomEvent("resetCamera"));
     }
   };
 
@@ -86,7 +103,9 @@ function App() {
             <button
               onClick={() => setAnnotationsVisible(!showAnnotations)}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded transition-colors ${
-                showAnnotations ? 'text-white bg-zinc-700' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
+                showAnnotations
+                  ? "text-white bg-zinc-700"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-700"
               }`}
             >
               {showAnnotations ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -95,7 +114,9 @@ function App() {
             <button
               onClick={() => setDimensionsVisible(!showDimensions)}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded transition-colors ${
-                showDimensions ? 'text-white bg-zinc-700' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
+                showDimensions
+                  ? "text-white bg-zinc-700"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-700"
               }`}
             >
               {showDimensions ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -104,7 +125,9 @@ function App() {
             <button
               onClick={() => setClearancesVisible(!showClearances)}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded transition-colors ${
-                showClearances ? 'text-white bg-zinc-700' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
+                showClearances
+                  ? "text-white bg-zinc-700"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-700"
               }`}
             >
               {showClearances ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -130,7 +153,9 @@ function App() {
               <span>Move camera</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-zinc-500 text-[10px] px-1 bg-zinc-700 rounded">Shift</span>
+              <span className="text-zinc-500 text-[10px] px-1 bg-zinc-700 rounded">
+                Shift
+              </span>
               <span>Faster movement</span>
             </div>
           </div>

@@ -1,7 +1,7 @@
-import { useRef } from 'react';
-import { Group, Mesh } from 'three';
-import type { Component } from '../../schemas/bunkie.schema';
-import { useBunkieStore } from '../../store/useBunkieStore';
+import { useRef } from "react";
+import { Group, Mesh } from "three";
+import type { Component } from "../../schemas/bunkie.schema";
+import { useBunkieStore } from "../../store/useBunkieStore";
 
 interface WindowProps {
   component: Component;
@@ -10,37 +10,42 @@ interface WindowProps {
 export function Window({ component }: WindowProps) {
   const groupRef = useRef<Group>(null);
   const meshRef = useRef<Mesh>(null);
-  const { selectedComponentId, hoveredComponentId, hoverComponent, selectComponent } = useBunkieStore();
+  const {
+    selectedComponentId,
+    hoveredComponentId,
+    hoverComponent,
+    selectComponent,
+  } = useBunkieStore();
 
   const isSelected = selectedComponentId === component.id;
   const isHovered = hoveredComponentId === component.id;
 
   const handlePointerOver = () => {
     hoverComponent(component.id);
-    document.body.style.cursor = 'pointer';
+    document.body.style.cursor = "pointer";
   };
 
   const handlePointerOut = () => {
     hoverComponent(null);
-    document.body.style.cursor = 'auto';
+    document.body.style.cursor = "auto";
   };
 
   const handleClick = () => {
     selectComponent(isSelected ? null : component.id);
   };
 
-  const frameColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#f5f5f4';
-  const glassColor = isSelected ? '#93c5fd' : '#87ceeb';
+  const frameColor = isSelected ? "#60a5fa" : isHovered ? "#93c5fd" : "#f5f5f4";
+  const glassColor = isSelected ? "#93c5fd" : "#87ceeb";
 
   // Rotation based on which wall the window is on:
   // - window-south (on +X wall): rotate -90° to face +X
   // - window-north (on -X wall): rotate +90° to face -X
   let rotation: [number, number, number];
   switch (component.id) {
-    case 'window-south':
+    case "window-south":
       rotation = [0, -Math.PI / 2, 0];
       break;
-    case 'window-north':
+    case "window-north":
       rotation = [0, Math.PI / 2, 0];
       break;
     default:
@@ -50,7 +55,11 @@ export function Window({ component }: WindowProps) {
   return (
     <group
       ref={groupRef}
-      position={[component.position.x, component.position.y, component.position.z]}
+      position={[
+        component.position.x,
+        component.position.y,
+        component.position.z,
+      ]}
       rotation={rotation}
     >
       {/* Window frame - vertical */}
@@ -80,7 +89,13 @@ export function Window({ component }: WindowProps) {
         onPointerOut={handlePointerOut}
         onClick={handleClick}
       >
-        <boxGeometry args={[component.dimensions.width, component.dimensions.height, 0.005]} />
+        <boxGeometry
+          args={[
+            component.dimensions.width,
+            component.dimensions.height,
+            0.005,
+          ]}
+        />
         <meshStandardMaterial
           color={glassColor}
           transparent
