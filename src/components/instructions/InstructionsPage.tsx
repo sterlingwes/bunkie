@@ -7,11 +7,10 @@
 
 import { useState } from "react";
 import { useBunkieStore } from "../../store/useBunkieStore";
-import { BookOpen, Box, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Box } from "lucide-react";
 import { PlanView } from "./drawing/PlanView";
 import { ElevationView } from "./drawing/ElevationView";
 import { InstructionStep } from "./InstructionStep";
-import { StepNavigation } from "./StepNavigation";
 import { MaterialsList } from "./MaterialsList";
 import type { ViewType } from "../../schemas/bunkie.schema";
 
@@ -172,28 +171,68 @@ export function InstructionsPage() {
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-zinc-900 text-zinc-100">
-      {/* Header */}
-      <header className="flex-shrink-0 flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3 border-b border-zinc-700 bg-zinc-800/50">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <BookOpen className="text-blue-400" size={20} />
-          <h1 className="text-base sm:text-lg font-semibold">Instructions</h1>
-        </div>
-        {currentStep && (
-          <div className="flex items-center gap-2">
-            <Eye size={16} className="text-zinc-500 hidden sm:block" />
-            <ViewSelector
-              views={currentStep.views}
-              selectedView={activeView}
-              onSelect={setSelectedView}
-            />
+      {/* Header with navigation */}
+      <header className="flex-shrink-0 border-b border-zinc-700 bg-zinc-800/50">
+        <div className="flex items-center justify-between px-2 py-2 sm:px-4">
+          {/* Left: Title + Prev button */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={handlePrev}
+              disabled={currentStepIndex === 0}
+              className="p-1.5 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-700"
+              aria-label="Previous step"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <BookOpen className="text-blue-400" size={18} />
+            <h1 className="text-sm sm:text-base font-semibold hidden sm:block">
+              Building Instructions
+            </h1>
           </div>
-        )}
+
+          {/* Center: Step counter & progress */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="text-xs sm:text-sm text-zinc-400">
+              {currentStepIndex + 1} / {totalSteps || "—"}
+            </span>
+            <div className="w-16 sm:w-24 h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-500 transition-all duration-300"
+                style={{
+                  width:
+                    totalSteps > 0
+                      ? `${((currentStepIndex + 1) / totalSteps) * 100}%`
+                      : "0%",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Right: View selector + Next button */}
+          <div className="flex items-center gap-2">
+            {currentStep && currentStep.views.length > 1 && (
+              <ViewSelector
+                views={currentStep.views}
+                selectedView={activeView}
+                onSelect={setSelectedView}
+              />
+            )}
+            <button
+              onClick={handleNext}
+              disabled={currentStepIndex >= totalSteps - 1}
+              className="p-1.5 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-700"
+              aria-label="Next step"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        </div>
       </header>
 
       {/* Main content area */}
-      <main className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+      <main className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
         {/* Drawing area */}
-        <div className="flex-1 p-2 sm:p-4 flex items-center justify-center min-h-[200px] md:min-h-0">
+        <div className="flex-1 p-2 sm:p-4 flex items-center justify-center min-h-[200px] lg:min-h-0">
           <div className="w-full h-full bg-white rounded-lg shadow-lg overflow-hidden">
             {currentStep ? (
               <DrawingRenderer
@@ -218,7 +257,7 @@ export function InstructionsPage() {
         </div>
 
         {/* Step details sidebar */}
-        <aside className="w-full md:w-96 border-t md:border-t-0 md:border-l border-zinc-700 bg-zinc-800/30 overflow-y-auto max-h-[40vh] md:max-h-none">
+        <aside className="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-zinc-700 bg-zinc-800/30 overflow-y-auto max-h-[40vh] lg:max-h-none">
           <div className="p-4 sm:p-5">
             {currentStep ? (
               <>
@@ -239,16 +278,6 @@ export function InstructionsPage() {
           </div>
         </aside>
       </main>
-
-      {/* Navigation footer - sticky on mobile */}
-      <div className="flex-shrink-0 sticky bottom-0">
-        <StepNavigation
-          currentStep={currentStepIndex}
-          totalSteps={totalSteps}
-          onPrev={handlePrev}
-          onNext={handleNext}
-        />
-      </div>
     </div>
   );
 }
