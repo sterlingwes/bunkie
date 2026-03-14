@@ -387,6 +387,92 @@ describe('Structural Validation Tests', () => {
     });
   });
 
+  describe('Insulation Requirements (Canadian Climate)', () => {
+    it('Floor insulation should be R-28 or better', () => {
+      const floor = getComponentById('floor-assembly');
+      expect(floor).toBeDefined();
+
+      if (floor) {
+        const floorInsulation = floor.materials.find(m => m.id === 'insulation-floor');
+        expect(floorInsulation).toBeDefined();
+        expect(floorInsulation?.name).toMatch(/R-2[89]|R-3[0-9]/);
+      }
+    });
+
+    it('Wall insulation component should exist and be in finishing phase', () => {
+      const wallInsulation = getComponentById('insulation-walls');
+      expect(wallInsulation).toBeDefined();
+
+      if (wallInsulation) {
+        expect(wallInsulation.phase).toBe('finishing');
+        expect(wallInsulation.materials.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('Wall insulation should include R-20 batts and R-5 continuous', () => {
+      const wallInsulation = getComponentById('insulation-walls');
+      expect(wallInsulation).toBeDefined();
+
+      if (wallInsulation) {
+        const batts = wallInsulation.materials.find(m => m.id === 'r20-batts');
+        const rigid = wallInsulation.materials.find(m => m.id === 'r5-rigid');
+
+        expect(batts).toBeDefined();
+        expect(rigid).toBeDefined();
+        expect(batts?.name).toMatch(/R-20/);
+        expect(rigid?.name).toMatch(/R-5/);
+      }
+    });
+
+    it('Wall insulation should include vapor barrier for Canadian climate', () => {
+      const wallInsulation = getComponentById('insulation-walls');
+      expect(wallInsulation).toBeDefined();
+
+      if (wallInsulation) {
+        const vaporBarrier = wallInsulation.materials.find(m => m.id === 'vapor-barrier');
+        const sealant = wallInsulation.materials.find(m => m.id === 'acoustic-sealant');
+
+        expect(vaporBarrier).toBeDefined();
+        expect(sealant).toBeDefined();
+      }
+    });
+
+    it('Ceiling insulation should exist for heated space', () => {
+      const ceilingInsulation = getComponentById('insulation-ceiling');
+      expect(ceilingInsulation).toBeDefined();
+
+      if (ceilingInsulation) {
+        expect(ceilingInsulation.phase).toBe('finishing');
+        expect(ceilingInsulation.category).toBe('roof');
+      }
+    });
+
+    it('Ceiling insulation should be R-40 or better for Canadian climate', () => {
+      const ceilingInsulation = getComponentById('insulation-ceiling');
+      expect(ceilingInsulation).toBeDefined();
+
+      if (ceilingInsulation) {
+        const batts = ceilingInsulation.materials.find(m => m.id === 'r40-batts');
+        expect(batts).toBeDefined();
+        expect(batts?.name).toMatch(/R-4[0-9]/);
+      }
+    });
+
+    it('Finishing phase should include all insulation components', () => {
+      const finishingPhase = bunkie.phases.finishing;
+      expect(finishingPhase.components).toContain('insulation-walls');
+      expect(finishingPhase.components).toContain('insulation-ceiling');
+    });
+
+    it('Insulation materials should have OBC code references', () => {
+      const wallInsulation = getComponentById('insulation-walls');
+      const ceilingInsulation = getComponentById('insulation-ceiling');
+
+      expect(wallInsulation?.codeReferences.some(ref => ref.code === 'OBC')).toBe(true);
+      expect(ceilingInsulation?.codeReferences.some(ref => ref.code === 'OBC')).toBe(true);
+    });
+  });
+
   describe('Component Relationships', () => {
     it('Walls should reference their windows/doors as children', () => {
       const frontWall = getComponentById('wall-west');

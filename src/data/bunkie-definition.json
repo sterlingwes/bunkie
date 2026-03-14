@@ -3,7 +3,7 @@
     "name": "Ontario Bunkie",
     "description": "3.0m x 3.28m backyard bunkie on Canadian Shield bedrock with wood stove heating",
     "totalArea": 9.84,
-    "totalCost": 8280,
+    "totalCost": 9019,
     "currency": "CAD",
     "created": "2024-01-15",
     "modified": "2024-01-20"
@@ -122,14 +122,14 @@
         { "id": "rim-joist", "name": "2x8 SPF Rim Joist", "quantity": 12.56, "unit": "linear m", "unitCost": 8, "totalCost": 100, "specs": "SPF #2 or better" },
         { "id": "floor-joist", "name": "2x8 SPF Floor Joist", "quantity": 15, "unit": "linear m", "unitCost": 8, "totalCost": 120, "specs": "@ 16\" OC" },
         { "id": "subfloor", "name": "5/8\" Plywood Subfloor", "quantity": 4, "unit": "sheets", "unitCost": 55, "totalCost": 220, "specs": "Tongue & groove, exterior grade" },
-        { "id": "insulation-floor", "name": "R-22 Fiberglass Batts", "quantity": 10, "unit": "m²", "unitCost": 12, "totalCost": 120, "specs": "23\" width for 16\" OC" },
+        { "id": "insulation-floor", "name": "R-28 Fiberglass Batts", "quantity": 10, "unit": "m²", "unitCost": 15, "totalCost": 150, "specs": "23\" width for 16\" OC, Canadian climate rated" },
         { "id": "joist-hangers", "name": "Joist Hangers", "quantity": 12, "unit": "pieces", "unitCost": 2, "totalCost": 24, "specs": "Simpson LU28" }
       ],
       "codeReferences": [
         { "code": "OBC", "section": "9.23.4", "description": "Floor joist spans and sizes" },
         { "code": "OBC", "section": "9.23.13", "description": "Subfloor requirements" }
       ],
-      "estimatedCost": { "materials": 584, "labor": 0, "hardware": 24, "total": 608, "currency": "CAD" },
+      "estimatedCost": { "materials": 614, "labor": 0, "hardware": 24, "total": 638, "currency": "CAD" },
       "annotations": [
         { "id": "ann-fl1", "type": "dimension", "text": "3.0m", "position": { "x": -1.5, "y": 0.1, "z": 0 }, "endPosition": { "x": 1.5, "y": 0.1, "z": 0 } },
         { "id": "ann-fl2", "type": "dimension", "text": "3.28m", "position": { "x": 0, "y": 0.1, "z": 1.79 }, "endPosition": { "x": 0, "y": 0.1, "z": -1.79 } }
@@ -312,6 +312,29 @@
       "children": []
     },
     {
+      "id": "insulation-ceiling",
+      "name": "Ceiling Insulation",
+      "category": "roof",
+      "phase": "finishing",
+      "dimensions": { "width": 3.0, "height": 0.3, "depth": 3.28 },
+      "position": { "x": 0, "y": 2.35, "z": 0 },
+      "materials": [
+        { "id": "r40-batts", "name": "R-40 Fiberglass Batts", "quantity": 12, "unit": "m²", "unitCost": 18, "totalCost": 216, "specs": "12\" thick, for ceiling/roof cavity" },
+        { "id": "insulation-support", "name": "Insulation Supports", "quantity": 50, "unit": "pieces", "unitCost": 0.5, "totalCost": 25, "specs": "Light gauge wire to hold batts in place" },
+        { "id": "vapor-barrier-ceiling", "name": "6mil Poly Vapor Barrier", "quantity": 0.3, "unit": "roll", "unitCost": 45, "totalCost": 14, "specs": "Warm side vapor barrier for ceiling" },
+        { "id": "can-foam", "name": "Spray Foam (Cans)", "quantity": 3, "unit": "cans", "unitCost": 12, "totalCost": 36, "specs": "Great Stuff or equivalent, for gaps and penetrations" }
+      ],
+      "codeReferences": [
+        { "code": "OBC", "section": "9.25", "description": "Insulation and vapor barriers" },
+        { "code": "OBC", "section": "9.25.2", "description": "Minimum insulation values for ceiling" },
+        { "code": "NBC", "section": "9.36", "description": "Energy efficiency - ceiling R-value requirements" }
+      ],
+      "estimatedCost": { "materials": 291, "labor": 0, "hardware": 0, "total": 291, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-cins1", "type": "note", "text": "R-40 ceiling insulation for Canadian winter", "position": { "x": 0, "y": 2.5, "z": 0 } }
+      ]
+    },
+    {
       "id": "wood-stove",
       "name": "Wood Stove System",
       "category": "appliance",
@@ -386,18 +409,24 @@
       "name": "Wall Insulation",
       "category": "wall",
       "phase": "finishing",
-      "dimensions": { "width": 3.0, "height": 2.25, "depth": 0.089 },
+      "dimensions": { "width": 3.0, "height": 2.25, "depth": 0.14 },
       "position": { "x": 0, "y": 1.325, "z": 0 },
       "materials": [
-        { "id": "r14-batts", "name": "R-14 Fiberglass Batts", "quantity": 25, "unit": "m²", "unitCost": 5, "totalCost": 125, "specs": "15\" width for 16\" OC studs" },
-        { "id": "vapor-barrier", "name": "6mil Poly Vapor Barrier", "quantity": 1, "unit": "roll", "unitCost": 45, "totalCost": 45, "specs": "10' x 100'" },
-        { "id": "acoustic-sealant", "name": "Acoustic Sealant", "quantity": 2, "unit": "tubes", "unitCost": 8, "totalCost": 16, "specs": "For vapor barrier edges" }
+        { "id": "r20-batts", "name": "R-20 Fiberglass Batts", "quantity": 25, "unit": "m²", "unitCost": 7, "totalCost": 175, "specs": "15\" width for 16\" OC studs, 6\" thick" },
+        { "id": "r5-rigid", "name": "R-5 Rigid Foam (Continuous)", "quantity": 28, "unit": "m²", "unitCost": 12, "totalCost": 336, "specs": "1\" XPS or EPS, exterior continuous insulation" },
+        { "id": "vapor-barrier", "name": "6mil Poly Vapor Barrier", "quantity": 1, "unit": "roll", "unitCost": 45, "totalCost": 45, "specs": "10' x 100', installed on warm side" },
+        { "id": "acoustic-sealant", "name": "Acoustic Sealant", "quantity": 3, "unit": "tubes", "unitCost": 8, "totalCost": 24, "specs": "For vapor barrier edges and penetrations" },
+        { "id": "tape-vapor", "name": "Vapor Barrier Tape", "quantity": 2, "unit": "rolls", "unitCost": 12, "totalCost": 24, "specs": "Tuck tape for sealing seams" }
       ],
       "codeReferences": [
-        { "code": "OBC", "section": "9.25", "description": "Insulation and vapor barriers" }
+        { "code": "OBC", "section": "9.25", "description": "Insulation and vapor barriers" },
+        { "code": "OBC", "section": "9.25.2", "description": "Minimum insulation values for climate zones" },
+        { "code": "NBC", "section": "9.36", "description": "Energy efficiency requirements" }
       ],
-      "estimatedCost": { "materials": 186, "labor": 0, "hardware": 0, "total": 186, "currency": "CAD" },
-      "annotations": []
+      "estimatedCost": { "materials": 604, "labor": 0, "hardware": 0, "total": 604, "currency": "CAD" },
+      "annotations": [
+        { "id": "ann-ins1", "type": "note", "text": "R-20 batts + R-5 continuous = R-25 total for Canadian climate", "position": { "x": 0, "y": 1.5, "z": 0 } }
+      ]
     },
     {
       "id": "interior-finish",
@@ -496,16 +525,19 @@
     },
     "finishing": {
       "name": "Finishing",
-      "description": "Exterior cladding, insulation, interior finish, and wood stove installation",
+      "description": "Insulation, vapor barriers, exterior cladding, interior finish, and wood stove installation",
       "order": 4,
-      "components": ["wood-stove", "stove-hearth", "stove-clearance", "exterior-siding", "insulation-walls", "interior-finish"],
+      "components": ["wood-stove", "stove-hearth", "stove-clearance", "exterior-siding", "insulation-walls", "insulation-ceiling", "interior-finish"],
       "tasks": [
-        "Install board and batten siding",
+        "Install R-5 rigid foam continuous insulation on exterior walls",
+        "Install board and batten siding over rigid foam",
         "Apply clear stain to exterior",
-        "Install fiberglass insulation in walls",
-        "Install vapor barrier (6mil poly)",
+        "Install R-20 fiberglass batts in wall cavities",
+        "Install R-40 fiberglass batts in ceiling/roof cavity",
+        "Install vapor barrier on warm side (6mil poly)",
         "Seal all vapor barrier edges with acoustic sealant",
-        "Install tongue & groove interior",
+        "Spray foam around all penetrations and gaps",
+        "Install tongue & groove interior ceiling and walls",
         "Install interior trim around windows/door",
         "Build non-combustible hearth (900mm x 900mm min)",
         "Install wood stove per manufacturer instructions",
@@ -513,7 +545,7 @@
         "Install CO detector",
         "Final inspection and cleanup"
       ],
-      "estimatedHours": 48
+      "estimatedHours": 56
     }
   }
 }
