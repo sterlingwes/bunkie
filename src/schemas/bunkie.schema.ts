@@ -119,6 +119,7 @@ export interface BunkieDefinition {
   site: SiteInfo;
   components: Component[];
   phases: Record<BuildPhase, PhaseDefinition>;
+  instructions?: InstructionStep[];
 }
 
 // View presets for camera
@@ -127,6 +128,42 @@ export interface ViewPreset {
   name: string;
   position: Position3D;
   target: Position3D;
+}
+
+// =============================================================================
+// INSTRUCTION MANUAL TYPES
+// =============================================================================
+
+// App view type
+export type AppView = "builder" | "instructions";
+
+// Types of 2D architectural views for instruction steps
+export type ViewType =
+  | "plan"
+  | "elevation-front"
+  | "elevation-back"
+  | "elevation-side"
+  | "section";
+
+// 2D dimension line for drawings
+export interface DimensionLine2D {
+  start: { x: number; y: number };
+  end: { x: number; y: number };
+  label: string;
+  offset: number;
+}
+
+// Instruction step for building the bunkie
+export interface InstructionStep {
+  id: string;
+  phase: BuildPhase;
+  order: number;
+  title: string;
+  description: string;
+  views: ViewType[]; // which drawing views to show
+  componentIds: string[]; // components involved
+  tips?: string[];
+  warnings?: string[];
 }
 
 // Store state
@@ -153,6 +190,10 @@ export interface BunkieStore {
   // Camera
   activeView: string;
 
+  // Instruction view state
+  currentView: AppView;
+  currentStepIndex: number;
+
   // Actions
   loadBunkie: (definition: BunkieDefinition) => void;
   selectComponent: (id: string | null) => void;
@@ -166,4 +207,10 @@ export interface BunkieStore {
   setWireframe: (wireframe: boolean) => void;
   setActiveView: (viewId: string) => void;
   getComponentById: (id: string) => Component | undefined;
+
+  // Instruction view actions
+  setView: (view: AppView) => void;
+  setCurrentStepIndex: (index: number) => void;
+  nextStep: () => void;
+  prevStep: () => void;
 }

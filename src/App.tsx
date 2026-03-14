@@ -4,8 +4,9 @@ import { PerspectiveCamera, Environment } from "@react-three/drei";
 import { Sidebar } from "./components/ui/Sidebar";
 import { Bunkie } from "./components/3d/Bunkie";
 import { CameraControls } from "./components/3d/CameraControls";
+import { InstructionsPage } from "./components/instructions/InstructionsPage";
 import { useBunkieStore } from "./store/useBunkieStore";
-import type { BunkieDefinition } from "./schemas/bunkie.schema";
+import type { BunkieDefinition, AppView } from "./schemas/bunkie.schema";
 import bunkieDefinition from "./data/bunkie-definition.json";
 import {
   Eye,
@@ -16,7 +17,47 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  Box,
+  BookOpen,
 } from "lucide-react";
+
+// View toggle component to avoid type narrowing issues
+function ViewToggle({
+  currentView,
+  setView,
+  variant = "full",
+}: {
+  currentView: AppView;
+  setView: (view: AppView) => void;
+  variant?: "full" | "compact";
+}) {
+  return (
+    <div className="flex items-center gap-1 bg-zinc-800/90 backdrop-blur rounded-lg p-1">
+      <button
+        onClick={() => setView("builder")}
+        className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded transition-colors ${
+          currentView === "builder"
+            ? "text-white bg-zinc-700"
+            : "text-zinc-400 hover:text-white hover:bg-zinc-700"
+        }`}
+      >
+        <Box size={14} />
+        {variant === "full" ? "3D Builder" : "3D"}
+      </button>
+      <button
+        onClick={() => setView("instructions")}
+        className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded transition-colors ${
+          currentView === "instructions"
+            ? "text-white bg-zinc-700"
+            : "text-zinc-400 hover:text-white hover:bg-zinc-700"
+        }`}
+      >
+        <BookOpen size={14} />
+        Instructions
+      </button>
+    </div>
+  );
+}
 
 function App() {
   const [loaded, setLoaded] = useState(false);
@@ -28,6 +69,8 @@ function App() {
     setClearancesVisible,
     setDimensionsVisible,
     setAnnotationsVisible,
+    currentView,
+    setView,
   } = useBunkieStore();
 
   useEffect(() => {
@@ -52,8 +95,28 @@ function App() {
     );
   }
 
+  // Render Instructions view
+  if (currentView === "instructions") {
+    return (
+      <div className="w-full h-full flex flex-col bg-zinc-900">
+        {/* View toggle header */}
+        <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-700">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-400 text-sm font-medium">Bunkie Builder</span>
+          </div>
+          <ViewToggle currentView={currentView} setView={setView} variant="full" />
+        </div>
+        <InstructionsPage />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full flex bg-zinc-900">
+      {/* View toggle - top left */}
+      <div className="absolute top-4 left-4 z-10">
+        <ViewToggle currentView={currentView} setView={setView} variant="compact" />
+      </div>
       {/* Sidebar */}
       <Sidebar definition={bunkieDefinition as BunkieDefinition} />
 
