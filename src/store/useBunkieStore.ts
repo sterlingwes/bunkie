@@ -4,7 +4,9 @@ import type {
   BunkieDefinition,
   BuildPhase,
   Component,
+  AppView,
 } from "../schemas/bunkie.schema";
+import { instructionSteps } from "../data/instructions";
 
 export const useBunkieStore = create<BunkieStore>((set, get) => ({
   // Data
@@ -29,9 +31,19 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
   // Camera
   activeView: "perspective",
 
+  // Instruction view state
+  currentView: "builder",
+  currentStepIndex: 0,
+
   // Actions
   loadBunkie: (definition: BunkieDefinition) => {
-    set({ bunkieDefinition: definition });
+    // Merge instructions from separate data file
+    set({
+      bunkieDefinition: {
+        ...definition,
+        instructions: instructionSteps,
+      },
+    });
   },
 
   selectComponent: (id: string | null) => {
@@ -87,5 +99,33 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
   getComponentById: (id: string): Component | undefined => {
     const state = get();
     return state.bunkieDefinition?.components.find((c) => c.id === id);
+  },
+
+  // Instruction view actions
+  setView: (view: AppView) => {
+    set({ currentView: view });
+  },
+
+  setCurrentStepIndex: (index: number) => {
+    set({ currentStepIndex: index });
+  },
+
+  nextStep: () => {
+    set((state) => {
+      const totalSteps = state.bunkieDefinition?.instructions?.length ?? 0;
+      if (state.currentStepIndex < totalSteps - 1) {
+        return { currentStepIndex: state.currentStepIndex + 1 };
+      }
+      return {};
+    });
+  },
+
+  prevStep: () => {
+    set((state) => {
+      if (state.currentStepIndex > 0) {
+        return { currentStepIndex: state.currentStepIndex - 1 };
+      }
+      return {};
+    });
   },
 }));
