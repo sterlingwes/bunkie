@@ -93,27 +93,34 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             {Array.from({ length: studCount }).map((_, i) => {
                 const xPos = -wallLength / 2 + 0.089 / 2 + i * studSpacing;
 
-                // Skip studs where door opening is (centered on wall)
-                if (hasDoor && Math.abs(xPos) < 0.95) {
-                    // Door header
-                    if (i === Math.floor(studCount / 2) - 1 || i === Math.floor(studCount / 2)) {
+                // Door opening framing (centered on wall)
+                // Door dimensions: 1.84m x 2.03m (72.5" x 80")
+                if (hasDoor) {
+                    const doorWidth = 1.84;
+                    const doorHeight = 2.03;
+                    // Rough opening (RO) - slightly larger than door for shims (12.5mm each side)
+                    const roHalfWidth = doorWidth / 2 + 0.0125; // 0.9325m
+                    const studHalfWidth = 0.019; // half of 0.038m (2x4 actual width)
+
+                    // King stud positions (at rough opening edges)
+                    const kingStudLeftX = -roHalfWidth - studHalfWidth;
+                    const kingStudRightX = roHalfWidth + studHalfWidth;
+
+                    // Skip regular studs in the door opening area
+                    if (Math.abs(xPos) < roHalfWidth) {
+                        return null;
+                    }
+
+                    // Jack studs (short studs supporting header) at king stud positions
+                    if (Math.abs(xPos - kingStudRightX) < 0.02 || Math.abs(xPos - kingStudLeftX) < 0.02) {
+                        const jackStudHeight = doorHeight - 0.089; // door height minus sill/threshold
                         return (
-                            <mesh key={`stud-${i}`} position={[xPos, wallHeight / 2 - 0.3, 0]} castShadow receiveShadow>
-                                <boxGeometry args={[0.038, 0.089, 0.089]} />
+                            <mesh key={`stud-${i}`} position={[xPos, -wallHeight / 2 + jackStudHeight / 2 + 0.038, 0]} castShadow receiveShadow>
+                                <boxGeometry args={[0.038, jackStudHeight, 0.089]} />
                                 <meshStandardMaterial color={frameColor} roughness={0.8} />
                             </mesh>
                         );
                     }
-                    // Door jack studs
-                    if (Math.abs(xPos - 0.95) < 0.05 || Math.abs(xPos + 0.95) < 0.05) {
-                        return (
-                            <mesh key={`stud-${i}`} position={[xPos, 0, 0]} castShadow receiveShadow>
-                                <boxGeometry args={[0.038, wallHeight - 0.6, 0.089]} />
-                                <meshStandardMaterial color={frameColor} roughness={0.8} />
-                            </mesh>
-                        );
-                    }
-                    return null;
                 }
 
                 // Window opening - skip regular studs in the rough opening area
@@ -183,6 +190,46 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                         {/* Sill - bottom of rough opening */}
                         <mesh position={[windowOffset, sillY, 0]} castShadow receiveShadow>
                             <boxGeometry args={[roHalfWidth * 2, 0.089, 0.089]} />
+                            <meshStandardMaterial color={frameColor} roughness={0.8} />
+                        </mesh>
+                    </>
+                );
+            })()}
+
+            {/* Door framing - explicit king studs and header */}
+            {hasDoor && (() => {
+                // Door dimensions: 1.84m x 2.03m (72.5" x 80")
+                const doorWidth = 1.84;
+                const doorHeight = 2.03;
+                // Rough opening (RO) - slightly larger than door for shims (12.5mm each side)
+                const roHalfWidth = doorWidth / 2 + 0.0125; // 0.9325m
+
+                // King stud positions (at rough opening edges)
+                const studHalfWidth = 0.019; // half of 0.038m (2x4 actual width)
+                const kingStudLeftX = -roHalfWidth - studHalfWidth;
+                const kingStudRightX = roHalfWidth + studHalfWidth;
+
+                // Header spans rough opening + king studs on each side
+                const headerWidth = roHalfWidth * 2 + 0.038 * 2; // RO + one king stud width on each side
+
+                // Header Y position (top of door opening)
+                const headerY = -wallHeight / 2 + doorHeight + 0.038 + 0.089 / 2; // above bottom plate + door height
+
+                return (
+                    <>
+                        {/* King studs at door edges - full height */}
+                        <mesh position={[kingStudLeftX, 0, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                            <meshStandardMaterial color={frameColor} roughness={0.8} />
+                        </mesh>
+                        <mesh position={[kingStudRightX, 0, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[0.038, wallHeight, 0.089]} />
+                            <meshStandardMaterial color={frameColor} roughness={0.8} />
+                        </mesh>
+
+                        {/* Header - spans rough opening, sits on jack studs */}
+                        <mesh position={[0, headerY, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[headerWidth, 0.089, 0.089]} />
                             <meshStandardMaterial color={frameColor} roughness={0.8} />
                         </mesh>
                     </>

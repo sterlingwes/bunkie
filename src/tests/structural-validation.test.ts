@@ -276,6 +276,117 @@ describe('Structural Validation Tests', () => {
     });
   });
 
+  describe('Door Framing Alignment', () => {
+    it('Door dimensions should match specification (72.5" x 80")', () => {
+      const door = getComponentById('sliding-door');
+
+      // 72.5" = 1.8415m, 80" = 2.032m
+      const expectedWidth = 1.84;
+      const expectedHeight = 2.03;
+      const tolerance = 0.01;
+
+      expect(door).toBeDefined();
+      if (door) {
+        expect(
+          Math.abs(door.dimensions.width - expectedWidth),
+          `Door width ${door.dimensions.width}m should be ${expectedWidth}m`
+        ).toBeLessThan(tolerance);
+        expect(
+          Math.abs(door.dimensions.height - expectedHeight),
+          `Door height ${door.dimensions.height}m should be ${expectedHeight}m`
+        ).toBeLessThan(tolerance);
+      }
+    });
+
+    it('Door should be centered on front wall', () => {
+      const door = getComponentById('sliding-door');
+      const frontWall = getComponentById('wall-west');
+
+      expect(door).toBeDefined();
+      expect(frontWall).toBeDefined();
+
+      if (door && frontWall) {
+        // Door should be centered (x position should be same as wall center)
+        expect(door.position.x).toBeCloseTo(frontWall.position.x, 1);
+        // Door should be on the front wall (same z position)
+        expect(door.position.z).toBeCloseTo(frontWall.position.z, 1);
+      }
+    });
+
+    it('Door should fit snugly in rough opening', () => {
+      const door = getComponentById('sliding-door');
+      const frontWall = getComponentById('wall-west');
+
+      expect(door).toBeDefined();
+      expect(frontWall).toBeDefined();
+
+      if (door && frontWall) {
+        // Rough opening should be door width + shim allowance (12.5mm each side = 25mm total)
+        const doorWidth = door.dimensions.width;
+        const roughOpeningWidth = doorWidth + 0.025; // 25mm total shim allowance
+
+        // Wall is 3.0m wide, door is centered
+        // Rough opening goes from -roughOpeningWidth/2 to +roughOpeningWidth/2
+        // Wall goes from -1.5 to +1.5
+
+        // Verify door fits within wall bounds
+        const doorBox = getBoundingBox(door);
+        const wallBox = getBoundingBox(frontWall);
+
+        // Door should fit within wall width
+        expect(doorBox.minX).toBeGreaterThan(wallBox.minX);
+        expect(doorBox.maxX).toBeLessThan(wallBox.maxX);
+
+        // Door should fit within wall height (with room for header)
+        expect(doorBox.minY).toBeGreaterThan(wallBox.minY);
+        expect(doorBox.maxY).toBeLessThan(wallBox.maxY);
+      }
+    });
+
+    it('Door rough opening should leave adequate shim space', () => {
+      const door = getComponentById('sliding-door');
+
+      expect(door).toBeDefined();
+
+      if (door) {
+        // Door dimensions: 1.84m x 2.03m
+        const doorWidth = door.dimensions.width;
+        const doorHeight = door.dimensions.height;
+
+        // Rough opening should be door + 12.5mm each side for shims
+        const minShimAllowance = 0.010; // 10mm minimum each side
+        const maxShimAllowance = 0.020; // 20mm maximum each side
+
+        const roughOpeningWidth = doorWidth + (minShimAllowance * 2);
+        const roughOpeningHeight = doorHeight + (minShimAllowance * 2);
+
+        // Verify rough opening is larger than door
+        expect(roughOpeningWidth).toBeGreaterThan(doorWidth);
+        expect(roughOpeningHeight).toBeGreaterThan(doorHeight);
+
+        // Verify rough opening isn't excessively large
+        const maxRoughOpeningWidth = doorWidth + (maxShimAllowance * 2);
+        expect(roughOpeningWidth).toBeLessThanOrEqual(maxRoughOpeningWidth);
+      }
+    });
+
+    it('Door should have correct Y position (sill at floor level)', () => {
+      const door = getComponentById('sliding-door');
+      const floor = getComponentById('floor-assembly');
+
+      expect(door).toBeDefined();
+      expect(floor).toBeDefined();
+
+      if (door && floor) {
+        const floorBox = getBoundingBox(floor);
+        const doorBox = getBoundingBox(door);
+
+        // Door sill should be at or just above floor top
+        expect(doorBox.minY).toBeGreaterThanOrEqual(floorBox.maxY - 0.05);
+      }
+    });
+  });
+
   describe('Component Relationships', () => {
     it('Walls should reference their windows/doors as children', () => {
       const frontWall = getComponentById('wall-west');

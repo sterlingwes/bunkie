@@ -229,10 +229,10 @@
       "name": "Sliding Patio Door",
       "category": "door",
       "phase": "envelope",
-      "dimensions": { "width": 1.8, "height": 2.1, "depth": 0.08 },
-      "position": { "x": 0, "y": 1.25, "z": 1.64 },
+      "dimensions": { "width": 1.84, "height": 2.03, "depth": 0.08 },
+      "position": { "x": 0, "y": 1.215, "z": 1.64 },
       "materials": [
-        { "id": "door-unit", "name": "Sliding Patio Door", "quantity": 1, "unit": "unit", "unitCost": 750, "totalCost": 750, "specs": "6' x 6'10\" vinyl, dual pane Low-E" },
+        { "id": "door-unit", "name": "Sliding Patio Door", "quantity": 1, "unit": "unit", "unitCost": 750, "totalCost": 750, "specs": "72.5\" x 80\" vinyl, dual pane Low-E" },
         { "id": "door-trim", "name": "Door Trim Kit", "quantity": 1, "unit": "kit", "unitCost": 45, "totalCost": 45, "specs": "Vinyl brickmold" },
         { "id": "door-flashing", "name": "Flashing Tape", "quantity": 1, "unit": "roll", "unitCost": 25, "totalCost": 25, "specs": "Grace Vycor Plus" }
       ],
@@ -242,7 +242,7 @@
       ],
       "estimatedCost": { "materials": 820, "labor": 0, "hardware": 30, "total": 850, "currency": "CAD" },
       "annotations": [
-        { "id": "ann-d1", "type": "label", "text": "1.8m x 2.1m Sliding Door", "position": { "x": 0, "y": 0.5, "z": 1.9 } }
+        { "id": "ann-d1", "type": "label", "text": "1.84m x 2.03m (72.5\" x 80\") Sliding Door", "position": { "x": 0, "y": 0.5, "z": 1.9 } }
       ]
     },
     {
