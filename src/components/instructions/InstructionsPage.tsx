@@ -5,28 +5,37 @@
  * Displays step-by-step building instructions with 2D drawings.
  */
 
+import { useState } from "react";
 import { useBunkieStore } from "../../store/useBunkieStore";
-import { ChevronLeft, ChevronRight, BookOpen, Box } from "lucide-react";
+import { BookOpen, Box, Eye } from "lucide-react";
 import { PlanView } from "./drawing/PlanView";
 import { ElevationView } from "./drawing/ElevationView";
+import { InstructionStep } from "./InstructionStep";
+import { StepNavigation } from "./StepNavigation";
+import { MaterialsList } from "./MaterialsList";
 import type { ViewType } from "../../schemas/bunkie.schema";
+
+const VIEW_LABELS: Record<ViewType, string> = {
+  plan: "Plan View",
+  "elevation-front": "Front Elevation",
+  "elevation-back": "Back Elevation",
+  "elevation-side": "Side Elevation",
+  section: "Section View",
+};
 
 /**
  * Render the appropriate drawing based on view type
  */
 function DrawingRenderer({
-  views,
+  view,
   step,
 }: {
-  views: ViewType[];
+  view: ViewType;
   step: {
     phase: string;
     componentIds: string[];
   };
 }) {
-  // Determine which view to show (first in the list)
-  const primaryView = views[0];
-
   // Show different drawings based on phase and view type
   const showPiers =
     step.phase === "foundation" ||
@@ -40,7 +49,7 @@ function DrawingRenderer({
     step.componentIds.some((id) => id.includes("wall"));
   const showOpenings = step.phase !== "foundation";
 
-  switch (primaryView) {
+  switch (view) {
     case "plan":
       return (
         <PlanView
@@ -85,53 +94,110 @@ function DrawingRenderer({
         />
       );
     case "section":
-      // Section view to be implemented
       return (
-        <div className="text-zinc-500 p-8 text-center">
-          <p className="text-lg mb-2">Section View</p>
-          <p className="text-sm">(Coming soon)</p>
+        <div className="w-full h-full flex items-center justify-center bg-zinc-100">
+          <div className="text-zinc-500 p-8 text-center">
+            <p className="text-lg mb-2">Section View</p>
+            <p className="text-sm">(Coming soon)</p>
+          </div>
         </div>
       );
     default:
       return (
-        <div className="text-zinc-500 p-8 text-center">
-          <p className="text-lg">No drawing available</p>
+        <div className="w-full h-full flex items-center justify-center bg-zinc-100">
+          <div className="text-zinc-500 p-8 text-center">
+            <p className="text-lg">No drawing available</p>
+          </div>
         </div>
       );
   }
 }
 
+/**
+ * View selector tabs for steps with multiple views
+ */
+function ViewSelector({
+  views,
+  selectedView,
+  onSelect,
+}: {
+  views: ViewType[];
+  selectedView: ViewType;
+  onSelect: (view: ViewType) => void;
+}) {
+  if (views.length <= 1) return null;
+
+  return (
+    <div className="flex items-center gap-1 p-1 bg-zinc-700/50 rounded-lg">
+      {views.map((view) => (
+        <button
+          key={view}
+          onClick={() => onSelect(view)}
+          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+            selectedView === view
+              ? "bg-blue-500 text-white"
+              : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-600/50"
+          }`}
+        >
+          {VIEW_LABELS[view]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function InstructionsPage() {
   const { currentStepIndex, nextStep, prevStep, bunkieDefinition } =
     useBunkieStore();
+  const [selectedView, setSelectedView] = useState<ViewType | null>(null);
 
   const instructions = bunkieDefinition?.instructions ?? [];
+  const components = bunkieDefinition?.components ?? [];
   const currentStep = instructions[currentStepIndex];
   const totalSteps = instructions.length;
+
+  // Determine the active view
+  const activeView = selectedView ?? currentStep?.views[0] ?? "plan";
+
+  // Reset selected view when step changes
+  const handlePrev = () => {
+    setSelectedView(null);
+    prevStep();
+  };
+
+  const handleNext = () => {
+    setSelectedView(null);
+    nextStep();
+  };
 
   return (
     <div className="w-full h-full flex flex-col bg-zinc-900 text-zinc-100">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-zinc-700">
+      <header className="flex items-center justify-between px-6 py-3 border-b border-zinc-700 bg-zinc-800/50">
         <div className="flex items-center gap-3">
-          <BookOpen className="text-zinc-400" size={24} />
-          <h1 className="text-xl font-semibold">Building Instructions</h1>
+          <BookOpen className="text-blue-400" size={22} />
+          <h1 className="text-lg font-semibold">Building Instructions</h1>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-zinc-400">
-            Step {currentStepIndex + 1} of {totalSteps || "—"}
-          </span>
-        </div>
+        {currentStep && (
+          <div className="flex items-center gap-2">
+            <Eye size={16} className="text-zinc-500" />
+            <ViewSelector
+              views={currentStep.views}
+              selectedView={activeView}
+              onSelect={setSelectedView}
+            />
+          </div>
+        )}
       </header>
 
       {/* Main content area */}
       <main className="flex-1 flex overflow-hidden">
         {/* Drawing area */}
-        <div className="flex-1 p-6 flex items-center justify-center">
+        <div className="flex-1 p-4 flex items-center justify-center">
           <div className="w-full h-full bg-white rounded-lg shadow-lg overflow-hidden">
             {currentStep ? (
               <DrawingRenderer
-                views={currentStep.views}
+                view={activeView}
                 step={{
                   phase: currentStep.phase,
                   componentIds: currentStep.componentIds,
@@ -152,130 +218,35 @@ export function InstructionsPage() {
         </div>
 
         {/* Step details sidebar */}
-        <aside className="w-80 border-l border-zinc-700 p-6 overflow-y-auto">
-          {currentStep ? (
-            <>
-              {/* Phase badge */}
-              <div className="inline-block px-2 py-1 rounded text-xs font-medium bg-zinc-700 text-zinc-300 mb-4">
-                {currentStep.phase.charAt(0).toUpperCase() +
-                  currentStep.phase.slice(1)}
+        <aside className="w-96 border-l border-zinc-700 bg-zinc-800/30 overflow-y-auto">
+          <div className="p-5">
+            {currentStep ? (
+              <>
+                <InstructionStep step={currentStep} />
+                <MaterialsList
+                  components={components}
+                  componentIds={currentStep.componentIds}
+                />
+              </>
+            ) : (
+              <div className="text-zinc-500 text-sm">
+                <p>No instruction steps defined yet.</p>
+                <p className="mt-2 text-xs">
+                  Add steps to bunkie-definition.json to see them here.
+                </p>
               </div>
-
-              {/* Title */}
-              <h2 className="text-lg font-semibold mb-3">
-                {currentStep.title}
-              </h2>
-
-              {/* Description */}
-              <p className="text-zinc-400 text-sm mb-4">
-                {currentStep.description}
-              </p>
-
-              {/* Tips */}
-              {currentStep.tips && currentStep.tips.length > 0 && (
-                <div className="mb-4">
-                  <h3 className="text-sm font-medium text-zinc-300 mb-2">
-                    Tips
-                  </h3>
-                  <ul className="space-y-1">
-                    {currentStep.tips.map((tip, i) => (
-                      <li
-                        key={i}
-                        className="text-xs text-zinc-400 flex items-start gap-2"
-                      >
-                        <span className="text-blue-400">•</span>
-                        {tip}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Warnings */}
-              {currentStep.warnings && currentStep.warnings.length > 0 && (
-                <div className="mb-4">
-                  <h3 className="text-sm font-medium text-amber-400 mb-2">
-                    Warnings
-                  </h3>
-                  <ul className="space-y-1">
-                    {currentStep.warnings.map((warning, i) => (
-                      <li
-                        key={i}
-                        className="text-xs text-amber-300/80 flex items-start gap-2"
-                      >
-                        <span>⚠</span>
-                        {warning}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Components involved */}
-              {currentStep.componentIds.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-300 mb-2">
-                    Components
-                  </h3>
-                  <div className="flex flex-wrap gap-1">
-                    {currentStep.componentIds.map((id) => (
-                      <span
-                        key={id}
-                        className="px-2 py-0.5 text-xs bg-zinc-700 rounded text-zinc-400"
-                      >
-                        {id}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="text-zinc-500 text-sm">
-              <p>No instruction steps defined yet.</p>
-              <p className="mt-2 text-xs">
-                Add steps to bunkie-definition.json to see them here.
-              </p>
-            </div>
-          )}
+            )}
+          </div>
         </aside>
       </main>
 
       {/* Navigation footer */}
-      <footer className="flex items-center justify-between px-6 py-4 border-t border-zinc-700">
-        <button
-          onClick={prevStep}
-          disabled={currentStepIndex === 0}
-          className="flex items-center gap-2 px-4 py-2 text-sm rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700"
-        >
-          <ChevronLeft size={18} />
-          Previous
-        </button>
-
-        {/* Progress bar */}
-        <div className="flex-1 mx-8">
-          <div className="h-1 bg-zinc-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-blue-500 transition-all duration-300"
-              style={{
-                width:
-                  totalSteps > 0
-                    ? `${((currentStepIndex + 1) / totalSteps) * 100}%`
-                    : "0%",
-              }}
-            />
-          </div>
-        </div>
-
-        <button
-          onClick={nextStep}
-          disabled={currentStepIndex >= totalSteps - 1}
-          className="flex items-center gap-2 px-4 py-2 text-sm rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700"
-        >
-          Next
-          <ChevronRight size={18} />
-        </button>
-      </footer>
+      <StepNavigation
+        currentStep={currentStepIndex}
+        totalSteps={totalSteps}
+        onPrev={handlePrev}
+        onNext={handleNext}
+      />
     </div>
   );
 }
