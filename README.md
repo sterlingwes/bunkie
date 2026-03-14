@@ -9,6 +9,7 @@ This application helps visualize and plan construction of a 3.0m x 3.28m (9.84mÂ
 ## Requirements
 
 ### Structure Specifications
+
 - **Dimensions**: 3.0m wide x 3.28m deep (9.84mÂ² total area)
 - **Foundation**: 6 sonotube piers pinned to bedrock
 - **Walls**: 2x4 framing at 16" OC with board and batten siding
@@ -18,6 +19,7 @@ This application helps visualize and plan construction of a 3.0m x 3.28m (9.84mÂ
 - **Heating**: EPA-certified wood stove with CSA B365 compliant installation
 
 ### Key Features
+
 1. **3D Visualization**: Interactive 3D model with orbit controls
 2. **Component Selection**: Click to select and highlight individual building components
 3. **Phase-based Construction**: View foundation, framing, envelope, and finishing phases
@@ -57,7 +59,9 @@ src/
 ## Component System
 
 ### JSON-Driven Architecture
+
 All building components are defined in `bunkie-definition.json` with:
+
 - Dimensions (width, height, depth in meters)
 - Position (x, y, z coordinates)
 - Materials with quantities and costs
@@ -65,6 +69,7 @@ All building components are defined in `bunkie-definition.json` with:
 - Child component relationships
 
 ### Framing Details
+
 - **Stud spacing**: 16" OC (0.406m)
 - **Stud dimensions**: 2x4 (actual 38mm x 89mm)
 - **Window rough opening**: Window width + 40mm shim allowance
@@ -73,11 +78,13 @@ All building components are defined in `bunkie-definition.json` with:
 ## Structural Validation Tests
 
 The test suite validates physical properties:
+
 - **Gravity Support**: Walls rest on floor, roof rests on walls, piers at ground level
 - **Non-Overlap**: Windows within wall bounds, door within front wall
 - **Dimensions**: Floor area < 10mÂ², window sizes match spec, wall heights reasonable
 
 Run tests with:
+
 ```bash
 npm test
 ```
@@ -101,6 +108,7 @@ npm test
 ## Building Code References
 
 Key Ontario Building Code sections referenced:
+
 - **OBC 9.15.3**: Pier foundation requirements
 - **OBC 9.23.4**: Floor joist spans and sizes
 - **OBC 9.23.6**: Stud size and spacing
@@ -112,3 +120,17 @@ Key Ontario Building Code sections referenced:
 ## Cost Estimate
 
 Total estimated cost: ~$8,280 CAD (materials only, labor not included)
+
+## TODOs
+
+- missing finishing elements
+  - flooring
+  - external siding
+- fix position of the wood burning stove
+  - back corner for more living space
+  - stove pipe should fit between roof joists (I think?)
+  - stove pipe should extend past roof with cut-outs and flashing to code
+- house wrap is missing?
+- costs seem low? donâ€™t account for waste?
+- report should account for actual material sizes and expected waste so we can work to minimize
+- sheating, etc. should resemble realistic cuts not solid boards of unrealistic size
