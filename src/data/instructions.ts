@@ -45,7 +45,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Drill Bedrock & Install Anchors",
     description:
       'Drill 1/2" holes 6" deep into bedrock at each pier location. Install epoxy-set rebar pins to anchor the sonotubes to the bedrock.',
-    views: ["plan", "section"],
+    views: ["plan", "side-view-side"],
     componentIds: [
       "pier-fl",
       "pier-ml",
@@ -71,7 +71,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Set Sonotube Forms",
     description:
       "Cut sonotubes to length (~400mm above grade) and position over rebar pins. Brace forms plumb and level at the top.",
-    views: ["plan", "elevation-front", "elevation-side"],
+    views: ["plan", "side-view-front", "side-view-side"],
     componentIds: [
       "pier-fl",
       "pier-ml",
@@ -122,7 +122,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Cure & Attach Rim Joist",
     description:
       "Allow concrete to cure minimum 7 days before loading. Attach pressure-treated rim joist to post base connectors.",
-    views: ["plan", "elevation-front"],
+    views: ["plan", "side-view-front"],
     componentIds: ["floor-assembly"],
     tips: [
       "Keep concrete moist during cure for maximum strength",
@@ -178,7 +178,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Frame Back Wall (East)",
     description:
       'Frame the back wall flat on the subfloor using 2x4 studs at 16" OC. This is the low wall at 2.1m height with no openings.',
-    views: ["elevation-back", "plan"],
+    views: ["side-view-back", "plan"],
     componentIds: ["wall-east"],
     tips: [
       "Use a framing jig or chalk lines for consistent stud placement",
@@ -194,7 +194,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Frame Front Wall (West) with Door",
     description:
       "Frame the front wall with opening for the sliding patio door. Use double king studs at the opening and proper header.",
-    views: ["elevation-front", "plan"],
+    views: ["side-view-front", "plan"],
     componentIds: ["wall-west", "sliding-door"],
     tips: [
       "Header must be sized for the 1.84m door opening span",
@@ -210,7 +210,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Frame Side Walls (South & North)",
     description:
       "Frame the rake walls with increasing height from back to front. Include window openings in both walls.",
-    views: ["elevation-side", "plan"],
+    views: ["side-view-side", "plan"],
     componentIds: ["wall-south", "wall-north", "window-south", "window-north"],
     tips: [
       "Top plate follows roof slope - cut at 5° angle",
@@ -226,7 +226,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Raise & Brace Walls",
     description:
       "Raise all walls into position, brace plumb, and temporarily secure. Verify square by measuring diagonals.",
-    views: ["plan", "elevation-front"],
+    views: ["plan", "side-view-front"],
     componentIds: ["wall-west", "wall-east", "wall-south", "wall-north"],
     tips: [
       "Use temporary braces at 45° angles",
@@ -246,7 +246,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Cut & Install Rafters",
     description:
       'Cut 2x6 rafters with birdsmouth notches to sit on wall top plates. Install at 16" OC matching wall stud positions.',
-    views: ["elevation-side", "section"],
+    views: ["side-view-side"],
     componentIds: ["roof-assembly"],
     tips: [
       "Make a pattern rafter first, test fit before cutting all",
@@ -262,7 +262,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Apply Roof Sheathing",
     description:
       'Install 5/8" plywood roof sheathing perpendicular to rafters. Stagger joints and use H-clips at unsupported edges.',
-    views: ["plan", "section"],
+    views: ["plan", "side-view-side"],
     componentIds: ["roof-assembly"],
     tips: [
       "Start from bottom edge and work up",
@@ -278,7 +278,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Fascia",
     description:
       "Attach fascia boards to rafter ends. Front fascia is deeper (180mm) to accommodate gutter.",
-    views: ["elevation-front", "elevation-side"],
+    views: ["side-view-front", "side-view-side"],
     componentIds: ["roof-assembly"],
     tips: [
       "Fascia tops should align with roof sheathing",
@@ -298,7 +298,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Apply Housewrap",
     description:
       'Cover exterior walls with Tyvek or similar housewrap. Lap joints 6" and tape all seams.',
-    views: ["elevation-front", "elevation-side"],
+    views: ["side-view-front", "side-view-side"],
     componentIds: ["wall-west", "wall-east", "wall-south", "wall-north"],
     tips: [
       "Work from bottom up for proper lapping",
@@ -314,7 +314,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Flash & Install Windows",
     description:
       "Apply self-adhesive flashing to window rough openings (sill, jambs, head). Install windows plumb and square.",
-    views: ["elevation-side", "section"],
+    views: ["side-view-side"],
     componentIds: ["window-south", "window-north"],
     tips: [
       "Sill flashing goes first, then jambs, then head",
@@ -330,7 +330,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Sliding Door",
     description:
       "Install sliding patio door with proper drainage. Ensure threshold is level and properly sealed.",
-    views: ["elevation-front", "section"],
+    views: ["side-view-front", "side-view-side"],
     componentIds: ["sliding-door"],
     tips: [
       "Use sill pan flashing under threshold",
@@ -346,7 +346,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Roofing",
     description:
       "Apply drip edge, underlayment, and architectural shingles. Install ridge cap at peak.",
-    views: ["plan", "section"],
+    views: ["plan", "side-view-side"],
     componentIds: ["roof-assembly"],
     tips: [
       "Apply drip edge before underlayment on eaves",
@@ -366,7 +366,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Exterior Insulation",
     description:
       "Apply R-5 rigid foam insulation over housewrap. Tape all seams and corners.",
-    views: ["elevation-front", "elevation-side", "section"],
+    views: ["side-view-front", "side-view-side"],
     componentIds: ["exterior-siding"],
     tips: [
       'Use 1" XPS or polyiso for R-5',
@@ -382,7 +382,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Board & Batten Siding",
     description:
       "Apply vertical board and batten siding over rigid foam. Use rainscreen gap if required by local code.",
-    views: ["elevation-front", "elevation-side"],
+    views: ["side-view-front", "side-view-side"],
     componentIds: ["exterior-siding"],
     tips: [
       "Prime all sides of boards before installation",
@@ -398,7 +398,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Wall Insulation",
     description:
       "Install R-20 fiberglass batts in wall cavities between studs. Cut to fit around outlets and framing.",
-    views: ["section"],
+    views: ["side-view-side"],
     componentIds: ["insulation-walls"],
     tips: [
       "Friction fit - no gaps or compression",
@@ -414,7 +414,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Ceiling Insulation",
     description:
       "Install R-40 fiberglass batts in ceiling/roof cavity. Support with insulation supports.",
-    views: ["section"],
+    views: ["side-view-side"],
     componentIds: ["insulation-ceiling"],
     tips: [
       "Higher R-value required for ceiling",
@@ -430,7 +430,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Vapor Barrier",
     description:
       "Apply 6mil polyethylene vapor barrier on warm side of insulation. Seal all edges and penetrations.",
-    views: ["section"],
+    views: ["side-view-side"],
     componentIds: ["insulation-walls", "insulation-ceiling"],
     tips: [
       "Use acoustic sealant at all edges",
@@ -446,7 +446,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Interior Finish",
     description:
       "Apply tongue & groove pine to walls and ceiling. Install trim around windows and door.",
-    views: ["elevation-front", "elevation-side"],
+    views: ["side-view-front", "side-view-side"],
     componentIds: ["interior-finish"],
     tips: [
       "Acclimate wood in space for 1 week before installing",
@@ -478,7 +478,7 @@ export const instructionSteps: InstructionStep[] = [
     title: "Install Wood Stove & Chimney",
     description:
       "Install EPA-certified wood stove per manufacturer instructions. Install chimney with proper clearances and flashing.",
-    views: ["plan", "section"],
+    views: ["plan", "side-view-side"],
     componentIds: ["wood-stove", "stove-clearance"],
     tips: [
       "Maintain required clearances to combustibles",

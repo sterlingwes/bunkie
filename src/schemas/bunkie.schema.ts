@@ -140,10 +140,9 @@ export type AppView = "builder" | "instructions";
 // Types of 2D architectural views for instruction steps
 export type ViewType =
   | "plan"
-  | "elevation-front"
-  | "elevation-back"
-  | "elevation-side"
-  | "section";
+  | "side-view-front"
+  | "side-view-back"
+  | "side-view-side";
 
 // 2D dimension line for drawings
 export interface DimensionLine2D {

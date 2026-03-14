@@ -16,10 +16,9 @@ import type { ViewType } from "../../schemas/bunkie.schema";
 
 const VIEW_LABELS: Record<ViewType, string> = {
   plan: "Plan View",
-  "elevation-front": "Front Elevation",
-  "elevation-back": "Back Elevation",
-  "elevation-side": "Side Elevation",
-  section: "Section View",
+  "side-view-front": "Front Wall",
+  "side-view-back": "Back Wall",
+  "side-view-side": "Side Walls",
 };
 
 /**
@@ -59,7 +58,7 @@ function DrawingRenderer({
           scale={100}
         />
       );
-    case "elevation-front":
+    case "side-view-front":
       return (
         <ElevationView
           direction="front"
@@ -70,7 +69,7 @@ function DrawingRenderer({
           scale={100}
         />
       );
-    case "elevation-back":
+    case "side-view-back":
       return (
         <ElevationView
           direction="back"
@@ -81,7 +80,7 @@ function DrawingRenderer({
           scale={100}
         />
       );
-    case "elevation-side":
+    case "side-view-side":
       return (
         <ElevationView
           direction="side"
@@ -91,15 +90,6 @@ function DrawingRenderer({
           showRoof={true}
           scale={100}
         />
-      );
-    case "section":
-      return (
-        <div className="w-full h-full flex items-center justify-center bg-zinc-100">
-          <div className="text-zinc-500 p-8 text-center">
-            <p className="text-lg mb-2">Section View</p>
-            <p className="text-sm">(Coming soon)</p>
-          </div>
-        </div>
       );
     default:
       return (

@@ -329,7 +329,7 @@ function FrontElevation({
         fill={DRAWING_COLORS.outline}
         fontWeight="bold"
       >
-        Front Elevation (West)
+        Front Wall - External View
       </text>
       <text
         x={0}
@@ -503,7 +503,7 @@ function BackElevation({
         fill={DRAWING_COLORS.outline}
         fontWeight="bold"
       >
-        Back Elevation (East)
+        Back Wall - External View
       </text>
       <text
         x={0}
@@ -753,7 +753,7 @@ function SideElevation({
         fill={DRAWING_COLORS.outline}
         fontWeight="bold"
       >
-        Side Elevation (South/North)
+        Side Walls - External View
       </text>
       <text
         x={0}
