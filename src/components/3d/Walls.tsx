@@ -194,11 +194,66 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
         return geometry;
     }, [isSideWall, isSouthWall, wallLength]);
 
+    // Bottom plate height constant (needed early for window calculations)
+    const bottomPlateHeight = 0.038;
+
     // Window opening position along wall
     const windowOffset = windowPosition === 'front' ? wallLength / 4 : -wallLength / 4;
 
-    // Bottom plate height constant
-    const bottomPlateHeight = 0.038;
+    // Calculate header Y position for window (needed for sheathing with cutout)
+    // These values are used by both framing and sheathing
+    const headerHeight = 0.089;
+    const windowSillY = bottomPlateHeight + headerHeight / 2; // Center of sill
+    const windowHeaderY = windowSillY + 1.83 + headerHeight / 2; // Center of header
+
+    // Create trapezoidal sheathing geometry for the section above window header
+    // This is only used for side walls with windows
+    const aboveHeaderSheathingGeometry = useMemo(() => {
+        if (!isSideWall || !hasWindow) return null;
+
+        const sheathingThickness = 0.011;
+        const halfLength = wallLength / 2;
+
+        // Heights at each end based on wall direction
+        const heightAtPlusX = isSouthWall ? FRONT_WALL_HEIGHT : BACK_WALL_HEIGHT;
+        const heightAtMinusX = isSouthWall ? BACK_WALL_HEIGHT : FRONT_WALL_HEIGHT;
+
+        // Create trapezoidal geometry from windowHeaderY to wall top
+        const vertices = new Float32Array([
+            // Front face (X = +halfLength)
+            +halfLength, windowHeaderY, -sheathingThickness / 2,
+            +halfLength, windowHeaderY, +sheathingThickness / 2,
+            +halfLength, heightAtPlusX, +sheathingThickness / 2,
+            +halfLength, heightAtPlusX, -sheathingThickness / 2,
+            // Back face (X = -halfLength)
+            -halfLength, windowHeaderY, -sheathingThickness / 2,
+            -halfLength, windowHeaderY, +sheathingThickness / 2,
+            -halfLength, heightAtMinusX, +sheathingThickness / 2,
+            -halfLength, heightAtMinusX, -sheathingThickness / 2,
+        ]);
+
+        const indices = [
+            // Front face
+            0, 1, 2,  0, 2, 3,
+            // Back face
+            5, 4, 7,  5, 7, 6,
+            // Top face (angled)
+            7, 6, 2,  7, 2, 3,
+            // Bottom face (flat at headerY)
+            4, 5, 1,  4, 1, 0,
+            // Right face (+Z)
+            1, 5, 6,  1, 6, 2,
+            // Left face (-Z)
+            4, 0, 3,  4, 3, 7,
+        ];
+
+        const geometry = new BufferGeometry();
+        geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
+        geometry.setIndex(indices);
+        geometry.computeVertexNormals();
+
+        return geometry;
+    }, [isSideWall, isSouthWall, wallLength, hasWindow, windowHeaderY]);
 
     // Bottom plate position
     const bottomPlateY = isSideWall
@@ -403,17 +458,9 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             {hasWindow && isSideWall ? (
                 // Side wall with window - split sheathing around window opening
                 <>
-                    {/* Window opening dimensions */}
                     {(() => {
                         const windowWidth = 0.61;
-                        const windowHalfWidth = windowWidth / 2;
-                        const roHalfWidth = windowHalfWidth + 0.02; // 0.325m
-
-                        // Window vertical bounds - match framing code exactly
-                        // sillY and headerY are centers of sill and header beams
-                        const headerHeight = 0.089;
-                        const sillY = bottomPlateHeight + headerHeight / 2; // Center of sill
-                        const headerY = sillY + 1.83 + headerHeight / 2; // Center of header
+                        const roHalfWidth = windowWidth / 2 + 0.02; // 0.325m
 
                         // Window horizontal bounds
                         const windowLeft = windowOffset - roHalfWidth;
@@ -424,87 +471,45 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                             <>
                                 {/* Below window - full width, covers bottom plate and sill */}
                                 <mesh
-                                    position={[0, sillY / 2, 0.048]}
+                                    position={[0, windowSillY / 2, 0.048]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[wallLength, sillY, 0.011]} />
+                                    <boxGeometry args={[wallLength, windowSillY, 0.011]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
                                 {/* Left of window - from wall left to window left, sill to header */}
                                 <mesh
-                                    position={[(windowLeft - halfLength) / 2, (sillY + headerY) / 2, 0.048]}
+                                    position={[(windowLeft - halfLength) / 2, (windowSillY + windowHeaderY) / 2, 0.048]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[windowLeft + halfLength, headerY - sillY, 0.011]} />
+                                    <boxGeometry args={[windowLeft + halfLength, windowHeaderY - windowSillY, 0.011]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
                                 {/* Right of window - from window right to wall right, sill to header */}
                                 <mesh
-                                    position={[(windowRight + halfLength) / 2, (sillY + headerY) / 2, 0.048]}
+                                    position={[(windowRight + halfLength) / 2, (windowSillY + windowHeaderY) / 2, 0.048]}
                                     castShadow
                                     receiveShadow
                                 >
-                                    <boxGeometry args={[halfLength - windowRight, headerY - sillY, 0.011]} />
+                                    <boxGeometry args={[halfLength - windowRight, windowHeaderY - windowSillY, 0.011]} />
                                     <meshStandardMaterial color={sheathingColor} roughness={0.9} />
                                 </mesh>
 
                                 {/* Above header - full width trapezoidal section */}
-                                {/* For rake walls, we need to create a custom trapezoidal geometry */}
-                                {(() => {
-                                    const sheathingThickness = 0.011;
-                                    // Heights at each end for the section above header
-                                    const heightAtPlusX = isSouthWall ? FRONT_WALL_HEIGHT : BACK_WALL_HEIGHT;
-                                    const heightAtMinusX = isSouthWall ? BACK_WALL_HEIGHT : FRONT_WALL_HEIGHT;
-
-                                    // Create trapezoidal geometry from headerY to wall top
-                                    const vertices = new Float32Array([
-                                        // Front face (X = +halfLength)
-                                        +halfLength, headerY, -sheathingThickness / 2,
-                                        +halfLength, headerY, +sheathingThickness / 2,
-                                        +halfLength, heightAtPlusX, +sheathingThickness / 2,
-                                        +halfLength, heightAtPlusX, -sheathingThickness / 2,
-                                        // Back face (X = -halfLength)
-                                        -halfLength, headerY, -sheathingThickness / 2,
-                                        -halfLength, headerY, +sheathingThickness / 2,
-                                        -halfLength, heightAtMinusX, +sheathingThickness / 2,
-                                        -halfLength, heightAtMinusX, -sheathingThickness / 2,
-                                    ]);
-
-                                    const indices = [
-                                        // Front face
-                                        0, 1, 2,  0, 2, 3,
-                                        // Back face
-                                        5, 4, 7,  5, 7, 6,
-                                        // Top face (angled)
-                                        7, 6, 2,  7, 2, 3,
-                                        // Bottom face (flat at headerY)
-                                        4, 5, 1,  4, 1, 0,
-                                        // Right face (+Z)
-                                        1, 5, 6,  1, 6, 2,
-                                        // Left face (-Z)
-                                        4, 0, 3,  4, 3, 7,
-                                    ];
-
-                                    const geometry = new BufferGeometry();
-                                    geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
-                                    geometry.setIndex(indices);
-                                    geometry.computeVertexNormals();
-
-                                    return (
-                                        <mesh
-                                            geometry={geometry}
-                                            position={[0, 0, 0.048]}
-                                            castShadow
-                                            receiveShadow
-                                        >
-                                            <meshStandardMaterial color={sheathingColor} roughness={0.9} />
-                                        </mesh>
-                                    );
-                                })()}
+                                {aboveHeaderSheathingGeometry && (
+                                    <mesh
+                                        geometry={aboveHeaderSheathingGeometry}
+                                        position={[0, 0, 0.048]}
+                                        castShadow
+                                        receiveShadow
+                                    >
+                                        <meshStandardMaterial color={sheathingColor} roughness={0.9} />
+                                    </mesh>
+                                )}
                             </>
                         );
                     })()}

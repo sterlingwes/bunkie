@@ -12,6 +12,11 @@
 export const BACK_WALL_HEIGHT = 2.1;   // Low wall height (meters)
 export const FRONT_WALL_HEIGHT = 2.4;  // High wall height (+30cm rise for 5° pitch)
 
+// Wall lengths (from bunkie floor dimensions)
+export const SIDE_WALL_LENGTH = 3.28;  // South and North walls (along Z axis)
+export const FRONT_WALL_LENGTH = 3.0;  // West wall (front, +Z)
+export const BACK_WALL_LENGTH = 3.0;   // East wall (back, -Z)
+
 // Lumber actual dimensions (nominal vs actual)
 // 2x4 actual: 38mm x 89mm
 export const STUD_WIDTH = 0.038;      // 2x4 actual width: 38mm
@@ -33,7 +38,12 @@ export const STUD_SPACING = 0.406;  // 16" OC in meters
 // Window dimensions (24" x 72" window)
 export const WINDOW_WIDTH = 0.61;
 export const WINDOW_HEIGHT = 1.83;
+export const WINDOW_RO_HALF_WIDTH = WINDOW_WIDTH / 2 + 0.02; // Rough opening half-width with shim allowance
 
 // Door dimensions (72.5" x 80" sliding door)
 export const DOOR_WIDTH = 1.84;
 export const DOOR_HEIGHT = 2.03;
+export const DOOR_RO_HALF_WIDTH = DOOR_WIDTH / 2 + 0.0125; // Rough opening half-width with shim allowance
+
+// Sheathing dimensions
+export const SHEATHING_THICKNESS = 0.011; // 7/16" OSB (11mm)
