@@ -188,7 +188,7 @@
       "category": "wall",
       "phase": "framing",
       "dimensions": { "width": 3.28, "height": 2.25, "depth": 0.14 },
-      "position": { "x": 1.5, "y": 1.25, "z": 0 },
+      "position": { "x": 1.5, "y": 0.2, "z": 0 },
       "materials": [
         { "id": "stud-2x4-s", "name": "2x4 SPF Studs", "quantity": 9, "unit": "pieces", "unitCost": 6, "totalCost": 54, "specs": "@ 16\" OC, graduated lengths for rake" },
         { "id": "plate-2x4-s", "name": "2x4 Plates", "quantity": 3, "unit": "pieces", "unitCost": 8, "totalCost": 24, "specs": "Bottom plate + angled top plate" },
@@ -209,12 +209,12 @@
       "category": "wall",
       "phase": "framing",
       "dimensions": { "width": 3.28, "height": 2.25, "depth": 0.14 },
-      "position": { "x": -1.5, "y": 1.25, "z": 0 },
+      "position": { "x": -1.5, "y": 0.2, "z": 0 },
       "materials": [
-        { "id": "stud-2x4-n", "name": "2x4 SPF Studs", "quantity": 9, "unit": "pieces", "unitCost": 6, "totalCost": 54, "specs": "@ 16\" OC" },
-        { "id": "plate-2x4-n", "name": "2x4 Plates", "quantity": 3, "unit": "pieces", "unitCost": 8, "totalCost": 24, "specs": "Top and bottom plates" },
+        { "id": "stud-2x4-n", "name": "2x4 SPF Studs", "quantity": 9, "unit": "pieces", "unitCost": 6, "totalCost": 54, "specs": "@ 16\" OC, graduated lengths for rake" },
+        { "id": "plate-2x4-n", "name": "2x4 Plates", "quantity": 3, "unit": "pieces", "unitCost": 8, "totalCost": 24, "specs": "Bottom plate + angled top plate" },
         { "id": "header-n", "name": "Header", "quantity": 1, "unit": "piece", "unitCost": 25, "totalCost": 25, "specs": "For window opening" },
-        { "id": "osb-sheathing-n", "name": "7/16\" OSB Sheathing", "quantity": 2, "unit": "sheets", "unitCost": 28, "totalCost": 56, "specs": "Exposure 1" },
+        { "id": "osb-sheathing-n", "name": "7/16\" OSB Sheathing", "quantity": 2, "unit": "sheets", "unitCost": 28, "totalCost": 56, "specs": "Exposure 1, trapezoidal cut for rake" },
         { "id": "tyvek-n", "name": "Tyvek Housewrap", "quantity": 0.2, "unit": "roll", "unitCost": 85, "totalCost": 17, "specs": "Shared from roll" }
       ],
       "codeReferences": [

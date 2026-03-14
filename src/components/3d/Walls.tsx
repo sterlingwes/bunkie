@@ -2,6 +2,10 @@ import { useRef, useMemo } from 'react';
 import { Group, BufferGeometry, Float32BufferAttribute } from 'three';
 import type { Component } from '../../schemas/bunkie.schema';
 import { useBunkieStore } from '../../store/useBunkieStore';
+import {
+  BACK_WALL_HEIGHT,
+  FRONT_WALL_HEIGHT,
+} from '../../constants/framing';
 
 interface WallProps {
   component: Component;
@@ -9,12 +13,6 @@ interface WallProps {
   hasWindow?: boolean;
   windowPosition?: 'front' | 'back';
 }
-
-// Wall heights for shed roof construction
-// Back wall (east) is LOW, Front wall (west) is HIGH
-// Side walls rake between these heights
-const BACK_WALL_HEIGHT = 2.1;  // Low wall height (meters)
-const FRONT_WALL_HEIGHT = 2.4; // High wall height (meters)
 
 export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProps) {
   const groupRef = useRef<Group>(null);
@@ -93,7 +91,8 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
     const sheathingColor = isSelected ? '#60a5fa' : isHovered ? '#93c5fd' : '#d4b896';
 
     // Create trapezoidal sheathing geometry for rake walls
-    // The sheathing extends from the wall's bottom to top, following the rake angle
+    // IMPORTANT: Bottom is FLAT (all at y=0), only top is angled
+    // This ensures the wall sits level on the floor
     const rakeSheathingGeometry = useMemo(() => {
         if (!isSideWall) return null;
 
@@ -105,20 +104,19 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
         const heightAtPlusX = isSouthWall ? FRONT_WALL_HEIGHT : BACK_WALL_HEIGHT;
         const heightAtMinusX = isSouthWall ? BACK_WALL_HEIGHT : FRONT_WALL_HEIGHT;
 
-        // Create a trapezoidal prism (angled top, flat bottom)
-        // The shape runs along X axis, Z is thickness
-        const verticesWithX = new Float32Array([
-            // Front face (X = +halfLength)
-            +halfLength, -heightAtPlusX / 2, -sheathingThickness / 2,
-            +halfLength, -heightAtPlusX / 2, +sheathingThickness / 2,
-            +halfLength, +heightAtPlusX / 2, +sheathingThickness / 2,
-            +halfLength, +heightAtPlusX / 2, -sheathingThickness / 2,
+        // Create a trapezoidal prism with FLAT BOTTOM (y=0) and ANGLED TOP
+        const vertices = new Float32Array([
+            // Front face (X = +halfLength) - bottom at y=0, top at heightAtPlusX
+            +halfLength, 0, -sheathingThickness / 2,
+            +halfLength, 0, +sheathingThickness / 2,
+            +halfLength, heightAtPlusX, +sheathingThickness / 2,
+            +halfLength, heightAtPlusX, -sheathingThickness / 2,
 
-            // Back face (X = -halfLength)
-            -halfLength, -heightAtMinusX / 2, -sheathingThickness / 2,
-            -halfLength, -heightAtMinusX / 2, +sheathingThickness / 2,
-            -halfLength, +heightAtMinusX / 2, +sheathingThickness / 2,
-            -halfLength, +heightAtMinusX / 2, -sheathingThickness / 2,
+            // Back face (X = -halfLength) - bottom at y=0, top at heightAtMinusX
+            -halfLength, 0, -sheathingThickness / 2,
+            -halfLength, 0, +sheathingThickness / 2,
+            -halfLength, heightAtMinusX, +sheathingThickness / 2,
+            -halfLength, heightAtMinusX, -sheathingThickness / 2,
         ]);
 
         const indices = [
@@ -128,7 +126,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             5, 4, 7,  5, 7, 6,
             // Top face (angled)
             7, 6, 2,  7, 2, 3,
-            // Bottom face
+            // Bottom face (flat)
             4, 5, 1,  4, 1, 0,
             // Right face (+Z)
             1, 5, 6,  1, 6, 2,
@@ -137,7 +135,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
         ];
 
         const geometry = new BufferGeometry();
-        geometry.setAttribute('position', new Float32BufferAttribute(verticesWithX, 3));
+        geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
         geometry.setIndex(indices);
         geometry.computeVertexNormals();
 
@@ -145,6 +143,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
     }, [isSideWall, isSouthWall, wallLength]);
 
     // Create angled top plate geometry for rake walls
+    // IMPORTANT: Like the sheathing, bottom is FLAT, top follows the rake
     const rakeTopPlateGeometry = useMemo(() => {
         if (!isSideWall) return null;
 
@@ -157,19 +156,19 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
         const heightAtMinusX = isSouthWall ? BACK_WALL_HEIGHT : FRONT_WALL_HEIGHT;
 
         // Top plate sits on top of the studs
-        // The plate itself has height, so we need to offset the top surface
+        // Bottom of plate is at wall height, top is at wall height + plate height
         const vertices = new Float32Array([
             // Front end (X = +halfLength)
-            +halfLength, heightAtPlusX / 2, -plateDepth / 2,
-            +halfLength, heightAtPlusX / 2, +plateDepth / 2,
-            +halfLength, heightAtPlusX / 2 + plateHeight, +plateDepth / 2,
-            +halfLength, heightAtPlusX / 2 + plateHeight, -plateDepth / 2,
+            +halfLength, heightAtPlusX, -plateDepth / 2,
+            +halfLength, heightAtPlusX, +plateDepth / 2,
+            +halfLength, heightAtPlusX + plateHeight, +plateDepth / 2,
+            +halfLength, heightAtPlusX + plateHeight, -plateDepth / 2,
 
             // Back end (X = -halfLength)
-            -halfLength, heightAtMinusX / 2, -plateDepth / 2,
-            -halfLength, heightAtMinusX / 2, +plateDepth / 2,
-            -halfLength, heightAtMinusX / 2 + plateHeight, +plateDepth / 2,
-            -halfLength, heightAtMinusX / 2 + plateHeight, -plateDepth / 2,
+            -halfLength, heightAtMinusX, -plateDepth / 2,
+            -halfLength, heightAtMinusX, +plateDepth / 2,
+            -halfLength, heightAtMinusX + plateHeight, +plateDepth / 2,
+            -halfLength, heightAtMinusX + plateHeight, -plateDepth / 2,
         ]);
 
         const indices = [
@@ -179,7 +178,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             5, 4, 7,  5, 7, 6,
             // Top face (angled)
             7, 6, 2,  7, 2, 3,
-            // Bottom face (angled)
+            // Bottom face (angled - follows wall top)
             4, 5, 1,  4, 1, 0,
             // Right face (+Z)
             1, 5, 6,  1, 6, 2,
@@ -198,6 +197,14 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
     // Window opening position along wall
     const windowOffset = windowPosition === 'front' ? wallLength / 4 : -wallLength / 4;
 
+    // Bottom plate height constant
+    const bottomPlateHeight = 0.038;
+
+    // Bottom plate position
+    const bottomPlateY = isSideWall
+        ? bottomPlateHeight / 2  // Sitting on floor (y=0), centered on its height
+        : -wallHeight / 2;       // Centered geometry
+
     return (
         <group
             ref={groupRef}
@@ -208,7 +215,7 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
             onClick={handleClick}
         >
             {/* Bottom plate */}
-            <mesh position={[0, -wallHeight / 2, 0]} castShadow receiveShadow>
+            <mesh position={[0, bottomPlateY, 0]} castShadow receiveShadow>
                 <boxGeometry args={[wallLength, 0.038, 0.089]} />
                 <meshStandardMaterial color={frameColor} roughness={0.8} />
             </mesh>
@@ -274,11 +281,13 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 }
 
                 const studHeight = isSideWall ? getWallHeightAtX(xPos) : wallHeight;
-                // Position stud so bottom sits on top of bottom plate
-                // Bottom plate top is at: -wallHeight/2 + 0.038
-                const studY = isSideWall
-                    ? -wallHeight / 2 + 0.038 + studHeight / 2
-                    : 0;
+                // For side walls with flat-bottom geometry:
+                // - Stud bottom at y=0 (floor level)
+                // - Stud top at y=studHeight
+                // - Stud center at y=studHeight/2
+                // For regular walls (centered geometry):
+                // - Stud center at y=0
+                const studY = isSideWall ? studHeight / 2 : 0;
 
                 return (
                     <mesh key={`stud-${i}`} position={[xPos, studY, 0]} castShadow receiveShadow>
@@ -307,22 +316,21 @@ export function Wall({ component, hasDoor, hasWindow, windowPosition }: WallProp
                 const headerWidth = roHalfWidth * 2 + 0.038 * 2; // RO + one king stud width on each side
 
                 // Header and sill Y positions
-                // Sill at floor level (bottom of wall + sill height)
-                const sillY = -wallHeight / 2 + 0.089 / 2 + 0.038; // just above bottom plate
-                // Header at top of window opening
-                const headerY = sillY + windowHeight + 0.089; // sill + window height + header height
+                // For flat-bottom geometry: sill sits just above bottom plate
+                // For centered geometry: sill is relative to wall center
+                const headerHeight = 0.089;
+                const sillY = isSideWall
+                    ? bottomPlateHeight + headerHeight / 2  // Floor + bottom plate + half sill
+                    : -wallHeight / 2 + 0.089 / 2 + 0.038;   // Original centered calculation
+                const headerY = sillY + windowHeight + headerHeight / 2;
 
                 // For rake walls, get the height at each king stud position
                 const leftKingStudHeight = isSideWall ? getWallHeightAtX(kingStudLeftX) : wallHeight;
                 const rightKingStudHeight = isSideWall ? getWallHeightAtX(kingStudRightX) : wallHeight;
 
-                // Position king studs so they sit on bottom plate
-                const leftKingStudY = isSideWall
-                    ? -wallHeight / 2 + 0.038 + leftKingStudHeight / 2
-                    : 0;
-                const rightKingStudY = isSideWall
-                    ? -wallHeight / 2 + 0.038 + rightKingStudHeight / 2
-                    : 0;
+                // Position king studs - flat bottom geometry for side walls
+                const leftKingStudY = isSideWall ? leftKingStudHeight / 2 : 0;
+                const rightKingStudY = isSideWall ? rightKingStudHeight / 2 : 0;
 
                 return (
                     <>
