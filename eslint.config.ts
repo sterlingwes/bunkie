@@ -17,6 +17,7 @@ export default defineConfig([
     rules: {
       "react/react-in-jsx-scope": "off",
       "react/no-unknown-property": "off",
+      "react/no-unescaped-entities": "off",
     },
   },
 ]);

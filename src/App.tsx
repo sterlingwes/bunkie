@@ -5,6 +5,7 @@ import { Sidebar } from "./components/ui/Sidebar";
 import { Bunkie } from "./components/3d/Bunkie";
 import { CameraControls } from "./components/3d/CameraControls";
 import { InstructionsPage } from "./components/instructions/InstructionsPage";
+import { MaterialsPage } from "./components/materials/MaterialsPage";
 import { useBunkieStore } from "./store/useBunkieStore";
 import type { BunkieDefinition, AppView } from "./schemas/bunkie.schema";
 import bunkieDefinition from "./data/bunkie-definition.json";
@@ -19,6 +20,7 @@ import {
   ArrowRight,
   Box,
   BookOpen,
+  ShoppingBag,
 } from "lucide-react";
 
 // View toggle component to avoid type narrowing issues
@@ -54,6 +56,17 @@ function ViewToggle({
       >
         <BookOpen size={14} />
         Instructions
+      </button>
+      <button
+        onClick={() => setView("materials")}
+        className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded transition-colors ${
+          currentView === "materials"
+            ? "text-white bg-zinc-700"
+            : "text-zinc-400 hover:text-white hover:bg-zinc-700"
+        }`}
+      >
+        <ShoppingBag size={14} />
+        {variant === "full" ? "Materials" : "Shop"}
       </button>
     </div>
   );
@@ -113,6 +126,28 @@ function App() {
           />
         </div>
         <InstructionsPage />
+      </div>
+    );
+  }
+
+  // Render Materials view
+  if (currentView === "materials") {
+    return (
+      <div className="w-full h-screen flex flex-col bg-zinc-900 overflow-hidden">
+        {/* View toggle header */}
+        <div className="flex-shrink-0 flex items-center justify-between px-4 py-2 border-b border-zinc-700">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-400 text-sm font-medium">
+              Bunkie Builder
+            </span>
+          </div>
+          <ViewToggle
+            currentView={currentView}
+            setView={setView}
+            variant="full"
+          />
+        </div>
+        <MaterialsPage />
       </div>
     );
   }

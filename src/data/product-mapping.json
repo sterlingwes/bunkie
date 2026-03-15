@@ -1,0 +1,269 @@
+{
+  "mappings": [
+    {
+      "requirementType": "stud",
+      "productId": "2x4-spf-8ft",
+      "notes": "Standard 2x4 studs for walls"
+    },
+    {
+      "requirementType": "stud-tall",
+      "productId": "2x4-spf-10ft",
+      "notes": "Taller studs for front wall"
+    },
+    {
+      "requirementType": "plate",
+      "productId": "2x4-spf-12ft",
+      "notes": "Long 2x4 for plates"
+    },
+    {
+      "requirementType": "rafter",
+      "productId": "2x6-spf-12ft",
+      "notes": "2x6 rafters with overhang"
+    },
+    {
+      "requirementType": "floor-joist",
+      "productId": "2x8-spf-10ft",
+      "notes": "2x8 floor joists"
+    },
+    {
+      "requirementType": "rim-joist",
+      "productId": "2x8-spf-12ft",
+      "notes": "2x8 rim joists"
+    },
+    {
+      "requirementType": "header",
+      "productId": "lvl-header-4ft",
+      "notes": "LVL header for door"
+    },
+    {
+      "requirementType": "header-window",
+      "productId": "lvl-header-3ft",
+      "notes": "LVL header for windows"
+    },
+    {
+      "requirementType": "fascia",
+      "productId": "1x8-pine-primed-8ft",
+      "notes": "1x8 primed fascia"
+    },
+    {
+      "requirementType": "rake",
+      "productId": "1x6-pine-primed-8ft",
+      "notes": "1x6 primed rake board"
+    },
+    {
+      "requirementType": "siding-board",
+      "productId": "1x8-pine-8ft",
+      "notes": "1x8 rough-sawn pine for board and batten"
+    },
+    {
+      "requirementType": "batten",
+      "productId": "1x6-pine-8ft",
+      "notes": "1x3/1x6 batten strips"
+    },
+    {
+      "requirementType": "tongue-groove",
+      "productId": "tongue-groove-pine",
+      "notes": "1x6 T&G pine for interior"
+    },
+    {
+      "requirementType": "trim",
+      "productId": "interior-trim",
+      "notes": "Pine casing and baseboard"
+    },
+    {
+      "requirementType": "wall-sheathing",
+      "productId": "osb-7-16-4x8",
+      "notes": "7/16 OSB sheathing"
+    },
+    {
+      "requirementType": "roof-sheathing",
+      "productId": "plywood-5-8-4x8",
+      "notes": "5/8 CDX plywood for roof"
+    },
+    {
+      "requirementType": "subfloor",
+      "productId": "plywood-5-8-tg-4x8",
+      "notes": "5/8 T&G plywood subfloor"
+    },
+    {
+      "requirementType": "insulation-rigid",
+      "productId": "xps-1inch-4x8",
+      "notes": "1\" XPS rigid foam"
+    },
+    {
+      "requirementType": "insulation-r20",
+      "productId": "r20-fiberglass-batt",
+      "notes": "R-20 wall insulation"
+    },
+    {
+      "requirementType": "insulation-r28",
+      "productId": "r28-fiberglass-batt",
+      "notes": "R-28 floor insulation"
+    },
+    {
+      "requirementType": "insulation-r40",
+      "productId": "r40-fiberglass-batt",
+      "notes": "R-40 ceiling insulation"
+    },
+    {
+      "requirementType": "vapor-barrier",
+      "productId": "vapor-barrier-6mil",
+      "notes": "6mil poly"
+    },
+    {
+      "requirementType": "housewrap",
+      "productId": "tyvek-9x50",
+      "notes": "Tyvek housewrap"
+    },
+    {
+      "requirementType": "flashing-tape",
+      "productId": "flashing-tape-4in",
+      "notes": "Self-adhered flashing"
+    },
+    {
+      "requirementType": "acoustic-sealant",
+      "productId": "acoustic-sealant",
+      "notes": "For vapor barrier edges"
+    },
+    {
+      "requirementType": "spray-foam",
+      "productId": "spray-foam-can",
+      "notes": "Great Stuff foam"
+    },
+    {
+      "requirementType": "caulk",
+      "productId": "exterior-caulk",
+      "notes": "Exterior silicone caulk"
+    },
+    {
+      "requirementType": "tuck-tape",
+      "productId": "tuck-tape",
+      "notes": "Vapor barrier tape"
+    },
+    {
+      "requirementType": "window",
+      "productId": "window-24x72",
+      "notes": "24x72 vinyl window"
+    },
+    {
+      "requirementType": "sliding-door",
+      "productId": "sliding-door-72x80",
+      "notes": "72x80 sliding patio door"
+    },
+    {
+      "requirementType": "door-trim",
+      "productId": "door-trim-kit",
+      "notes": "Vinyl brickmold trim"
+    },
+    {
+      "requirementType": "sonotube",
+      "productId": "sonotube-8",
+      "notes": "8\" sonotube forms"
+    },
+    {
+      "requirementType": "concrete",
+      "productId": "concrete-mix-30kg",
+      "notes": "30kg concrete bags"
+    },
+    {
+      "requirementType": "rebar",
+      "productId": "rebar-1-2-4ft",
+      "notes": "1/2\" rebar"
+    },
+    {
+      "requirementType": "epoxy-anchor",
+      "productId": "epoxy-anchor-kit",
+      "notes": "Hilti epoxy"
+    },
+    {
+      "requirementType": "post-base",
+      "productId": "post-base-abu44",
+      "notes": "Simpson post base"
+    },
+    {
+      "requirementType": "joist-hanger",
+      "productId": "joist-hanger-lu28",
+      "notes": "Simpson LU28"
+    },
+    {
+      "requirementType": "hurricane-tie",
+      "productId": "hurricane-ties",
+      "notes": "Simpson H2.5A"
+    },
+    {
+      "requirementType": "insulation-support",
+      "productId": "insulation-supports",
+      "notes": "Wire supports"
+    },
+    {
+      "requirementType": "shingles",
+      "productId": "arch-shingles-bundle",
+      "notes": "Architectural shingles"
+    },
+    {
+      "requirementType": "drip-edge",
+      "productId": "drip-edge-10ft",
+      "notes": "Aluminum drip edge"
+    },
+    {
+      "requirementType": "underlayment",
+      "productId": "underlayment-synthetic",
+      "notes": "Synthetic roof underlayment"
+    },
+    {
+      "requirementType": "framing-nails",
+      "productId": "framing-nails-3-1-4",
+      "notes": "3-1/4\" framing nails"
+    },
+    {
+      "requirementType": "deck-screws",
+      "productId": "deck-screws-3",
+      "notes": "3\" deck screws"
+    },
+    {
+      "requirementType": "roofing-nails",
+      "productId": "roofing-nails-1-1-4",
+      "notes": "Roofing nails"
+    },
+    {
+      "requirementType": "finish-nails",
+      "productId": "finish-nails-2",
+      "notes": "2\" brad nails"
+    },
+    {
+      "requirementType": "structural-screws",
+      "productId": "grk-screws",
+      "notes": "GRK structural screws"
+    },
+    {
+      "requirementType": "wood-stove",
+      "productId": "wood-stove-epa",
+      "notes": "EPA certified stove"
+    },
+    {
+      "requirementType": "chimney",
+      "productId": "chimney-kit",
+      "notes": "Class A chimney"
+    },
+    {
+      "requirementType": "stove-pipe",
+      "productId": "stove-pipe-kit",
+      "notes": "6\" stove pipe"
+    },
+    {
+      "requirementType": "co-detector",
+      "productId": "co-detector",
+      "notes": "CO detector"
+    },
+    {
+      "requirementType": "hearth",
+      "productId": "slate-hearth",
+      "notes": "Slate hearth"
+    },
+    {
+      "requirementType": "stain",
+      "productId": "clear-stain",
+      "notes": "UV protective stain"
+    }
+  ]
+}

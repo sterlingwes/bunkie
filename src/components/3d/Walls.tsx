@@ -12,6 +12,7 @@ import {
   TOP_PLATE_HEIGHT,
   PLATE_DEPTH,
   HEADER_HEIGHT,
+  SILL_HEIGHT,
   WINDOW_WIDTH,
   WINDOW_HEIGHT,
   WINDOW_SHIM_ALLOWANCE,
@@ -21,6 +22,11 @@ import {
   SHEATHING_OFFSET,
   STUD_HALF_WIDTH,
 } from "../../constants/framing";
+import {
+  getWallConfigs,
+  getWallHeightAtPosition as getWallHeightFromCalculator,
+  getOpeningFraming,
+} from "../../utils/framing-calculator";
 
 interface WallProps {
   component: Component;
@@ -29,12 +35,7 @@ interface WallProps {
   windowPosition?: "front" | "back";
 }
 
-export function Wall({
-  component,
-  hasDoor,
-  hasWindow,
-  windowPosition,
-}: WallProps) {
+export function Wall({ component, hasDoor, hasWindow }: WallProps) {
   const groupRef = useRef<Group>(null);
   const {
     selectedComponentId,
@@ -69,21 +70,19 @@ export function Wall({
     component.id === "wall-south" || component.id === "wall-north";
   const isSouthWall = component.id === "wall-south";
 
-  // For rake walls, the height varies from BACK_WALL_HEIGHT to FRONT_WALL_HEIGHT
-  // wall-south: rotated -90°, so local +X = world +Z (front, taller)
-  // wall-north: rotated +90°, so local +X = world -Z (back, shorter)
-  const getWallHeightAtX = (xPos: number): number => {
-    if (!isSideWall) return wallHeight;
-    // Normalize position to 0-1 range
-    const t = (xPos + wallLength / 2) / wallLength; // 0 at -X end, 1 at +X end
+  // Get wall config from the calculator based on wall ID
+  const wallId = component.id.replace("wall-", "") as
+    | "west"
+    | "east"
+    | "north"
+    | "south";
+  const wallConfigs = getWallConfigs();
+  const wallConfig = wallConfigs[wallId];
 
-    if (isSouthWall) {
-      // Local +X = world +Z (front), so higher t = taller
-      return BACK_WALL_HEIGHT + t * (FRONT_WALL_HEIGHT - BACK_WALL_HEIGHT);
-    } else {
-      // wall-north: Local +X = world -Z (back), so higher t = shorter
-      return FRONT_WALL_HEIGHT - t * (FRONT_WALL_HEIGHT - BACK_WALL_HEIGHT);
-    }
+  // For rake walls, the height varies from BACK_WALL_HEIGHT to FRONT_WALL_HEIGHT
+  // Use the calculator function for consistency
+  const getWallHeightAtX = (xPos: number): number => {
+    return getWallHeightFromCalculator(xPos, wallConfig);
   };
 
   // Rotation based on wall ID:
@@ -257,18 +256,19 @@ export function Wall({
   }, [isSideWall, isSouthWall, wallLength]);
 
   // Bottom plate height constant (needed early for window calculations)
-  // Bottom plate height constant (needed early for window calculations)
   const bottomPlateHeight = BOTTOM_PLATE_HEIGHT;
 
-  // Window opening position along wall
-  const windowOffset =
-    windowPosition === "front" ? wallLength / 4 : -wallLength / 4;
+  // Get opening framing for window (if present)
+  const windowOpeningFraming = hasWindow ? getOpeningFraming(wallConfig) : null;
+  const windowOffset = windowOpeningFraming?.centerX ?? 0;
 
   // Calculate header Y position for window (needed for sheathing with cutout)
   // These values are used by both framing and sheathing
-  const headerHeight = HEADER_HEIGHT;
-  const windowSillY = bottomPlateHeight + headerHeight / 2; // Center of sill
-  const windowHeaderY = windowSillY + 1.83 + headerHeight / 2; // Center of header
+  const windowSillY =
+    windowOpeningFraming?.sillY ?? bottomPlateHeight + SILL_HEIGHT / 2;
+  const windowHeaderY =
+    windowOpeningFraming?.headerY ??
+    bottomPlateHeight + WINDOW_HEIGHT + HEADER_HEIGHT / 2;
 
   // Create trapezoidal sheathing geometry for the section above window header
   // This is only used for side walls with windows
@@ -458,30 +458,15 @@ export function Wall({
       {/* Window framing - explicit king studs, header, and sill */}
       {hasWindow &&
         (() => {
-          // Window dimensions: 0.61m x 1.83m (24" x 72")
-          const windowWidth = WINDOW_WIDTH;
-          const windowHeight = WINDOW_HEIGHT;
-          const windowHalfWidth = windowWidth / 2; // 0.305m
+          const openingFraming = getOpeningFraming(wallConfig);
+          if (!openingFraming) return null;
 
-          // Rough opening (RO) - slightly larger than window for shims (20mm each side)
-          const roHalfWidth = windowHalfWidth + 0.02; // 0.325m
+          const windowOffset = openingFraming.centerX;
 
-          // King stud positions (centered at rough opening edges)
-          const studHalfWidth = STUD_HALF_WIDTH; // half of STUD_WIDTHm (2x4 actual width)
-          const kingStudLeftX = windowOffset - roHalfWidth - studHalfWidth;
-          const kingStudRightX = windowOffset + roHalfWidth + studHalfWidth;
-
-          // Header spans rough opening + king studs on each side
-          const headerWidth = roHalfWidth * 2 + STUD_WIDTH * 2; // RO + one king stud width on each side
-
-          // Header and sill Y positions
-          // For flat-bottom geometry: sill sits just above bottom plate
-          // For centered geometry: sill is relative to wall center
-          const headerHeight = HEADER_HEIGHT;
-          const sillY = isSideWall
-            ? bottomPlateHeight + headerHeight / 2 // Floor + bottom plate + half sill
-            : -wallHeight / 2 + STUD_DEPTH / 2 + STUD_WIDTH; // Original centered calculation
-          const headerY = sillY + windowHeight + headerHeight / 2;
+          // King stud positions
+          const roHalfWidth = openingFraming.roughOpeningWidth / 2;
+          const kingStudLeftX = windowOffset - roHalfWidth - STUD_HALF_WIDTH;
+          const kingStudRightX = windowOffset + roHalfWidth + STUD_HALF_WIDTH;
 
           // For rake walls, get the height at each king stud position
           const leftKingStudHeight = isSideWall
@@ -494,6 +479,17 @@ export function Wall({
           // Position king studs - flat bottom geometry for side walls
           const leftKingStudY = isSideWall ? leftKingStudHeight / 2 : 0;
           const rightKingStudY = isSideWall ? rightKingStudHeight / 2 : 0;
+
+          // Header and sill Y positions from calculator
+          // Calculator returns floor-relative coordinates
+          // For side walls (flat-bottom, y=0 at floor): use directly
+          // For front/back walls (centered geometry): need to convert
+          const headerY = isSideWall
+            ? openingFraming.headerY
+            : openingFraming.headerY - wallHeight / 2;
+          const sillY = isSideWall
+            ? openingFraming.sillY
+            : openingFraming.sillY - wallHeight / 2;
 
           return (
             <>
@@ -525,7 +521,9 @@ export function Wall({
                 castShadow
                 receiveShadow
               >
-                <boxGeometry args={[headerWidth, STUD_DEPTH, STUD_DEPTH]} />
+                <boxGeometry
+                  args={[openingFraming.headerWidth, STUD_DEPTH, STUD_DEPTH]}
+                />
                 <meshStandardMaterial color={frameColor} roughness={0.8} />
               </mesh>
 
@@ -535,7 +533,13 @@ export function Wall({
                 castShadow
                 receiveShadow
               >
-                <boxGeometry args={[roHalfWidth * 2, STUD_DEPTH, STUD_DEPTH]} />
+                <boxGeometry
+                  args={[
+                    openingFraming.roughOpeningWidth,
+                    STUD_DEPTH,
+                    STUD_DEPTH,
+                  ]}
+                />
                 <meshStandardMaterial color={frameColor} roughness={0.8} />
               </mesh>
             </>
@@ -545,21 +549,20 @@ export function Wall({
       {/* Door framing - explicit king studs and header */}
       {hasDoor &&
         (() => {
-          const doorHeight = DOOR_HEIGHT;
-          // Rough opening (RO) - slightly larger than door for shims (12.5mm each side)
-          const roHalfWidth = DOOR_RO_HALF_WIDTH;
+          const openingFraming = getOpeningFraming(wallConfig);
+          if (!openingFraming) return null;
 
-          // King stud positions (at rough opening edges)
-          const studHalfWidth = STUD_HALF_WIDTH; // half of STUD_WIDTHm (2x4 actual width)
-          const kingStudLeftX = -roHalfWidth - studHalfWidth;
-          const kingStudRightX = roHalfWidth + studHalfWidth;
+          // King stud positions
+          const roHalfWidth = openingFraming.roughOpeningWidth / 2;
+          const kingStudLeftX = -roHalfWidth - STUD_HALF_WIDTH;
+          const kingStudRightX = roHalfWidth + STUD_HALF_WIDTH;
 
-          // Header spans rough opening + king studs on each side
-          const headerWidth = roHalfWidth * 2 + STUD_WIDTH * 2; // RO + one king stud width on each side
-
-          // Header Y position (top of door opening)
-          const headerY =
-            -wallHeight / 2 + doorHeight + STUD_WIDTH + STUD_DEPTH / 2; // above bottom plate + door height
+          // Header Y position - calculator returns floor-relative, need to convert for centered geometry
+          // For front/back walls (centered geometry): y = headerY - wallHeight/2
+          // For side walls (flat-bottom geometry): y = headerY directly
+          const headerY = isSideWall
+            ? openingFraming.headerY
+            : openingFraming.headerY - wallHeight / 2;
 
           return (
             <>
@@ -575,7 +578,9 @@ export function Wall({
 
               {/* Header - spans rough opening, sits on jack studs */}
               <mesh position={[0, headerY, 0]} castShadow receiveShadow>
-                <boxGeometry args={[headerWidth, STUD_DEPTH, STUD_DEPTH]} />
+                <boxGeometry
+                  args={[openingFraming.headerWidth, STUD_DEPTH, STUD_DEPTH]}
+                />
                 <meshStandardMaterial color={frameColor} roughness={0.8} />
               </mesh>
             </>

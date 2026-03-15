@@ -116,6 +116,7 @@ export interface DimensionLineSVGProps {
   label: string;
   color?: string;
   offset?: number;
+  flipped?: boolean; // Set to true when inside a Y-flipped transform group
 }
 
 export function DimensionLineSVG({
@@ -125,10 +126,14 @@ export function DimensionLineSVG({
   y2,
   label,
   color = "#6B7280",
+  flipped = false,
 }: DimensionLineSVGProps) {
   const midX = (x1 + x2) / 2;
   const midY = (y1 + y2) / 2;
   const isHorizontal = Math.abs(x2 - x1) > Math.abs(y2 - y1);
+
+  // Counter-transform for text when inside a Y-flipped group
+  const textTransform = flipped ? "scale(1,-1)" : undefined;
 
   return (
     <g className="dimension-line-svg">
@@ -177,27 +182,30 @@ export function DimensionLineSVG({
         </>
       )}
 
-      {/* Label background */}
-      <rect
-        x={midX - 25}
-        y={midY - 8}
-        width="50"
-        height="16"
-        fill="white"
-        rx="2"
-      />
+      {/* Label background and text - with counter-transform if flipped */}
+      <g transform={textTransform}>
+        {/* Label background */}
+        <rect
+          x={midX - 25}
+          y={midY - 8}
+          width="50"
+          height="16"
+          fill="white"
+          rx="2"
+        />
 
-      {/* Label text */}
-      <text
-        x={midX}
-        y={midY + 4}
-        textAnchor="middle"
-        fontSize="10"
-        fill={color}
-        fontFamily="system-ui, sans-serif"
-      >
-        {label}
-      </text>
+        {/* Label text */}
+        <text
+          x={midX}
+          y={midY + 4}
+          textAnchor="middle"
+          fontSize="10"
+          fill={color}
+          fontFamily="system-ui, sans-serif"
+        >
+          {label}
+        </text>
+      </g>
     </g>
   );
 }

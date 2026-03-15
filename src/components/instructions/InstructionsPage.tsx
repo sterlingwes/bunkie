@@ -13,6 +13,7 @@ import { ElevationView } from "./drawing/ElevationView";
 import { InstructionStep } from "./InstructionStep";
 import { MaterialsList } from "./MaterialsList";
 import type { ViewType } from "../../schemas/bunkie.schema";
+import type { UnitSystem } from "../../utils/unit-conversion";
 
 const VIEW_LABELS: Record<ViewType, string> = {
   plan: "Plan View",
@@ -27,12 +28,14 @@ const VIEW_LABELS: Record<ViewType, string> = {
 function DrawingRenderer({
   view,
   step,
+  units,
 }: {
   view: ViewType;
   step: {
     phase: string;
     componentIds: string[];
   };
+  units: UnitSystem;
 }) {
   // Show different drawings based on phase and view type
   const showPiers =
@@ -56,6 +59,7 @@ function DrawingRenderer({
           showWalls={showWalls}
           showDimensions={true}
           scale={100}
+          units={units}
         />
       );
     case "side-view-front":
@@ -67,6 +71,7 @@ function DrawingRenderer({
           showOpenings={showOpenings}
           showRoof={true}
           scale={100}
+          units={units}
         />
       );
     case "side-view-back":
@@ -78,6 +83,7 @@ function DrawingRenderer({
           showOpenings={false}
           showRoof={true}
           scale={100}
+          units={units}
         />
       );
     case "side-view-side":
@@ -89,6 +95,7 @@ function DrawingRenderer({
           showOpenings={showOpenings}
           showRoof={true}
           scale={100}
+          units={units}
         />
       );
     default:
@@ -139,6 +146,7 @@ export function InstructionsPage() {
   const { currentStepIndex, nextStep, prevStep, bunkieDefinition } =
     useBunkieStore();
   const [selectedView, setSelectedView] = useState<ViewType | null>(null);
+  const [units, setUnits] = useState<UnitSystem>("imperial");
 
   const instructions = bunkieDefinition?.instructions ?? [];
   const components = bunkieDefinition?.components ?? [];
@@ -198,8 +206,18 @@ export function InstructionsPage() {
             </div>
           </div>
 
-          {/* Right: View selector + Next button */}
+          {/* Right: Unit toggle + View selector + Next button */}
           <div className="flex items-center gap-2">
+            {/* Unit toggle */}
+            <button
+              onClick={() =>
+                setUnits(units === "imperial" ? "metric" : "imperial")
+              }
+              className="px-2 py-1 text-xs font-medium rounded-md bg-zinc-700/50 hover:bg-zinc-600/50 transition-colors"
+              title={`Switch to ${units === "imperial" ? "metric" : "imperial"} units`}
+            >
+              {units === "imperial" ? "ft/in" : "mm/m"}
+            </button>
             {currentStep && currentStep.views.length > 1 && (
               <ViewSelector
                 views={currentStep.views}
@@ -222,8 +240,8 @@ export function InstructionsPage() {
       {/* Main content area */}
       <main className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
         {/* Drawing area */}
-        <div className="flex-1 p-2 sm:p-4 flex items-center justify-center min-h-[200px] lg:min-h-0">
-          <div className="w-full h-full bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="flex-1 p-2 sm:p-4 flex items-center justify-center min-h-[200px] lg:min-h-0 lg:max-h-[60vh]">
+          <div className="w-full h-full max-h-full bg-white rounded-lg shadow-lg overflow-auto">
             {currentStep ? (
               <DrawingRenderer
                 view={activeView}
@@ -231,6 +249,7 @@ export function InstructionsPage() {
                   phase: currentStep.phase,
                   componentIds: currentStep.componentIds,
                 }}
+                units={units}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

@@ -1,0 +1,785 @@
+{
+  "products": [
+    {
+      "id": "2x4-spf-8ft",
+      "name": "2x4 SPF Stud 8'",
+      "category": "lumber",
+      "subcategory": "studs",
+      "dimensions": {
+        "length": 2438,
+        "width": 89,
+        "thickness": 38
+      },
+      "imperialDimensions": "8'",
+      "unit": "pieces",
+      "price": 6.5,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "SPF #2 or better, actual 1.5\" x 3.5\""
+    },
+    {
+      "id": "2x4-spf-10ft",
+      "name": "2x4 SPF Stud 10'",
+      "category": "lumber",
+      "subcategory": "studs",
+      "dimensions": {
+        "length": 3048,
+        "width": 89,
+        "thickness": 38
+      },
+      "imperialDimensions": "10'",
+      "unit": "pieces",
+      "price": 8.5,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "SPF #2 or better, for taller studs"
+    },
+    {
+      "id": "2x4-spf-12ft",
+      "name": "2x4 SPF Lumber 12'",
+      "category": "lumber",
+      "subcategory": "plates",
+      "dimensions": {
+        "length": 3658,
+        "width": 89,
+        "thickness": 38
+      },
+      "imperialDimensions": "12'",
+      "unit": "pieces",
+      "price": 10.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For plates and long runs"
+    },
+    {
+      "id": "2x6-spf-10ft",
+      "name": "2x6 SPF Lumber 10'",
+      "category": "lumber",
+      "subcategory": "rafters",
+      "dimensions": {
+        "length": 3048,
+        "width": 140,
+        "thickness": 38
+      },
+      "imperialDimensions": "10'",
+      "unit": "pieces",
+      "price": 11.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For rafters"
+    },
+    {
+      "id": "2x6-spf-12ft",
+      "name": "2x6 SPF Lumber 12'",
+      "category": "lumber",
+      "subcategory": "rafters",
+      "dimensions": {
+        "length": 3658,
+        "width": 140,
+        "thickness": 38
+      },
+      "imperialDimensions": "12'",
+      "unit": "pieces",
+      "price": 13.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For rafters with overhang"
+    },
+    {
+      "id": "2x8-spf-10ft",
+      "name": "2x8 SPF Lumber 10'",
+      "category": "lumber",
+      "subcategory": "joists",
+      "dimensions": {
+        "length": 3048,
+        "width": 184,
+        "thickness": 38
+      },
+      "imperialDimensions": "10'",
+      "unit": "pieces",
+      "price": 14.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For floor joists"
+    },
+    {
+      "id": "2x8-spf-12ft",
+      "name": "2x8 SPF Lumber 12'",
+      "category": "lumber",
+      "subcategory": "rim-joist",
+      "dimensions": {
+        "length": 3658,
+        "width": 184,
+        "thickness": 38
+      },
+      "imperialDimensions": "12'",
+      "unit": "pieces",
+      "price": 17.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For rim joists"
+    },
+    {
+      "id": "1x6-pine-8ft",
+      "name": "1x6 Pine Board 8'",
+      "category": "lumber",
+      "subcategory": "finish",
+      "dimensions": {
+        "length": 2438,
+        "width": 140,
+        "thickness": 19
+      },
+      "imperialDimensions": "8'",
+      "unit": "pieces",
+      "price": 8.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For interior T&G or battens"
+    },
+    {
+      "id": "1x8-pine-8ft",
+      "name": "1x8 Pine Board 8'",
+      "category": "lumber",
+      "subcategory": "siding",
+      "dimensions": {
+        "length": 2438,
+        "width": 184,
+        "thickness": 19
+      },
+      "imperialDimensions": "8'",
+      "unit": "pieces",
+      "price": 10.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For board and batten siding"
+    },
+    {
+      "id": "1x8-pine-primed-8ft",
+      "name": "1x8 SPF Primed Fascia 8'",
+      "category": "lumber",
+      "subcategory": "fascia",
+      "dimensions": {
+        "length": 2438,
+        "width": 184,
+        "thickness": 19
+      },
+      "imperialDimensions": "8'",
+      "unit": "pieces",
+      "price": 12.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For fascia boards"
+    },
+    {
+      "id": "1x6-pine-primed-8ft",
+      "name": "1x6 SPF Primed Rake 8'",
+      "category": "lumber",
+      "subcategory": "rake",
+      "dimensions": {
+        "length": 2438,
+        "width": 140,
+        "thickness": 19
+      },
+      "imperialDimensions": "8'",
+      "unit": "pieces",
+      "price": 10.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For rake boards"
+    },
+    {
+      "id": "lvl-header-4ft",
+      "name": "LVL Header 4' x 3.5\"",
+      "category": "lumber",
+      "subcategory": "headers",
+      "dimensions": {
+        "length": 1219,
+        "width": 89,
+        "thickness": 38
+      },
+      "imperialDimensions": "4'",
+      "unit": "pieces",
+      "price": 45.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "For door header"
+    },
+    {
+      "id": "lvl-header-3ft",
+      "name": "LVL Header 3' x 3.5\"",
+      "category": "lumber",
+      "subcategory": "headers",
+      "dimensions": {
+        "length": 914,
+        "width": 89,
+        "thickness": 38
+      },
+      "imperialDimensions": "3'",
+      "unit": "pieces",
+      "price": 35.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "For window headers"
+    },
+    {
+      "id": "osb-7-16-4x8",
+      "name": "7/16\" OSB Sheathing 4x8",
+      "category": "sheet-goods",
+      "subcategory": "wall-sheathing",
+      "dimensions": {
+        "length": 2438,
+        "width": 1219,
+        "thickness": 11,
+        "area": 2.98
+      },
+      "imperialDimensions": "4'x8'",
+      "unit": "sheets",
+      "price": 28.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Exposure 1 rated"
+    },
+    {
+      "id": "plywood-5-8-4x8",
+      "name": "5/8\" CDX Plywood 4x8",
+      "category": "sheet-goods",
+      "subcategory": "roof-sheathing",
+      "dimensions": {
+        "length": 2438,
+        "width": 1219,
+        "thickness": 16,
+        "area": 2.98
+      },
+      "imperialDimensions": "4'x8'",
+      "unit": "sheets",
+      "price": 65.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "CDX exterior grade for roof"
+    },
+    {
+      "id": "plywood-5-8-tg-4x8",
+      "name": "5/8\" T&G Plywood Subfloor 4x8",
+      "category": "sheet-goods",
+      "subcategory": "subfloor",
+      "dimensions": {
+        "length": 2438,
+        "width": 1219,
+        "thickness": 16,
+        "area": 2.98
+      },
+      "imperialDimensions": "4'x8'",
+      "unit": "sheets",
+      "price": 55.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Tongue & groove, exterior grade"
+    },
+    {
+      "id": "xps-1inch-4x8",
+      "name": "1\" XPS Rigid Foam 4x8",
+      "category": "insulation",
+      "subcategory": "rigid",
+      "dimensions": {
+        "length": 2438,
+        "width": 1219,
+        "thickness": 25,
+        "area": 2.98
+      },
+      "imperialDimensions": "4'x8'",
+      "unit": "sheets",
+      "price": 45.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "R-5 continuous exterior insulation"
+    },
+    {
+      "id": "r20-fiberglass-batt",
+      "name": "R-20 Fiberglass Batts (15\")",
+      "category": "insulation",
+      "subcategory": "batts",
+      "dimensions": {
+        "thickness": 152
+      },
+      "imperialDimensions": "6\" thick",
+      "unit": "m²",
+      "price": 7.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "15\" width for 16\" OC studs"
+    },
+    {
+      "id": "r28-fiberglass-batt",
+      "name": "R-28 Fiberglass Batts (23\")",
+      "category": "insulation",
+      "subcategory": "batts",
+      "dimensions": {
+        "thickness": 216
+      },
+      "imperialDimensions": "8.5\" thick",
+      "unit": "m²",
+      "price": 15.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "23\" width for 16\" OC joists"
+    },
+    {
+      "id": "r40-fiberglass-batt",
+      "name": "R-40 Fiberglass Batts (24\")",
+      "category": "insulation",
+      "subcategory": "batts",
+      "dimensions": {
+        "thickness": 305
+      },
+      "imperialDimensions": "12\" thick",
+      "unit": "m²",
+      "price": 18.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For ceiling/roof cavity"
+    },
+    {
+      "id": "window-24x72",
+      "name": "24\" x 72\" Vinyl Window",
+      "category": "windows-doors",
+      "subcategory": "windows",
+      "dimensions": {
+        "length": 610,
+        "width": 1830
+      },
+      "imperialDimensions": "24\"x72\"",
+      "unit": "pieces",
+      "price": 280.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "Dual pane Low-E vinyl"
+    },
+    {
+      "id": "sliding-door-72x80",
+      "name": "72\" x 80\" Sliding Patio Door",
+      "category": "windows-doors",
+      "subcategory": "doors",
+      "dimensions": {
+        "length": 1829,
+        "width": 2032
+      },
+      "imperialDimensions": "72\"x80\"",
+      "unit": "pieces",
+      "price": 750.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Vinyl dual pane Low-E"
+    },
+    {
+      "id": "sonotube-8",
+      "name": "8\" Sonotube",
+      "category": "foundation",
+      "dimensions": {
+        "length": 1219,
+        "width": 203
+      },
+      "imperialDimensions": "8\"x4'",
+      "unit": "pieces",
+      "price": 15.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "8\" diameter concrete form"
+    },
+    {
+      "id": "concrete-mix-30kg",
+      "name": "Concrete Mix 30kg",
+      "category": "foundation",
+      "dimensions": {},
+      "imperialDimensions": "30kg bag",
+      "unit": "bags",
+      "price": 8.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "High-strength mix"
+    },
+    {
+      "id": "rebar-1-2-4ft",
+      "name": "1/2\" Rebar 4'",
+      "category": "foundation",
+      "dimensions": {
+        "length": 1219,
+        "thickness": 13
+      },
+      "imperialDimensions": "4'",
+      "unit": "pieces",
+      "price": 6.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For pinning to bedrock"
+    },
+    {
+      "id": "epoxy-anchor-kit",
+      "name": "Hilti HIT-RE 500 Epoxy",
+      "category": "foundation",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "sets",
+      "price": 18.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "Epoxy anchor system"
+    },
+    {
+      "id": "post-base-abu44",
+      "name": "Simpson ABU44 Post Base",
+      "category": "hardware",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "pieces",
+      "price": 14.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Adjustable post base"
+    },
+    {
+      "id": "arch-shingles-bundle",
+      "name": "Architectural Shingles",
+      "category": "roofing",
+      "dimensions": {
+        "area": 3.0
+      },
+      "imperialDimensions": "33.3 sq ft/bundle",
+      "unit": "bundles",
+      "price": 45.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "30-year architectural"
+    },
+    {
+      "id": "drip-edge-10ft",
+      "name": "Aluminum Drip Edge 10'",
+      "category": "roofing",
+      "dimensions": {
+        "length": 3048
+      },
+      "imperialDimensions": "10'",
+      "unit": "pieces",
+      "price": 9.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Aluminum drip edge"
+    },
+    {
+      "id": "underlayment-synthetic",
+      "name": "Synthetic Roof Underlayment",
+      "category": "roofing",
+      "dimensions": {
+        "area": 92.9
+      },
+      "imperialDimensions": "10 sq",
+      "unit": "rolls",
+      "price": 45.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Synthetic felt"
+    },
+    {
+      "id": "tyvek-9x50",
+      "name": "Tyvek Housewrap 9'x50'",
+      "category": "weatherproofing",
+      "dimensions": {
+        "area": 41.8
+      },
+      "imperialDimensions": "9'x50'",
+      "unit": "rolls",
+      "price": 85.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Housewrap roll"
+    },
+    {
+      "id": "flashing-tape-4in",
+      "name": "Grace Vycor Plus 4\"",
+      "category": "weatherproofing",
+      "dimensions": {
+        "length": 22860
+      },
+      "imperialDimensions": "4\"x75'",
+      "unit": "rolls",
+      "price": 25.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Self-adhered flashing"
+    },
+    {
+      "id": "vapor-barrier-6mil",
+      "name": "6mil Poly Vapor Barrier",
+      "category": "weatherproofing",
+      "dimensions": {
+        "area": 92.9
+      },
+      "imperialDimensions": "10'x100'",
+      "unit": "rolls",
+      "price": 45.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "6mil polyethylene"
+    },
+    {
+      "id": "acoustic-sealant",
+      "name": "Acoustic Sealant",
+      "category": "weatherproofing",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "tubes",
+      "price": 8.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For vapor barrier sealing"
+    },
+    {
+      "id": "tuck-tape",
+      "name": "Tuck Tape",
+      "category": "weatherproofing",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "rolls",
+      "price": 12.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Red sheathing tape"
+    },
+    {
+      "id": "exterior-caulk",
+      "name": "Exterior Silicone Caulk",
+      "category": "weatherproofing",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "tubes",
+      "price": 8.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Paintable silicone"
+    },
+    {
+      "id": "spray-foam-can",
+      "name": "Great Stuff Spray Foam",
+      "category": "weatherproofing",
+      "dimensions": {},
+      "imperialDimensions": "16oz can",
+      "unit": "cans",
+      "price": 12.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For gaps and penetrations"
+    },
+    {
+      "id": "framing-nails-3-1-4",
+      "name": "3-1/4\" Framing Nails",
+      "category": "fasteners",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "boxes",
+      "price": 40.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Hot-dipped galvanized"
+    },
+    {
+      "id": "deck-screws-3",
+      "name": "3\" Deck Screws",
+      "category": "fasteners",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "boxes",
+      "price": 35.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Exterior grade"
+    },
+    {
+      "id": "roofing-nails-1-1-4",
+      "name": "1-1/4\" Roofing Nails",
+      "category": "fasteners",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "boxes",
+      "price": 25.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Coil roofing nails"
+    },
+    {
+      "id": "finish-nails-2",
+      "name": "2\" Finish Nails",
+      "category": "fasteners",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "boxes",
+      "price": 15.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "18ga brad nails"
+    },
+    {
+      "id": "grk-screws",
+      "name": "GRK Structural Screws",
+      "category": "fasteners",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "boxes",
+      "price": 45.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Hex head structural"
+    },
+    {
+      "id": "joist-hanger-lu28",
+      "name": "Simpson LU28 Joist Hanger",
+      "category": "hardware",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "pieces",
+      "price": 2.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For 2x8 joists"
+    },
+    {
+      "id": "hurricane-ties",
+      "name": "Hurricane Ties",
+      "category": "hardware",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "pieces",
+      "price": 1.5,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Simpson H2.5A"
+    },
+    {
+      "id": "insulation-supports",
+      "name": "Insulation Supports",
+      "category": "hardware",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "pieces",
+      "price": 0.5,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Light gauge wire"
+    },
+    {
+      "id": "wood-stove-epa",
+      "name": "EPA Certified Wood Stove",
+      "category": "appliances",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "units",
+      "price": 1500.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "Drolet or equivalent, 2020 EPA certified"
+    },
+    {
+      "id": "chimney-kit",
+      "name": "Class A Chimney Kit",
+      "category": "appliances",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "kits",
+      "price": 500.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "Double-wall through-roof"
+    },
+    {
+      "id": "stove-pipe-kit",
+      "name": "6\" Stove Pipe Kit",
+      "category": "appliances",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "kits",
+      "price": 120.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "Double-wall adjustable"
+    },
+    {
+      "id": "co-detector",
+      "name": "CO Detector",
+      "category": "appliances",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "units",
+      "price": 40.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Battery backup required"
+    },
+    {
+      "id": "slate-hearth",
+      "name": "Slate Hearth 36\"x36\"",
+      "category": "appliances",
+      "dimensions": {
+        "length": 914,
+        "width": 914
+      },
+      "imperialDimensions": "36\"x36\"",
+      "unit": "pieces",
+      "price": 200.0,
+      "currency": "CAD",
+      "vendor": "Special Order",
+      "notes": "Non-combustible hearth"
+    },
+    {
+      "id": "tongue-groove-pine",
+      "name": "1x6 T&G Pine",
+      "category": "finishing",
+      "dimensions": {
+        "length": 2438,
+        "width": 140,
+        "thickness": 19
+      },
+      "imperialDimensions": "1x6x8'",
+      "unit": "m²",
+      "price": 10.0,
+      "currency": "CAD",
+      "vendor": "Local Lumber",
+      "notes": "Eastern White Pine, knotty grade"
+    },
+    {
+      "id": "interior-trim",
+      "name": "Pine Casing/Baseboard",
+      "category": "finishing",
+      "dimensions": {
+        "length": 2438
+      },
+      "imperialDimensions": "8'",
+      "unit": "linear m",
+      "price": 4.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "Pine trim"
+    },
+    {
+      "id": "clear-stain",
+      "name": "Clear Wood Stain",
+      "category": "finishing",
+      "dimensions": {},
+      "imperialDimensions": "1 gallon",
+      "unit": "gallons",
+      "price": 50.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "UV protective clear coat"
+    },
+    {
+      "id": "door-trim-kit",
+      "name": "Vinyl Brickmold Trim Kit",
+      "category": "finishing",
+      "dimensions": {},
+      "imperialDimensions": "",
+      "unit": "kits",
+      "price": 45.0,
+      "currency": "CAD",
+      "vendor": "Home Depot",
+      "notes": "For patio door"
+    }
+  ]
+}

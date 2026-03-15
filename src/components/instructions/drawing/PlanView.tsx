@@ -5,6 +5,16 @@
  * Displays foundation piers, floor joists, wall positions, and openings.
  *
  * All dimensions come from constants/framing.ts
+ *
+ * IMPORTANT: The plan view follows standard architectural convention with North at TOP.
+ * 3D Model coordinates: +Z = Front (West), -Z = Back (East), +X = South, -X = North
+ * SVG coordinates (Y increases downward):
+ * - SVG -Y direction (top) = North side of building = North wall (with window)
+ * - SVG +Y direction (bottom) = South side of building = South wall (with window)
+ * - SVG -X direction (left) = West side of building = Front wall (with door)
+ * - SVG +X direction (right) = East side of building = Back wall (solid)
+ *
+ * Coordinate mapping: SVG_x = 3D_z, SVG_y = 3D_x
  */
 
 import {
@@ -12,13 +22,21 @@ import {
   FRONT_WALL_LENGTH,
   PIER_RADIUS,
   JOIST_WIDTH,
-  JOIST_SPACING,
   STUD_WIDTH,
   DOOR_WIDTH,
   WINDOW_WIDTH,
 } from "../../../constants/framing";
 import { DimensionLineSVG } from "./DimensionLine";
 import { DRAWING_COLORS } from "../../../utils/drawing-utils";
+import {
+  UnitSystem,
+  formatDimension,
+  formatArea,
+} from "../../../utils/unit-conversion";
+import {
+  getPierPositions,
+  getJoistPositions,
+} from "../../../utils/framing-calculator";
 
 export interface PlanViewProps {
   showPiers?: boolean;
@@ -26,94 +44,55 @@ export interface PlanViewProps {
   showWalls?: boolean;
   showDimensions?: boolean;
   scale?: number;
-}
-
-/**
- * Calculate pier positions for plan view
- * 6 piers in 2 rows of 3
- */
-function getPierPositions() {
-  const halfDepth = SIDE_WALL_LENGTH / 2;
-
-  // Piers are positioned near corners and midpoints
-  // Aligned with joist layout
-  const xSpacing = FRONT_WALL_LENGTH / 2;
-
-  return [
-    // Back row (south, negative Z)
-    { id: "pier-bl", cx: -xSpacing + 0.15, cy: -halfDepth + 0.15, label: "BL" },
-    { id: "pier-ml", cx: 0, cy: -halfDepth + 0.15, label: "ML" },
-    { id: "pier-br", cx: xSpacing - 0.15, cy: -halfDepth + 0.15, label: "BR" },
-    // Front row (north, positive Z)
-    { id: "pier-fl", cx: -xSpacing + 0.15, cy: halfDepth - 0.15, label: "FL" },
-    { id: "pier-mr", cx: 0, cy: halfDepth - 0.15, label: "MR" },
-    { id: "pier-fr", cx: xSpacing - 0.15, cy: halfDepth - 0.15, label: "FR" },
-  ];
-}
-
-/**
- * Calculate floor joist positions
- * Joists run along Z axis (front to back), spaced at 16" OC
- */
-function getJoistPositions() {
-  const joists: { x: number; isRim: boolean }[] = [];
-  const halfWidth = FRONT_WALL_LENGTH / 2;
-
-  // Rim joists at edges
-  joists.push({ x: -halfWidth + JOIST_WIDTH / 2, isRim: true });
-  joists.push({ x: halfWidth - JOIST_WIDTH / 2, isRim: true });
-
-  // Interior joists at 16" OC
-  let x = -halfWidth + JOIST_SPACING;
-  while (x < halfWidth - JOIST_WIDTH) {
-    joists.push({ x, isRim: false });
-    x += JOIST_SPACING;
-  }
-
-  return joists;
+  units?: UnitSystem;
 }
 
 /**
  * Get wall rectangles for plan view
+ * Coordinate mapping: SVG_x = 3D_z, SVG_y = 3D_x
+ * - West (3D +Z) -> SVG negative x (left)
+ * - East (3D -Z) -> SVG positive x (right)
+ * - North (3D -X) -> SVG negative y (top)
+ * - South (3D +X) -> SVG positive y (bottom)
  */
 function getWalls() {
-  const halfWidth = FRONT_WALL_LENGTH / 2;
-  const halfDepth = SIDE_WALL_LENGTH / 2;
+  const halfNorthSouth = SIDE_WALL_LENGTH / 2; // SVG Y extent
+  const halfWestEast = FRONT_WALL_LENGTH / 2; // SVG X extent
   const wallThickness = STUD_WIDTH * 2 + 0.011 * 2; // 2x4 + sheathing both sides
 
   return {
-    // West wall (front) - has door
+    // West wall (front) - has door - at SVG left (negative x)
     west: {
-      x: -halfWidth,
-      y: halfDepth - wallThickness,
-      width: FRONT_WALL_LENGTH,
-      height: wallThickness,
+      x: -halfWestEast,
+      y: -halfNorthSouth,
+      width: wallThickness,
+      height: SIDE_WALL_LENGTH,
       hasOpening: "door",
       openingWidth: DOOR_WIDTH,
     },
-    // East wall (back) - solid
+    // East wall (back) - solid - at SVG right (positive x)
     east: {
-      x: -halfWidth,
-      y: -halfDepth,
-      width: FRONT_WALL_LENGTH,
-      height: wallThickness,
-      hasOpening: null,
-    },
-    // South wall - has window
-    south: {
-      x: halfWidth - wallThickness,
-      y: -halfDepth,
+      x: halfWestEast - wallThickness,
+      y: -halfNorthSouth,
       width: wallThickness,
       height: SIDE_WALL_LENGTH,
+      hasOpening: null,
+    },
+    // South wall - has window - at SVG bottom (positive y)
+    south: {
+      x: -halfWestEast,
+      y: halfNorthSouth - wallThickness,
+      width: FRONT_WALL_LENGTH,
+      height: wallThickness,
       hasOpening: "window",
       openingWidth: WINDOW_WIDTH,
     },
-    // North wall - has window
+    // North wall - has window - at SVG top (negative y)
     north: {
-      x: -halfWidth,
-      y: -halfDepth,
-      width: wallThickness,
-      height: SIDE_WALL_LENGTH,
+      x: -halfWestEast,
+      y: -halfNorthSouth,
+      width: FRONT_WALL_LENGTH,
+      height: wallThickness,
       hasOpening: "window",
       openingWidth: WINDOW_WIDTH,
     },
@@ -126,16 +105,33 @@ export function PlanView({
   showWalls = true,
   showDimensions = true,
   scale = 100, // 1m = 100px
+  units = "imperial",
 }: PlanViewProps) {
-  const halfWidth = FRONT_WALL_LENGTH / 2;
-  const halfDepth = SIDE_WALL_LENGTH / 2;
+  const halfNorthSouth = SIDE_WALL_LENGTH / 2; // SVG Y extent (North-South)
+  const halfWestEast = FRONT_WALL_LENGTH / 2; // SVG X extent (West-East)
   const wallThickness = STUD_WIDTH * 2 + 0.011 * 2;
 
-  const piers = getPierPositions();
-  const joists = getJoistPositions();
+  // Get pier and joist positions from calculator
+  // Note: Calculator returns 3D coordinates (x, z) which map directly to SVG (cx, cy)
+  const piers3D = getPierPositions();
+  const joists3D = getJoistPositions();
+
+  // Transform 3D pier positions to SVG coordinates
+  // SVG cx = 3D x, SVG cy = 3D z
+  const piers = piers3D.map((p) => ({
+    id: p.id,
+    cx: p.x,
+    cy: p.z,
+    label: p.label,
+  }));
+
+  // Joists are already in the correct coordinate system
+  const joists = joists3D;
+
   const walls = getWalls();
 
   // ViewBox centered on floor plan
+  // Width = West-East extent, Height = North-South extent
   const padding = 0.5; // 0.5m padding
   const viewBoxWidth = FRONT_WALL_LENGTH + padding * 2;
   const viewBoxHeight = SIDE_WALL_LENGTH + padding * 2;
@@ -146,8 +142,8 @@ export function PlanView({
       width="100%"
       height="100%"
       viewBox={viewBox}
+      preserveAspectRatio="xMidYMid meet"
       className="bg-white"
-      style={{ maxHeight: "100%" }}
     >
       {/* Grid */}
       <defs>
@@ -175,8 +171,8 @@ export function PlanView({
 
       {/* Floor outline (subfloor) */}
       <rect
-        x={(-halfWidth - 0.01) * scale}
-        y={(-halfDepth - 0.01) * scale}
+        x={(-halfWestEast - 0.01) * scale}
+        y={(-halfNorthSouth - 0.01) * scale}
         width={(FRONT_WALL_LENGTH + 0.02) * scale}
         height={(SIDE_WALL_LENGTH + 0.02) * scale}
         fill="#FEF3C7"
@@ -184,13 +180,13 @@ export function PlanView({
         strokeWidth="1"
       />
 
-      {/* Floor joists */}
+      {/* Floor joists - vertical rectangles running North-South */}
       {showJoists &&
         joists.map((joist, i) => (
           <rect
             key={`joist-${i}`}
             x={(joist.x - JOIST_WIDTH / 2) * scale}
-            y={(-halfDepth + JOIST_WIDTH) * scale}
+            y={(-halfNorthSouth + JOIST_WIDTH) * scale}
             width={JOIST_WIDTH * scale}
             height={(SIDE_WALL_LENGTH - JOIST_WIDTH * 2) * scale}
             fill={joist.isRim ? DRAWING_COLORS.joist : "#D1D5DB"}
@@ -227,7 +223,7 @@ export function PlanView({
       {/* Walls */}
       {showWalls && (
         <g>
-          {/* West wall (front) with door */}
+          {/* West wall (front) with door - at left */}
           <rect
             x={walls.west.x * scale}
             y={walls.west.y * scale}
@@ -237,27 +233,27 @@ export function PlanView({
             stroke={DRAWING_COLORS.outline}
             strokeWidth="1"
           />
-          {/* Door opening */}
+          {/* Door opening - centered in West wall */}
           <rect
-            x={(-DOOR_WIDTH / 2 - 0.02) * scale}
-            y={(halfDepth - wallThickness) * scale}
-            width={(DOOR_WIDTH + 0.04) * scale}
-            height={wallThickness * scale}
+            x={(-wallThickness / 2) * scale}
+            y={(-DOOR_WIDTH / 2 - 0.02) * scale}
+            width={wallThickness * scale}
+            height={(DOOR_WIDTH + 0.04) * scale}
             fill="white"
             stroke={DRAWING_COLORS.outline}
             strokeWidth="0.5"
             strokeDasharray="3,2"
           />
-          {/* Door swing arc */}
+          {/* Door swing arc - opens to the right (East) */}
           <path
-            d={`M 0 ${(halfDepth - wallThickness / 2) * scale} A ${0.6 * scale} ${0.6 * scale} 0 0 1 ${-0.6 * scale} ${(halfDepth - wallThickness / 2) * scale}`}
+            d={`M ${(-wallThickness / 2) * scale} 0 A ${0.6 * scale} ${0.6 * scale} 0 0 0 ${(-wallThickness / 2) * scale} ${0.6 * scale}`}
             fill="none"
             stroke={DRAWING_COLORS.outline}
             strokeWidth="0.5"
             strokeDasharray="2,2"
           />
 
-          {/* East wall (back) - solid */}
+          {/* East wall (back) - solid - at right */}
           <rect
             x={walls.east.x * scale}
             y={walls.east.y * scale}
@@ -268,7 +264,7 @@ export function PlanView({
             strokeWidth="1"
           />
 
-          {/* South wall with window */}
+          {/* South wall with window - at bottom */}
           <rect
             x={walls.south.x * scale}
             y={walls.south.y * scale}
@@ -278,19 +274,19 @@ export function PlanView({
             stroke={DRAWING_COLORS.outline}
             strokeWidth="1"
           />
-          {/* Window opening */}
+          {/* Window opening - centered in South wall */}
           <rect
-            x={(halfWidth - wallThickness) * scale}
-            y={(-WINDOW_WIDTH / 2 - 0.02) * scale}
-            width={wallThickness * scale}
-            height={(WINDOW_WIDTH + 0.04) * scale}
+            x={(-WINDOW_WIDTH / 2 - 0.02) * scale}
+            y={(halfNorthSouth - wallThickness) * scale}
+            width={(WINDOW_WIDTH + 0.04) * scale}
+            height={wallThickness * scale}
             fill="white"
             stroke={DRAWING_COLORS.outline}
             strokeWidth="0.5"
             strokeDasharray="3,2"
           />
 
-          {/* North wall with window */}
+          {/* North wall with window - at top */}
           <rect
             x={walls.north.x * scale}
             y={walls.north.y * scale}
@@ -300,12 +296,12 @@ export function PlanView({
             stroke={DRAWING_COLORS.outline}
             strokeWidth="1"
           />
-          {/* Window opening */}
+          {/* Window opening - centered in North wall */}
           <rect
-            x={-halfWidth * scale}
-            y={(-WINDOW_WIDTH / 2 - 0.02) * scale}
-            width={wallThickness * scale}
-            height={(WINDOW_WIDTH + 0.04) * scale}
+            x={(-WINDOW_WIDTH / 2 - 0.02) * scale}
+            y={-halfNorthSouth * scale}
+            width={(WINDOW_WIDTH + 0.04) * scale}
+            height={wallThickness * scale}
             fill="white"
             stroke={DRAWING_COLORS.outline}
             strokeWidth="0.5"
@@ -317,34 +313,56 @@ export function PlanView({
       {/* Dimension lines */}
       {showDimensions && (
         <g>
-          {/* Width dimension (bottom) */}
+          {/* Width dimension (bottom) - West to East */}
           <DimensionLineSVG
-            x1={-halfWidth * scale}
-            y1={(halfDepth + 0.35) * scale}
-            x2={halfWidth * scale}
-            y2={(halfDepth + 0.35) * scale}
-            label={`${(FRONT_WALL_LENGTH * 1000).toFixed(0)}mm`}
+            x1={-halfWestEast * scale}
+            y1={(halfNorthSouth + 0.35) * scale}
+            x2={halfWestEast * scale}
+            y2={(halfNorthSouth + 0.35) * scale}
+            label={formatDimension(FRONT_WALL_LENGTH, units)}
             color={DRAWING_COLORS.dimension}
           />
 
-          {/* Depth dimension (right) */}
+          {/* Depth dimension (right) - North to South */}
           <DimensionLineSVG
-            x1={(halfWidth + 0.35) * scale}
-            y1={-halfDepth * scale}
-            x2={(halfWidth + 0.35) * scale}
-            y2={halfDepth * scale}
-            label={`${(SIDE_WALL_LENGTH * 1000).toFixed(0)}mm`}
+            x1={(halfWestEast + 0.35) * scale}
+            y1={-halfNorthSouth * scale}
+            x2={(halfWestEast + 0.35) * scale}
+            y2={halfNorthSouth * scale}
+            label={formatDimension(SIDE_WALL_LENGTH, units)}
             color={DRAWING_COLORS.dimension}
           />
 
-          {/* Door width dimension */}
+          {/* Door width dimension - on West side */}
           <DimensionLineSVG
-            x1={(-DOOR_WIDTH / 2) * scale}
-            y1={(halfDepth + 0.2) * scale}
-            x2={(DOOR_WIDTH / 2) * scale}
-            y2={(halfDepth + 0.2) * scale}
-            label={`${(DOOR_WIDTH * 1000).toFixed(0)}mm`}
+            x1={(-halfWestEast - 0.2) * scale}
+            y1={(-DOOR_WIDTH / 2) * scale}
+            x2={(-halfWestEast - 0.2) * scale}
+            y2={(DOOR_WIDTH / 2) * scale}
+            label={formatDimension(DOOR_WIDTH, units, { showInchesOnly: true })}
             color="#9CA3AF"
+          />
+
+          {/* Window width dimensions - on South side */}
+          <DimensionLineSVG
+            x1={(-WINDOW_WIDTH / 2) * scale}
+            y1={(halfNorthSouth + 0.2) * scale}
+            x2={(WINDOW_WIDTH / 2) * scale}
+            y2={(halfNorthSouth + 0.2) * scale}
+            label={formatDimension(WINDOW_WIDTH, units, {
+              showInchesOnly: true,
+            })}
+            color="#9CA3AF"
+          />
+
+          {/* Pier spacing dimension (vertical, at East side) */}
+          <DimensionLineSVG
+            x1={(halfWestEast - 0.15) * scale}
+            y1={-halfNorthSouth * scale}
+            x2={(halfWestEast - 0.15) * scale}
+            y2={0}
+            label={formatDimension(SIDE_WALL_LENGTH / 2, units)}
+            color={DRAWING_COLORS.pier}
           />
 
           {/* Total area label */}
@@ -356,47 +374,51 @@ export function PlanView({
             fill={DRAWING_COLORS.outline}
             fontWeight="bold"
           >
-            {(FRONT_WALL_LENGTH * SIDE_WALL_LENGTH).toFixed(2)}m²
+            {formatArea(FRONT_WALL_LENGTH * SIDE_WALL_LENGTH, units)}
           </text>
 
           {/* Orientation labels */}
+          {/* North at top */}
           <text
             x={0}
-            y={(-halfDepth - 0.3) * scale}
+            y={(-halfNorthSouth - 0.3) * scale}
             textAnchor="middle"
             fontSize="8"
             fill={DRAWING_COLORS.dimension}
           >
-            East (Back)
+            North
           </text>
+          {/* South at bottom */}
           <text
             x={0}
-            y={(halfDepth + 0.55) * scale}
+            y={(halfNorthSouth + 0.55) * scale}
             textAnchor="middle"
             fontSize="8"
             fill={DRAWING_COLORS.dimension}
-          >
-            West (Front)
-          </text>
-          <text
-            x={(-halfWidth - 0.25) * scale}
-            y={4}
-            textAnchor="middle"
-            fontSize="8"
-            fill={DRAWING_COLORS.dimension}
-            transform={`rotate(-90 ${(-halfWidth - 0.25) * scale},4)`}
           >
             South
           </text>
+          {/* West at left */}
           <text
-            x={(halfWidth + 0.25) * scale}
+            x={(-halfWestEast - 0.25) * scale}
             y={4}
             textAnchor="middle"
             fontSize="8"
             fill={DRAWING_COLORS.dimension}
-            transform={`rotate(90 ${(halfWidth + 0.25) * scale},4)`}
+            transform={`rotate(-90 ${(-halfWestEast - 0.25) * scale},4)`}
           >
-            North
+            West (Front)
+          </text>
+          {/* East at right */}
+          <text
+            x={(halfWestEast + 0.25) * scale}
+            y={4}
+            textAnchor="middle"
+            fontSize="8"
+            fill={DRAWING_COLORS.dimension}
+            transform={`rotate(90 ${(halfWestEast + 0.25) * scale},4)`}
+          >
+            East (Back)
           </text>
         </g>
       )}

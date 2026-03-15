@@ -135,7 +135,7 @@ export interface ViewPreset {
 // =============================================================================
 
 // App view type
-export type AppView = "builder" | "instructions";
+export type AppView = "builder" | "instructions" | "materials";
 
 // Types of 2D architectural views for instruction steps
 export type ViewType =

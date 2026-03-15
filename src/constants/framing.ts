@@ -69,6 +69,9 @@ export const WINDOW_WIDTH = 0.61;
 export const WINDOW_HEIGHT = 1.83;
 export const WINDOW_SHIM_ALLOWANCE = 0.02; // 20mm shim allowance each side
 export const WINDOW_RO_HALF_WIDTH = WINDOW_WIDTH / 2 + WINDOW_SHIM_ALLOWANCE; // Rough opening half-width
+export const WINDOW_ROUGH_OPENING_WIDTH =
+  WINDOW_WIDTH + WINDOW_SHIM_ALLOWANCE * 2; // Full rough opening width
+export const WINDOW_SILL_HEIGHT = 0.9; // Height from floor to bottom of window (typical)
 
 // Window frame dimensions
 export const WINDOW_FRAME_WIDTH = 0.02;
@@ -84,6 +87,7 @@ export const DOOR_WIDTH = 1.84;
 export const DOOR_HEIGHT = 2.03;
 export const DOOR_SHIM_ALLOWANCE = 0.0125; // 12.5mm shim allowance each side
 export const DOOR_RO_HALF_WIDTH = DOOR_WIDTH / 2 + DOOR_SHIM_ALLOWANCE; // Rough opening half-width
+export const DOOR_ROUGH_OPENING_WIDTH = DOOR_WIDTH + DOOR_SHIM_ALLOWANCE * 2; // Full rough opening width
 
 // Door frame dimensions
 export const DOOR_FRAME_WIDTH = 0.04;
@@ -135,6 +139,7 @@ export const FLOOR_JOIST_OFFSET = 0.05; // Vertical offset for joists
 
 export const PIER_RADIUS = 0.08;
 export const PIER_HEIGHT = 0.04;
+export const PIER_EDGE_OFFSET = 0.15; // Offset from floor edge to pier center
 export const SKID_HEIGHT = 0.2;
 export const SKID_WIDTH = 0.1;
 export const CONCRETE_PAD_OVERHANG = 0.1;

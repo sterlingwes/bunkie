@@ -334,6 +334,7 @@ export const DRAWING_COLORS = {
   highlight: "#3B82F6", // blue-500
   warning: "#EF4444", // red-500
   stud: "#9CA3AF", // gray-400
+  jack: "#78716C", // stone-500 - slightly darker for jack studs
   joist: "#A1A1AA", // zinc-400
   pier: "#78716C", // stone-500
   grid: "#E5E7EB", // gray-200
