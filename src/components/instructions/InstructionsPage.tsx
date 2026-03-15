@@ -17,7 +17,11 @@ import {
   Image,
 } from "lucide-react";
 import { PlanView } from "./drawing/PlanView";
-import { ElevationView } from "./drawing/ElevationView";
+import {
+  FrontElevation2D,
+  BackElevation2D,
+  RightElevation2D,
+} from "./drawing/GeometryRenderer2D";
 import { InstructionStep } from "./InstructionStep";
 import { MaterialsList } from "./MaterialsList";
 import type {
@@ -92,65 +96,43 @@ function DrawingRenderer({
   const showFraming =
     step.phase === "framing" ||
     step.componentIds.some((id) => id.includes("wall"));
-  const showOpenings = step.phase !== "foundation";
 
-  switch (view) {
-    case "plan":
-      return (
-        <PlanView
-          showPiers={showPiers}
-          showJoists={showJoists}
-          showWalls={showWalls}
-          showDimensions={true}
-          scale={100}
-          units={units}
-        />
-      );
-    case "side-view-front":
-      return (
-        <ElevationView
-          direction="front"
-          showFraming={showFraming}
-          showDimensions={true}
-          showOpenings={showOpenings}
-          showRoof={true}
-          scale={100}
-          units={units}
-        />
-      );
-    case "side-view-back":
-      return (
-        <ElevationView
-          direction="back"
-          showFraming={showFraming}
-          showDimensions={true}
-          showOpenings={false}
-          showRoof={true}
-          scale={100}
-          units={units}
-        />
-      );
-    case "side-view-side":
-      return (
-        <ElevationView
-          direction="side"
-          showFraming={showFraming}
-          showDimensions={true}
-          showOpenings={showOpenings}
-          showRoof={true}
-          scale={100}
-          units={units}
-        />
-      );
-    default:
-      return (
-        <div className="w-full h-full flex items-center justify-center bg-zinc-100">
-          <div className="text-zinc-500 p-8 text-center">
-            <p className="text-lg">No drawing available</p>
-          </div>
-        </div>
-      );
+  // Plan view uses legacy renderer (for now)
+  if (view === "plan") {
+    return (
+      <PlanView
+        showPiers={showPiers}
+        showJoists={showJoists}
+        showWalls={showWalls}
+        showDimensions={true}
+        scale={100}
+        units={units}
+      />
+    );
   }
+
+  // All elevation views use new unified geometry renderer
+  const viewMap: Record<string, React.ReactNode> = {
+    "side-view-front": (
+      <FrontElevation2D showFraming={showFraming} showSheathing scale={100} />
+    ),
+    "side-view-back": (
+      <BackElevation2D showFraming={showFraming} showSheathing scale={100} />
+    ),
+    "side-view-side": (
+      <RightElevation2D showFraming={showFraming} showSheathing scale={100} />
+    ),
+  };
+
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      {viewMap[view] || (
+        <div className="text-zinc-500 p-4 text-center text-sm">
+          No drawing available for this view
+        </div>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -372,9 +354,7 @@ export function InstructionsPage() {
           {/* Overlay header */}
           <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-zinc-700 bg-zinc-800">
             <div className="flex items-center gap-3">
-              <h2 className="text-sm font-medium">
-                {VIEW_LABELS[activeView]}
-              </h2>
+              <h2 className="text-sm font-medium">{VIEW_LABELS[activeView]}</h2>
               {currentStep.views.length > 1 && (
                 <ViewSelector
                   views={currentStep.views}
