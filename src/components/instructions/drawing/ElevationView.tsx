@@ -82,17 +82,16 @@ function FrontElevation({
   const dimLabel = (meters: number) => formatDimension(meters, units);
 
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox={`${-halfWidth * scale - 60} ${-60} ${wallWidth * scale + 120} ${wallHeight * scale + 120}`}
-      preserveAspectRatio="xMidYMid meet"
-      className="bg-white"
-    >
-      {/* Transform group to flip Y axis - SVG y=0 is at TOP, but we want wall floor at BOTTOM */}
-      <g transform={`scale(1,-1) translate(0,${-(wallHeight * scale)})`}>
-        {/* Grid */}
-        <defs>
+    <div className="w-full h-full overflow-hidden bg-white">
+      <svg
+        viewBox={`${-halfWidth * scale - 60} ${-60} ${wallWidth * scale + 120} ${wallHeight * scale + 120}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full h-full"
+      >
+        {/* Transform group to flip Y axis - SVG y=0 is at TOP, but we want wall floor at BOTTOM */}
+        <g transform={`scale(1,-1) translate(0,${-(wallHeight * scale)})`}>
+          {/* Grid */}
+          <defs>
           <pattern
             id="elevation-grid-front"
             width="20"
@@ -400,7 +399,8 @@ function FrontElevation({
           16" OC spacing
         </text>
       </g>
-    </svg>
+      </svg>
+    </div>
   );
 }
 
@@ -443,17 +443,16 @@ function BackElevation({
   const dimLabel = (meters: number) => formatDimension(meters, units);
 
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox={`${-halfWidth * scale - 60} ${-60} ${wallWidth * scale + 120} ${wallHeight * scale + 120}`}
-      preserveAspectRatio="xMidYMid meet"
-      className="bg-white"
-    >
-      {/* Transform group to flip Y axis - SVG y=0 is at TOP, but we want wall floor at BOTTOM */}
-      <g transform={`scale(1,-1) translate(0,${-(wallHeight * scale)})`}>
-        {/* Wall outline */}
-        <rect
+    <div className="w-full h-full overflow-hidden bg-white">
+      <svg
+        viewBox={`${-halfWidth * scale - 60} ${-60} ${wallWidth * scale + 120} ${wallHeight * scale + 120}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full h-full"
+      >
+        {/* Transform group to flip Y axis - SVG y=0 is at TOP, but we want wall floor at BOTTOM */}
+        <g transform={`scale(1,-1) translate(0,${-(wallHeight * scale)})`}>
+          {/* Wall outline */}
+          <rect
           x={-halfWidth * scale}
           y={0}
           width={wallWidth * scale}
@@ -647,7 +646,8 @@ function BackElevation({
           Solid wall (no openings)
         </text>
       </g>
-    </svg>
+      </svg>
+    </div>
   );
 }
 
@@ -683,17 +683,16 @@ function SideElevation({
   const dimLabel = (meters: number) => formatDimension(meters, units);
 
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox={`${-halfWidth * scale - 60} ${-60} ${wallWidth * scale + 120} ${highHeight * scale + 120}`}
-      preserveAspectRatio="xMidYMid meet"
-      className="bg-white"
-    >
-      {/* Transform group to flip Y axis - SVG y=0 is at TOP, but we want wall floor at BOTTOM */}
-      <g transform={`scale(1,-1) translate(0,${-(highHeight * scale)})`}>
-        {/* Rake wall outline (trapezoid) - FLOOR at y=0, TOP at varying heights */}
-        <polygon
+    <div className="w-full h-full overflow-hidden bg-white">
+      <svg
+        viewBox={`${-halfWidth * scale - 60} ${-60} ${wallWidth * scale + 120} ${highHeight * scale + 120}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full h-full"
+      >
+        {/* Transform group to flip Y axis - SVG y=0 is at TOP, but we want wall floor at BOTTOM */}
+        <g transform={`scale(1,-1) translate(0,${-(highHeight * scale)})`}>
+          {/* Rake wall outline (trapezoid) - FLOOR at y=0, TOP at varying heights */}
+          <polygon
           points={`
             ${-halfWidth * scale},${0}
             ${halfWidth * scale},${0}
@@ -1035,7 +1034,8 @@ function SideElevation({
           24"×72" window
         </text>
       </g>
-    </svg>
+      </svg>
+    </div>
   );
 }
 

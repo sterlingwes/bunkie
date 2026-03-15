@@ -7,12 +7,23 @@
 
 import { useState } from "react";
 import { useBunkieStore } from "../../store/useBunkieStore";
-import { ChevronLeft, ChevronRight, BookOpen, Box } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  BookOpen,
+  Box,
+  ChevronDown,
+  X,
+  Image,
+} from "lucide-react";
 import { PlanView } from "./drawing/PlanView";
 import { ElevationView } from "./drawing/ElevationView";
 import { InstructionStep } from "./InstructionStep";
 import { MaterialsList } from "./MaterialsList";
-import type { ViewType } from "../../schemas/bunkie.schema";
+import type {
+  ViewType,
+  InstructionStep as InstructionStepType,
+} from "../../schemas/bunkie.schema";
 import type { UnitSystem } from "../../utils/unit-conversion";
 
 const VIEW_LABELS: Record<ViewType, string> = {
@@ -21,6 +32,39 @@ const VIEW_LABELS: Record<ViewType, string> = {
   "side-view-back": "Back Wall",
   "side-view-side": "Side Walls",
 };
+
+/**
+ * Dropdown to quickly jump to any step
+ */
+function StepDropdown({
+  steps,
+  currentIndex,
+  onSelect,
+}: {
+  steps: InstructionStepType[];
+  currentIndex: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="relative">
+      <select
+        value={currentIndex}
+        onChange={(e) => onSelect(Number(e.target.value))}
+        className="appearance-none bg-zinc-700/50 hover:bg-zinc-600/50 text-zinc-100 text-xs font-medium rounded-md px-2 py-1.5 pr-7 cursor-pointer border-none outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+      >
+        {steps.map((step, index) => (
+          <option key={step.id} value={index} className="bg-zinc-800">
+            {index + 1}. {step.title}
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        size={14}
+        className="absolute right-1.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+      />
+    </div>
+  );
+}
 
 /**
  * Render the appropriate drawing based on view type
@@ -147,6 +191,7 @@ export function InstructionsPage() {
     useBunkieStore();
   const [selectedView, setSelectedView] = useState<ViewType | null>(null);
   const [units, setUnits] = useState<UnitSystem>("imperial");
+  const [showDiagramOverlay, setShowDiagramOverlay] = useState(false);
 
   const instructions = bunkieDefinition?.instructions ?? [];
   const components = bunkieDefinition?.components ?? [];
@@ -167,29 +212,40 @@ export function InstructionsPage() {
     nextStep();
   };
 
+  // Handler for step dropdown selection
+  const handleStepSelect = (index: number) => {
+    setSelectedView(null);
+    setShowDiagramOverlay(false);
+    useBunkieStore.getState().setCurrentStepIndex(index);
+  };
+
+  // Handler for view selection
+  const handleViewSelect = (view: ViewType) => {
+    setSelectedView(view);
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-zinc-900 text-zinc-100">
       {/* Header with navigation */}
       <header className="flex-shrink-0 border-b border-zinc-700 bg-zinc-800/50">
         <div className="flex items-center justify-between px-2 py-2 sm:px-4">
-          {/* Left: Title + Prev button */}
+          {/* Left: Title */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              onClick={handlePrev}
-              disabled={currentStepIndex === 0}
-              className="p-1.5 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-700"
-              aria-label="Previous step"
-            >
-              <ChevronLeft size={20} />
-            </button>
             <BookOpen className="text-blue-400" size={18} />
             <h1 className="text-sm sm:text-base font-semibold hidden sm:block">
               Building Instructions
             </h1>
           </div>
 
-          {/* Center: Step counter & progress */}
+          {/* Center: Step dropdown + progress */}
           <div className="flex items-center gap-2 sm:gap-4">
+            {totalSteps > 0 && (
+              <StepDropdown
+                steps={instructions}
+                currentIndex={currentStepIndex}
+                onSelect={handleStepSelect}
+              />
+            )}
             <span className="text-xs sm:text-sm text-zinc-400">
               {currentStepIndex + 1} / {totalSteps || "—"}
             </span>
@@ -206,7 +262,7 @@ export function InstructionsPage() {
             </div>
           </div>
 
-          {/* Right: Unit toggle + View selector + Next button */}
+          {/* Right: Navigation + Unit toggle + View selector */}
           <div className="flex items-center gap-2">
             {/* Unit toggle */}
             <button
@@ -222,26 +278,37 @@ export function InstructionsPage() {
               <ViewSelector
                 views={currentStep.views}
                 selectedView={activeView}
-                onSelect={setSelectedView}
+                onSelect={handleViewSelect}
               />
             )}
-            <button
-              onClick={handleNext}
-              disabled={currentStepIndex >= totalSteps - 1}
-              className="p-1.5 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-700"
-              aria-label="Next step"
-            >
-              <ChevronRight size={20} />
-            </button>
+            {/* Navigation arrows - together on the right */}
+            <div className="flex items-center gap-0.5">
+              <button
+                onClick={handlePrev}
+                disabled={currentStepIndex === 0}
+                className="p-1.5 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-700"
+                aria-label="Previous step"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={currentStepIndex >= totalSteps - 1}
+                className="p-1.5 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-700"
+                aria-label="Next step"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main content area */}
       <main className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-        {/* Drawing area */}
-        <div className="flex-1 p-2 sm:p-4 flex items-center justify-center min-h-[200px] lg:min-h-0 lg:max-h-[60vh]">
-          <div className="w-full h-full max-h-full bg-white rounded-lg shadow-lg overflow-auto">
+        {/* Drawing area - hidden on mobile, shown on lg+ */}
+        <div className="hidden lg:flex flex-1 p-4 items-center justify-center min-h-0 overflow-hidden">
+          <div className="w-full h-full max-h-full bg-white rounded-lg shadow-lg overflow-hidden flex items-center justify-center p-2">
             {currentStep ? (
               <DrawingRenderer
                 view={activeView}
@@ -265,9 +332,20 @@ export function InstructionsPage() {
           </div>
         </div>
 
-        {/* Step details sidebar */}
-        <aside className="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-zinc-700 bg-zinc-800/30 overflow-y-auto max-h-[40vh] lg:max-h-none">
+        {/* Step details sidebar - full width on mobile */}
+        <aside className="flex-1 lg:w-96 lg:flex-none border-t lg:border-t-0 lg:border-l border-zinc-700 bg-zinc-800/30 overflow-y-auto flex-shrink-0">
           <div className="p-4 sm:p-5">
+            {/* View Diagram button - mobile only */}
+            {currentStep && (
+              <button
+                onClick={() => setShowDiagramOverlay(true)}
+                className="lg:hidden w-full mb-4 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+              >
+                <Image size={20} />
+                View Diagram
+              </button>
+            )}
+
             {currentStep ? (
               <>
                 <InstructionStep step={currentStep} />
@@ -287,6 +365,48 @@ export function InstructionsPage() {
           </div>
         </aside>
       </main>
+
+      {/* Diagram overlay - mobile only */}
+      {showDiagramOverlay && currentStep && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-zinc-900 flex flex-col">
+          {/* Overlay header */}
+          <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-zinc-700 bg-zinc-800">
+            <div className="flex items-center gap-3">
+              <h2 className="text-sm font-medium">
+                {VIEW_LABELS[activeView]}
+              </h2>
+              {currentStep.views.length > 1 && (
+                <ViewSelector
+                  views={currentStep.views}
+                  selectedView={activeView}
+                  onSelect={handleViewSelect}
+                />
+              )}
+            </div>
+            <button
+              onClick={() => setShowDiagramOverlay(false)}
+              className="p-2 rounded-md hover:bg-zinc-700 transition-colors"
+              aria-label="Close diagram"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* Diagram content */}
+          <div className="flex-1 p-4 flex items-center justify-center overflow-hidden bg-zinc-800">
+            <div className="w-full h-full bg-white rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
+              <DrawingRenderer
+                view={activeView}
+                step={{
+                  phase: currentStep.phase,
+                  componentIds: currentStep.componentIds,
+                }}
+                units={units}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
