@@ -14,7 +14,9 @@
  * - SVG -X direction (left) = West side of building = Front wall (with door)
  * - SVG +X direction (right) = East side of building = Back wall (solid)
  *
- * Coordinate mapping: SVG_x = 3D_z, SVG_y = 3D_x
+ * Coordinate mapping (walls are hardcoded in plan-view space):
+ * - SVG X range = FRONT_WALL_LENGTH (3.0m), SVG Y range = SIDE_WALL_LENGTH (3.28m)
+ * - Pier/joist 3D coords map directly: SVG_x = 3D_x, SVG_y = 3D_z
  */
 
 import {
@@ -24,7 +26,11 @@ import {
   JOIST_WIDTH,
   STUD_WIDTH,
   DOOR_WIDTH,
+  DOOR_SHIM_ALLOWANCE,
   WINDOW_WIDTH,
+  WINDOW_SHIM_ALLOWANCE,
+  SHEATHING_THICKNESS,
+  SUBFLOOR_THICKNESS,
 } from "../../../constants/framing";
 import { DimensionLineSVG } from "./DimensionLine";
 import { DRAWING_COLORS } from "../../../utils/drawing-utils";
@@ -58,7 +64,7 @@ export interface PlanViewProps {
 function getWalls() {
   const halfNorthSouth = SIDE_WALL_LENGTH / 2; // SVG Y extent
   const halfWestEast = FRONT_WALL_LENGTH / 2; // SVG X extent
-  const wallThickness = STUD_WIDTH * 2 + 0.011 * 2; // 2x4 + sheathing both sides
+  const wallThickness = STUD_WIDTH * 2 + SHEATHING_THICKNESS * 2; // 2x4 + sheathing both sides
 
   return {
     // West wall (front) - has door - at SVG left (negative x)
@@ -109,7 +115,7 @@ export function PlanView({
 }: PlanViewProps) {
   const halfNorthSouth = SIDE_WALL_LENGTH / 2; // SVG Y extent (North-South)
   const halfWestEast = FRONT_WALL_LENGTH / 2; // SVG X extent (West-East)
-  const wallThickness = STUD_WIDTH * 2 + 0.011 * 2;
+  const wallThickness = STUD_WIDTH * 2 + SHEATHING_THICKNESS * 2;
 
   // Get pier and joist positions from calculator
   // Note: Calculator returns 3D coordinates (x, z) which map directly to SVG (cx, cy)
@@ -117,7 +123,7 @@ export function PlanView({
   const joists3D = getJoistPositions();
 
   // Transform 3D pier positions to SVG coordinates
-  // SVG cx = 3D x, SVG cy = 3D z
+  // 3D x maps to SVG x (across building width), 3D z maps to SVG y (along building depth)
   const piers = piers3D.map((p) => ({
     id: p.id,
     cx: p.x,
@@ -170,10 +176,10 @@ export function PlanView({
 
         {/* Floor outline (subfloor) */}
         <rect
-          x={(-halfWestEast - 0.01) * scale}
-          y={(-halfNorthSouth - 0.01) * scale}
-          width={(FRONT_WALL_LENGTH + 0.02) * scale}
-          height={(SIDE_WALL_LENGTH + 0.02) * scale}
+          x={(-halfWestEast - SUBFLOOR_THICKNESS) * scale}
+          y={(-halfNorthSouth - SUBFLOOR_THICKNESS) * scale}
+          width={(FRONT_WALL_LENGTH + SUBFLOOR_THICKNESS * 2) * scale}
+          height={(SIDE_WALL_LENGTH + SUBFLOOR_THICKNESS * 2) * scale}
           fill="#FEF3C7"
           stroke={DRAWING_COLORS.outline}
           strokeWidth="1"
@@ -235,9 +241,9 @@ export function PlanView({
             {/* Door opening - centered in West wall */}
             <rect
               x={(-wallThickness / 2) * scale}
-              y={(-DOOR_WIDTH / 2 - 0.02) * scale}
+              y={(-DOOR_WIDTH / 2 - DOOR_SHIM_ALLOWANCE) * scale}
               width={wallThickness * scale}
-              height={(DOOR_WIDTH + 0.04) * scale}
+              height={(DOOR_WIDTH + DOOR_SHIM_ALLOWANCE * 2) * scale}
               fill="white"
               stroke={DRAWING_COLORS.outline}
               strokeWidth="0.5"
@@ -275,9 +281,9 @@ export function PlanView({
             />
             {/* Window opening - centered in South wall */}
             <rect
-              x={(-WINDOW_WIDTH / 2 - 0.02) * scale}
+              x={(-WINDOW_WIDTH / 2 - WINDOW_SHIM_ALLOWANCE) * scale}
               y={(halfNorthSouth - wallThickness) * scale}
-              width={(WINDOW_WIDTH + 0.04) * scale}
+              width={(WINDOW_WIDTH + WINDOW_SHIM_ALLOWANCE * 2) * scale}
               height={wallThickness * scale}
               fill="white"
               stroke={DRAWING_COLORS.outline}
@@ -297,9 +303,9 @@ export function PlanView({
             />
             {/* Window opening - centered in North wall */}
             <rect
-              x={(-WINDOW_WIDTH / 2 - 0.02) * scale}
+              x={(-WINDOW_WIDTH / 2 - WINDOW_SHIM_ALLOWANCE) * scale}
               y={-halfNorthSouth * scale}
-              width={(WINDOW_WIDTH + 0.04) * scale}
+              width={(WINDOW_WIDTH + WINDOW_SHIM_ALLOWANCE * 2) * scale}
               height={wallThickness * scale}
               fill="white"
               stroke={DRAWING_COLORS.outline}

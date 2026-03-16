@@ -23,6 +23,9 @@ import {
   SILL_HEIGHT,
   SHEATHING_THICKNESS,
   SHEATHING_OFFSET,
+  SIDE_WALL_LENGTH,
+  WINDOW_HEIGHT,
+  DOOR_HEIGHT,
 } from "../constants/framing";
 
 // =============================================================================
@@ -209,6 +212,7 @@ function generateStuds(config: WallConfig): WallSegment[] {
       : [stud.x, yCenter, zPos]; // Front/back wall: stud.x is X position
 
     // For side walls, stud dimensions are [depth, height, width]; for front/back, [width, height, depth]
+    // Side wall studs: X=STUD_DEPTH (wall thickness), Z=STUD_WIDTH (38mm visible in side view)
     const dimensions: [number, number, number] = isSideWall
       ? [STUD_DEPTH, studHeight, STUD_WIDTH]
       : [STUD_WIDTH, studHeight, STUD_DEPTH];
@@ -261,7 +265,7 @@ function generateOpeningFraming(config: WallConfig): WallSegment[] {
         createBox(
           `${config.id}-sill`,
           [opening.centerX, opening.sillY, zPos],
-          [opening.roughOpeningWidth + STUD_WIDTH, SILL_HEIGHT, STUD_DEPTH],
+          [opening.roughOpeningWidth, SILL_HEIGHT, STUD_DEPTH],
           "framing",
           config.id,
         ),
@@ -271,58 +275,337 @@ function generateOpeningFraming(config: WallConfig): WallSegment[] {
     );
   }
 
+  // Opening indicator (rough opening rectangle)
+  const openingBottom =
+    config.opening?.type === "door"
+      ? BOTTOM_PLATE_HEIGHT
+      : BOTTOM_PLATE_HEIGHT + SILL_HEIGHT;
+  const openingHeight =
+    config.opening?.type === "door" ? DOOR_HEIGHT : WINDOW_HEIGHT;
+  segments.push(
+    makeSegment(
+      createBox(
+        `${config.id}-opening`,
+        [
+          opening.centerX,
+          openingBottom + openingHeight / 2,
+          zPos,
+        ],
+        [opening.roughOpeningWidth, openingHeight, STUD_DEPTH],
+        "opening",
+        config.id,
+      ),
+      config.opening?.type === "door" ? "Door Opening" : "Window Opening",
+    ),
+  );
+
   return segments;
 }
 
 function generateFlatSheathing(config: WallConfig): WallSegment[] {
   const zPos = getWallZPosition(config.id) + SHEATHING_OFFSET;
-  // Center sheathing at half wall height (covers from y=0 to y=lowHeight)
-  const yCenter = config.lowHeight / 2;
+  const opening = getOpeningFraming(config);
 
-  return [
-    makeSegment(
-      createBox(
-        `${config.id}-sheathing`,
-        [0, yCenter, zPos],
-        [config.width, config.lowHeight, SHEATHING_THICKNESS],
-        "sheathing",
-        config.id,
+  // No opening — monolithic panel
+  if (!opening) {
+    const yCenter = config.lowHeight / 2;
+    return [
+      makeSegment(
+        createBox(
+          `${config.id}-sheathing`,
+          [0, yCenter, zPos],
+          [config.width, config.lowHeight, SHEATHING_THICKNESS],
+          "sheathing",
+          config.id,
+        ),
+        "Wall Sheathing",
+        "OBC 9.23.13",
       ),
-      "Wall Sheathing",
-      "OBC 9.23.13",
-    ),
-  ];
+    ];
+  }
+
+  const segments: WallSegment[] = [];
+  const roLeft = opening.centerX - opening.roughOpeningWidth / 2;
+  const roRight = opening.centerX + opening.roughOpeningWidth / 2;
+  const halfWidth = config.width / 2;
+
+  if (config.opening?.type === "door") {
+    // Door: left of door, right of door, above door
+    const doorTop = BOTTOM_PLATE_HEIGHT + DOOR_HEIGHT + HEADER_HEIGHT;
+
+    // Left of door
+    const leftWidth = roLeft + halfWidth;
+    if (leftWidth > 0) {
+      segments.push(
+        makeSegment(
+          createBox(
+            `${config.id}-sheathing-left`,
+            [-halfWidth + leftWidth / 2, config.lowHeight / 2, zPos],
+            [leftWidth, config.lowHeight, SHEATHING_THICKNESS],
+            "sheathing",
+            config.id,
+          ),
+          "Wall Sheathing (left of door)",
+          "OBC 9.23.13",
+        ),
+      );
+    }
+
+    // Right of door
+    const rightWidth = halfWidth - roRight;
+    if (rightWidth > 0) {
+      segments.push(
+        makeSegment(
+          createBox(
+            `${config.id}-sheathing-right`,
+            [halfWidth - rightWidth / 2, config.lowHeight / 2, zPos],
+            [rightWidth, config.lowHeight, SHEATHING_THICKNESS],
+            "sheathing",
+            config.id,
+          ),
+          "Wall Sheathing (right of door)",
+          "OBC 9.23.13",
+        ),
+      );
+    }
+
+    // Above door
+    const aboveHeight = config.lowHeight - doorTop;
+    if (aboveHeight > 0) {
+      segments.push(
+        makeSegment(
+          createBox(
+            `${config.id}-sheathing-above`,
+            [opening.centerX, doorTop + aboveHeight / 2, zPos],
+            [opening.roughOpeningWidth, aboveHeight, SHEATHING_THICKNESS],
+            "sheathing",
+            config.id,
+          ),
+          "Wall Sheathing (above door)",
+          "OBC 9.23.13",
+        ),
+      );
+    }
+  } else {
+    // Window: left, right, below sill, above header
+    const windowBottom = BOTTOM_PLATE_HEIGHT;
+    const windowTop = BOTTOM_PLATE_HEIGHT + WINDOW_HEIGHT + HEADER_HEIGHT;
+
+    // Left of window
+    const leftWidth = roLeft + halfWidth;
+    if (leftWidth > 0) {
+      segments.push(
+        makeSegment(
+          createBox(
+            `${config.id}-sheathing-left`,
+            [-halfWidth + leftWidth / 2, config.lowHeight / 2, zPos],
+            [leftWidth, config.lowHeight, SHEATHING_THICKNESS],
+            "sheathing",
+            config.id,
+          ),
+          "Wall Sheathing (left of window)",
+          "OBC 9.23.13",
+        ),
+      );
+    }
+
+    // Right of window
+    const rightWidth = halfWidth - roRight;
+    if (rightWidth > 0) {
+      segments.push(
+        makeSegment(
+          createBox(
+            `${config.id}-sheathing-right`,
+            [halfWidth - rightWidth / 2, config.lowHeight / 2, zPos],
+            [rightWidth, config.lowHeight, SHEATHING_THICKNESS],
+            "sheathing",
+            config.id,
+          ),
+          "Wall Sheathing (right of window)",
+          "OBC 9.23.13",
+        ),
+      );
+    }
+
+    // Below sill
+    if (windowBottom > 0) {
+      segments.push(
+        makeSegment(
+          createBox(
+            `${config.id}-sheathing-below`,
+            [opening.centerX, windowBottom / 2, zPos],
+            [opening.roughOpeningWidth, windowBottom, SHEATHING_THICKNESS],
+            "sheathing",
+            config.id,
+          ),
+          "Wall Sheathing (below window)",
+          "OBC 9.23.13",
+        ),
+      );
+    }
+
+    // Above header
+    const aboveHeight = config.lowHeight - windowTop;
+    if (aboveHeight > 0) {
+      segments.push(
+        makeSegment(
+          createBox(
+            `${config.id}-sheathing-above`,
+            [opening.centerX, windowTop + aboveHeight / 2, zPos],
+            [opening.roughOpeningWidth, aboveHeight, SHEATHING_THICKNESS],
+            "sheathing",
+            config.id,
+          ),
+          "Wall Sheathing (above window)",
+          "OBC 9.23.13",
+        ),
+      );
+    }
+  }
+
+  return segments;
 }
 
 function generateRakeSheathing(config: WallConfig): WallSegment[] {
   const zPos = getWallZPosition(config.id) + SHEATHING_OFFSET;
+  const opening = getOpeningFraming(config);
 
-  // Rake wall sheathing is trapezoidal
+  // Side walls (north/south) have their width along Z axis
+  const widthAxis = config.id === "north" || config.id === "south" ? "z" : "x";
+
   const heightLeft =
     config.id === "south" ? config.lowHeight : config.highHeight;
   const heightRight =
     config.id === "south" ? config.highHeight : config.lowHeight;
 
-  // Side walls (north/south) have their width along Z axis
-  const widthAxis = config.id === "north" || config.id === "south" ? "z" : "x";
-
-  return [
-    makeSegment(
-      createTrapezoid(
-        `${config.id}-sheathing`,
-        [0, 0, zPos],
-        config.width,
-        SHEATHING_THICKNESS,
-        heightLeft,
-        heightRight,
-        "sheathing",
-        config.id,
-        widthAxis,
+  // No opening — monolithic trapezoid
+  if (!opening) {
+    return [
+      makeSegment(
+        createTrapezoid(
+          `${config.id}-sheathing`,
+          [0, 0, zPos],
+          config.width,
+          SHEATHING_THICKNESS,
+          heightLeft,
+          heightRight,
+          "sheathing",
+          config.id,
+          widthAxis,
+        ),
+        "Wall Sheathing",
+        "OBC 9.23.13",
       ),
-      "Wall Sheathing",
-      "OBC 9.23.13",
-    ),
-  ];
+    ];
+  }
+
+  // Window opening — split into 4 pieces: left, right, below sill, above header
+  const segments: WallSegment[] = [];
+  const halfWidth = config.width / 2;
+  const roLeft = opening.centerX - opening.roughOpeningWidth / 2;
+  const roRight = opening.centerX + opening.roughOpeningWidth / 2;
+  const windowBottom = BOTTOM_PLATE_HEIGHT;
+  const windowTop = BOTTOM_PLATE_HEIGHT + WINDOW_HEIGHT + HEADER_HEIGHT;
+
+  // Helper: get height at a position along the wall (in wall-local coords where 0=center)
+  const heightAt = (pos: number): number => {
+    const t = (pos + halfWidth) / config.width;
+    return heightLeft + t * (heightRight - heightLeft);
+  };
+
+  // Helper: build position for a sub-trapezoid centered at `centerLocal` (wall-local)
+  const trapPos = (centerLocal: number, y: number): [number, number, number] =>
+    widthAxis === "z" ? [0, y, zPos + centerLocal] : [centerLocal, y, zPos];
+
+  // Left of window (trapezoid from wall start to roLeft)
+  const leftWidth = roLeft + halfWidth;
+  if (leftWidth > 0) {
+    const leftCenter = (-halfWidth + roLeft) / 2;
+    segments.push(
+      makeSegment(
+        createTrapezoid(
+          `${config.id}-sheathing-left`,
+          trapPos(leftCenter, 0),
+          leftWidth,
+          SHEATHING_THICKNESS,
+          heightAt(-halfWidth),
+          heightAt(roLeft),
+          "sheathing",
+          config.id,
+          widthAxis,
+        ),
+        "Wall Sheathing (left of window)",
+        "OBC 9.23.13",
+      ),
+    );
+  }
+
+  // Right of window (trapezoid from roRight to wall end)
+  const rightWidth = halfWidth - roRight;
+  if (rightWidth > 0) {
+    const rightCenter = (roRight + halfWidth) / 2;
+    segments.push(
+      makeSegment(
+        createTrapezoid(
+          `${config.id}-sheathing-right`,
+          trapPos(rightCenter, 0),
+          rightWidth,
+          SHEATHING_THICKNESS,
+          heightAt(roRight),
+          heightAt(halfWidth),
+          "sheathing",
+          config.id,
+          widthAxis,
+        ),
+        "Wall Sheathing (right of window)",
+        "OBC 9.23.13",
+      ),
+    );
+  }
+
+  // Below sill (box spanning the rough opening width)
+  if (windowBottom > 0) {
+    segments.push(
+      makeSegment(
+        createBox(
+          `${config.id}-sheathing-below`,
+          trapPos(opening.centerX, windowBottom / 2),
+          widthAxis === "z"
+            ? [SHEATHING_THICKNESS, windowBottom, opening.roughOpeningWidth]
+            : [opening.roughOpeningWidth, windowBottom, SHEATHING_THICKNESS],
+          "sheathing",
+          config.id,
+        ),
+        "Wall Sheathing (below window)",
+        "OBC 9.23.13",
+      ),
+    );
+  }
+
+  // Above header (trapezoid spanning the rough opening width)
+  const hAboveLeft = heightAt(roLeft) - windowTop;
+  const hAboveRight = heightAt(roRight) - windowTop;
+  if (hAboveLeft > 0 || hAboveRight > 0) {
+    segments.push(
+      makeSegment(
+        createTrapezoid(
+          `${config.id}-sheathing-above`,
+          trapPos(opening.centerX, windowTop),
+          opening.roughOpeningWidth,
+          SHEATHING_THICKNESS,
+          Math.max(0, hAboveLeft),
+          Math.max(0, hAboveRight),
+          "sheathing",
+          config.id,
+          widthAxis,
+        ),
+        "Wall Sheathing (above window)",
+        "OBC 9.23.13",
+      ),
+    );
+  }
+
+  return segments;
 }
 
 // =============================================================================
@@ -334,11 +617,12 @@ function generateRakeSheathing(config: WallConfig): WallSegment[] {
  * This determines where the wall sits in 3D space.
  */
 function getWallZPosition(wallId: string): number {
+  const halfDepth = SIDE_WALL_LENGTH / 2;
   switch (wallId) {
     case "west":
-      return 1.64; // Front wall at +Z
+      return halfDepth; // Front wall at +Z
     case "east":
-      return -1.64; // Back wall at -Z
+      return -halfDepth; // Back wall at -Z
     case "south":
       return 0; // Side wall at +X, centered on Z
     case "north":
@@ -362,23 +646,29 @@ export function generateAllWallGeometry(): Record<string, WallGeometry> {
   };
 }
 
-/** Get all segments for a specific view direction */
+/** Get all segments for a specific view direction, optionally overriding which wall to show */
 export function getSegmentsForView(
   view: "front" | "back" | "left" | "right",
+  wallId?: "west" | "east" | "north" | "south",
 ): WallSegment[] {
-  const wallMap: Record<string, "front" | "back" | "left" | "right"> = {
+  const defaultWallMap: Record<string, "front" | "back" | "left" | "right"> = {
     west: "front",
     east: "back",
     north: "left",
     south: "right",
   };
 
-  const targetWall = Object.entries(wallMap).find(([, v]) => v === view)?.[0];
+  const targetWall =
+    wallId ??
+    (Object.entries(defaultWallMap).find(([, v]) => v === view)?.[0] as
+      | "west"
+      | "east"
+      | "north"
+      | "south"
+      | undefined);
 
   if (!targetWall) return [];
 
-  const geometry = generateWallGeometry(
-    targetWall as "west" | "east" | "north" | "south",
-  );
+  const geometry = generateWallGeometry(targetWall);
   return geometry.segments;
 }

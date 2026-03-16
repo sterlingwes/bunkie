@@ -26,6 +26,7 @@ interface GeometryRenderer2DProps {
   showSheathing?: boolean;
   scale?: number;
   className?: string;
+  wallId?: "west" | "east" | "north" | "south";
 }
 
 export function GeometryRenderer2D({
@@ -34,15 +35,19 @@ export function GeometryRenderer2D({
   showSheathing = true,
   scale = 100,
   className,
+  wallId,
 }: GeometryRenderer2DProps) {
   // For now, only handle elevation views
   const isElevation = view !== "top";
   const segments = useMemo(() => {
     if (isElevation) {
-      return getSegmentsForView(view as "front" | "back" | "left" | "right");
+      return getSegmentsForView(
+        view as "front" | "back" | "left" | "right",
+        wallId,
+      );
     }
     return [];
-  }, [view, isElevation]);
+  }, [view, isElevation, wallId]);
 
   // Extract primitives from segments
   const primitives = useMemo(
@@ -123,16 +128,23 @@ function SVGElement({ element }: SVGElementProps) {
   const { type, props, primitive } = element;
   const colors = MATERIAL_COLORS[primitive.material];
 
-  // Sheathing gets lighter stroke, framing gets darker for contrast
-  const strokeColor =
-    primitive.material === "sheathing" ? "#D1D5DB" : "#374151";
-  const strokeWidth = primitive.material === "sheathing" ? 0.5 : 1.5;
+  // Material-specific styling
+  const isOpening = primitive.material === "opening";
+  const isSheathing = primitive.material === "sheathing";
+
+  const strokeColor = isOpening
+    ? "#87CEEB"
+    : isSheathing
+      ? "#D1D5DB"
+      : "#374151";
+  const strokeWidth = isSheathing ? 0.5 : 1.5;
 
   // Common props
   const commonProps = {
-    fill: colors.primary,
+    fill: isOpening ? "rgba(135, 206, 235, 0.15)" : colors.primary,
     stroke: strokeColor,
     strokeWidth,
+    ...(isOpening ? { strokeDasharray: "4 2" } : {}),
     ...props,
   };
 

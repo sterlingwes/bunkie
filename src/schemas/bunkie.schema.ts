@@ -184,7 +184,6 @@ export interface BunkieStore {
   showAnnotations: boolean;
   showClearances: boolean;
   showDimensions: boolean;
-  wireframe: boolean;
 
   // Camera
   activeView: string;
@@ -203,7 +202,6 @@ export interface BunkieStore {
   setAnnotationsVisible: (visible: boolean) => void;
   setClearancesVisible: (visible: boolean) => void;
   setDimensionsVisible: (visible: boolean) => void;
-  setWireframe: (wireframe: boolean) => void;
   setActiveView: (viewId: string) => void;
   getComponentById: (id: string) => Component | undefined;
 

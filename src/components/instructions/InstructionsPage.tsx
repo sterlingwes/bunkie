@@ -17,11 +17,7 @@ import {
   Image,
 } from "lucide-react";
 import { PlanView } from "./drawing/PlanView";
-import {
-  FrontElevation2D,
-  BackElevation2D,
-  RightElevation2D,
-} from "./drawing/GeometryRenderer2D";
+import { GeometryRenderer2D } from "./drawing/GeometryRenderer2D";
 import { InstructionStep } from "./InstructionStep";
 import { MaterialsList } from "./MaterialsList";
 import type {
@@ -71,6 +67,21 @@ function StepDropdown({
 }
 
 /**
+ * Determine which wall to render based on componentIds referenced in a step
+ */
+function getWallIdFromComponentIds(
+  componentIds: string[],
+): "west" | "east" | "north" | "south" | null {
+  for (const id of componentIds) {
+    if (id === "wall-west" || id === "sliding-door") return "west";
+    if (id === "wall-east") return "east";
+    if (id === "wall-south" || id === "window-south") return "south";
+    if (id === "wall-north" || id === "window-north") return "north";
+  }
+  return null;
+}
+
+/**
  * Render the appropriate drawing based on view type
  */
 function DrawingRenderer({
@@ -111,26 +122,42 @@ function DrawingRenderer({
     );
   }
 
-  // All elevation views use new unified geometry renderer
-  const viewMap: Record<string, React.ReactNode> = {
-    "side-view-front": (
-      <FrontElevation2D showFraming={showFraming} showSheathing scale={100} />
-    ),
-    "side-view-back": (
-      <BackElevation2D showFraming={showFraming} showSheathing scale={100} />
-    ),
-    "side-view-side": (
-      <RightElevation2D showFraming={showFraming} showSheathing scale={100} />
-    ),
+  // Determine which wall to show based on componentIds
+  const wallId = getWallIdFromComponentIds(step.componentIds);
+
+  // Map view type to view direction and default wall
+  const viewConfig: Record<
+    string,
+    {
+      direction: "front" | "back" | "left" | "right";
+      defaultWall: "west" | "east" | "north" | "south";
+    }
+  > = {
+    "side-view-front": { direction: "front", defaultWall: "west" },
+    "side-view-back": { direction: "back", defaultWall: "east" },
+    "side-view-side": { direction: "right", defaultWall: "south" },
   };
 
-  return (
-    <div className="w-full h-full flex items-center justify-center">
-      {viewMap[view] || (
+  const config = viewConfig[view];
+  if (!config) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
         <div className="text-zinc-500 p-4 text-center text-sm">
           No drawing available for this view
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <GeometryRenderer2D
+        view={config.direction}
+        wallId={wallId ?? config.defaultWall}
+        showFraming={showFraming}
+        showSheathing
+        scale={100}
+      />
     </div>
   );
 }

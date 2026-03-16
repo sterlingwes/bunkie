@@ -26,7 +26,6 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
   showAnnotations: true,
   showClearances: true,
   showDimensions: true,
-  wireframe: false,
 
   // Camera
   activeView: "perspective",
@@ -86,10 +85,6 @@ export const useBunkieStore = create<BunkieStore>((set, get) => ({
 
   setDimensionsVisible: (visible: boolean) => {
     set({ showDimensions: visible });
-  },
-
-  setWireframe: (wireframe: boolean) => {
-    set({ wireframe });
   },
 
   setActiveView: (viewId: string) => {

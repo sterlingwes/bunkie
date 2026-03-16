@@ -51,24 +51,26 @@ describe("Wall Geometry Generation", () => {
     expect(geometry.bounds.width).toBe(3.0);
   });
 
-  it("generates side wall (south) geometry with trapezoidal sheathing", () => {
+  it("generates side wall (south) geometry with split sheathing", () => {
     const geometry = generateWallGeometry("south");
 
     console.log("\n=== SIDE WALL (SOUTH) ===");
     console.log("Bounds:", geometry.bounds);
     console.log("Segment count:", geometry.segments.length);
 
-    // Find sheathing
-    const sheathing = geometry.segments.find(
-      (s) => s.label === "Wall Sheathing",
+    // Find sheathing pieces (split around window opening)
+    const sheathingPieces = geometry.segments.filter((s) =>
+      s.label.startsWith("Wall Sheathing"),
     );
-    expect(sheathing).toBeDefined();
+    expect(sheathingPieces.length).toBeGreaterThanOrEqual(3);
 
-    if (sheathing && sheathing.primitive.type === "trapezoid") {
-      console.log("\nSheathing is trapezoid:");
-      console.log("  Height left:", sheathing.primitive.heightLeft);
-      console.log("  Height right:", sheathing.primitive.heightRight);
-    }
+    sheathingPieces.forEach((s) => {
+      console.log(`\n${s.label} (${s.primitive.type}):`);
+      if (s.primitive.type === "trapezoid") {
+        console.log("  Height left:", s.primitive.heightLeft);
+        console.log("  Height right:", s.primitive.heightRight);
+      }
+    });
   });
 
   it("generates all walls", () => {

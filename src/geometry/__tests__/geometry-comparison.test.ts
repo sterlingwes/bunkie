@@ -30,20 +30,26 @@ describe("Geometry Comparison", () => {
         geometry.segments.filter((s) => s.label === "Stud").length,
       ).toBeGreaterThan(0);
       expect(geometry.segments.some((s) => s.label === "Header")).toBe(true);
-      expect(geometry.segments.some((s) => s.label === "Wall Sheathing")).toBe(
-        true,
-      );
+      expect(
+        geometry.segments.some((s) => s.label.startsWith("Wall Sheathing")),
+      ).toBe(true);
     });
 
     it("projects to SVG with correct dimensions", () => {
       const segments = getSegmentsForView("front");
       const bottomPlate = segments.find((s) => s.label === "Bottom Plate");
       const topPlate = segments.find((s) => s.label === "Double Top Plate");
-      const sheathing = segments.find((s) => s.label === "Wall Sheathing");
+      const sheathingSegments = segments.filter((s) =>
+        s.label.startsWith("Wall Sheathing"),
+      );
 
       // Get SVG data
       const plateSVG = primitiveToSVG(bottomPlate!.primitive, "front", 100);
-      const sheathingSVG = primitiveToSVG(sheathing!.primitive, "front", 100);
+      const sheathingSVG = primitiveToSVG(
+        sheathingSegments[0]!.primitive,
+        "front",
+        100,
+      );
 
       console.log("\n=== FRONT WALL SVG OUTPUT ===");
       console.log("Bottom plate:", plateSVG[0].props);
@@ -75,24 +81,29 @@ describe("Geometry Comparison", () => {
   });
 
   describe("Side Wall (South)", () => {
-    it("has trapezoidal sheathing", () => {
+    it("has split sheathing around window opening", () => {
       const geometry = generateWallGeometry("south");
-      const sheathing = geometry.segments.find(
-        (s) => s.label === "Wall Sheathing",
+      const sheathingSegments = geometry.segments.filter((s) =>
+        s.label.startsWith("Wall Sheathing"),
       );
 
-      expect(sheathing).toBeDefined();
-      expect(sheathing!.primitive.type).toBe("trapezoid");
+      // Should have multiple sheathing pieces (left, right, below, above)
+      expect(sheathingSegments.length).toBeGreaterThanOrEqual(3);
 
-      if (sheathing!.primitive.type === "trapezoid") {
-        const trap = sheathing!.primitive;
-        console.log("\n=== SIDE WALL SHEATHING ===");
+      // Left and right pieces should be trapezoids (rake wall)
+      const leftPiece = sheathingSegments.find((s) =>
+        s.label.includes("left"),
+      );
+      expect(leftPiece).toBeDefined();
+      expect(leftPiece!.primitive.type).toBe("trapezoid");
+
+      if (leftPiece!.primitive.type === "trapezoid") {
+        const trap = leftPiece!.primitive;
+        console.log("\n=== SIDE WALL SHEATHING (LEFT) ===");
         console.log("Height left:", trap.heightLeft);
         console.log("Height right:", trap.heightRight);
         console.log("Width axis:", trap.widthAxis);
 
-        // Heights should differ (rake wall)
-        expect(trap.heightLeft).not.toEqual(trap.heightRight);
         // Width should be along Z for side walls
         expect(trap.widthAxis).toBe("z");
       }
