@@ -102,6 +102,13 @@ export const DOOR_HANDLE_DEPTH = 0.02;
 export const DOOR_HANDLE_OFFSET = 0.15;
 
 // =============================================================================
+// FLOOR SURFACE HEIGHT
+// =============================================================================
+
+/** Y position of the floor surface (top of subfloor) in world coordinates */
+export const FLOOR_SURFACE_Y = 0.2;
+
+// =============================================================================
 // SHEATHING DIMENSIONS
 // =============================================================================
 

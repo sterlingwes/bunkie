@@ -11,10 +11,10 @@ import type {
   GeometryPrimitive,
   BoxPrimitive,
   TrapezoidPrimitive,
+  MaterialCategory,
 } from "../../geometry/primitives";
-import { MATERIAL_COLORS } from "../../geometry/primitives";
+import { MATERIAL_COLORS_3D } from "../../geometry/primitives";
 import { useBunkieStore } from "../../store/useBunkieStore";
-import { generateWallGeometry } from "../../geometry/wall-factory";
 
 // =============================================================================
 // MAIN RENDERER
@@ -22,13 +22,29 @@ import { generateWallGeometry } from "../../geometry/wall-factory";
 
 interface GeometryRendererProps {
   primitives: GeometryPrimitive[];
+  /** When set, all primitives use this ID for hover/select instead of their own */
+  groupId?: string;
+  /** Filter out primitives with these material categories */
+  excludeMaterials?: MaterialCategory[];
 }
 
-export function GeometryRenderer({ primitives }: GeometryRendererProps) {
+export function GeometryRenderer({
+  primitives,
+  groupId,
+  excludeMaterials,
+}: GeometryRendererProps) {
+  const filtered = excludeMaterials
+    ? primitives.filter((p) => !excludeMaterials.includes(p.material))
+    : primitives;
+
   return (
     <group>
-      {primitives.map((primitive) => (
-        <PrimitiveMesh key={primitive.id} primitive={primitive} />
+      {filtered.map((primitive) => (
+        <PrimitiveMesh
+          key={primitive.id}
+          primitive={primitive}
+          groupId={groupId}
+        />
       ))}
     </group>
   );
@@ -40,9 +56,10 @@ export function GeometryRenderer({ primitives }: GeometryRendererProps) {
 
 interface PrimitiveMeshProps {
   primitive: GeometryPrimitive;
+  groupId?: string;
 }
 
-function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
+function PrimitiveMesh({ primitive, groupId }: PrimitiveMeshProps) {
   const {
     selectedComponentId,
     hoveredComponentId,
@@ -50,10 +67,11 @@ function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
     selectComponent,
   } = useBunkieStore();
 
-  const isSelected = selectedComponentId === primitive.id;
-  const isHovered = hoveredComponentId === primitive.id;
+  const interactionId = groupId ?? primitive.id;
+  const isSelected = selectedComponentId === interactionId;
+  const isHovered = hoveredComponentId === interactionId;
 
-  const colors = MATERIAL_COLORS[primitive.material];
+  const colors = MATERIAL_COLORS_3D[primitive.material];
   const color = isSelected
     ? colors.selected
     : isHovered
@@ -61,7 +79,7 @@ function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
       : colors.primary;
 
   const handlePointerOver = () => {
-    hoverComponent(primitive.id);
+    hoverComponent(interactionId);
     document.body.style.cursor = "pointer";
   };
 
@@ -71,7 +89,7 @@ function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
   };
 
   const handleClick = () => {
-    selectComponent(isSelected ? null : primitive.id);
+    selectComponent(isSelected ? null : interactionId);
   };
 
   switch (primitive.type) {
@@ -80,6 +98,7 @@ function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
         <BoxMesh
           primitive={primitive}
           color={color}
+          roughness={colors.roughness}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
           onClick={handleClick}
@@ -90,6 +109,7 @@ function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
         <TrapezoidMesh
           primitive={primitive}
           color={color}
+          roughness={colors.roughness}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
           onClick={handleClick}
@@ -100,6 +120,7 @@ function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
         <PlaneMesh
           primitive={primitive}
           color={color}
+          roughness={colors.roughness}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
           onClick={handleClick}
@@ -117,24 +138,27 @@ function PrimitiveMesh({ primitive }: PrimitiveMeshProps) {
 interface BoxMeshProps {
   primitive: BoxPrimitive;
   color: string;
+  roughness: number;
   onPointerOver: () => void;
   onPointerOut: () => void;
   onClick: () => void;
 }
 
-function BoxMesh({ primitive, color, ...handlers }: BoxMeshProps) {
+function BoxMesh({ primitive, color, roughness, ...handlers }: BoxMeshProps) {
   const { position, dimensions, rotation } = primitive;
 
   return (
     <mesh
       position={position}
       rotation={rotation || [0, 0, 0]}
+      castShadow
+      receiveShadow
       onPointerOver={handlers.onPointerOver}
       onPointerOut={handlers.onPointerOut}
       onClick={handlers.onClick}
     >
       <boxGeometry args={dimensions} />
-      <meshStandardMaterial color={color} />
+      <meshStandardMaterial color={color} roughness={roughness} />
     </mesh>
   );
 }
@@ -142,12 +166,18 @@ function BoxMesh({ primitive, color, ...handlers }: BoxMeshProps) {
 interface TrapezoidMeshProps {
   primitive: TrapezoidPrimitive;
   color: string;
+  roughness: number;
   onPointerOver: () => void;
   onPointerOut: () => void;
   onClick: () => void;
 }
 
-function TrapezoidMesh({ primitive, color, ...handlers }: TrapezoidMeshProps) {
+function TrapezoidMesh({
+  primitive,
+  color,
+  roughness,
+  ...handlers
+}: TrapezoidMeshProps) {
   const geometry = useMemo(
     () => createTrapezoidGeometry(primitive),
     [primitive],
@@ -157,12 +187,13 @@ function TrapezoidMesh({ primitive, color, ...handlers }: TrapezoidMeshProps) {
     <mesh
       geometry={geometry}
       position={primitive.position}
+      castShadow
+      receiveShadow
       onPointerOver={handlers.onPointerOver}
       onPointerOut={handlers.onPointerOut}
       onClick={handlers.onClick}
     >
-      <meshStandardMaterial color={color} side={2} />{" "}
-      {/* side={2} = DoubleSide */}
+      <meshStandardMaterial color={color} roughness={roughness} side={2} />
     </mesh>
   );
 }
@@ -230,39 +261,37 @@ function createTrapezoidGeometry(trap: TrapezoidPrimitive): BufferGeometry {
 interface PlaneMeshProps {
   primitive: GeometryPrimitive & { type: "plane" };
   color: string;
+  roughness: number;
   onPointerOver: () => void;
   onPointerOut: () => void;
   onClick: () => void;
 }
 
-function PlaneMesh({ primitive, color, ...handlers }: PlaneMeshProps) {
+function PlaneMesh({
+  primitive,
+  color,
+  roughness,
+  ...handlers
+}: PlaneMeshProps) {
   const { position, dimensions, rotation } = primitive;
 
   return (
     <mesh
       position={position}
       rotation={rotation || [0, 0, 0]}
+      castShadow
+      receiveShadow
       onPointerOver={handlers.onPointerOver}
       onPointerOut={handlers.onPointerOut}
       onClick={handlers.onClick}
     >
       <boxGeometry args={dimensions} />
-      <meshStandardMaterial color={color} transparent opacity={0.8} />
+      <meshStandardMaterial
+        color={color}
+        roughness={roughness}
+        transparent
+        opacity={0.8}
+      />
     </mesh>
   );
-}
-
-// =============================================================================
-// WALL-SPECIFIC COMPONENT (convenience wrapper)
-// =============================================================================
-
-interface WallGeometryProps {
-  wallId: "west" | "east" | "north" | "south";
-}
-
-export function WallGeometry3D({ wallId }: WallGeometryProps) {
-  const geometry = useMemo(() => generateWallGeometry(wallId), [wallId]);
-  const primitives = geometry.segments.map((s) => s.primitive);
-
-  return <GeometryRenderer primitives={primitives} />;
 }

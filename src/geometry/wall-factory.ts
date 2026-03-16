@@ -75,6 +75,25 @@ function makeSegment(
 export function generateWallGeometry(
   wallId: "west" | "east" | "north" | "south",
 ): WallGeometry {
+  return generateWallGeometryInternal(wallId, false);
+}
+
+/**
+ * Generate wall geometry in wall-local coordinates.
+ * - All framing at Z=0, sheathing at Z=SHEATHING_OFFSET
+ * - Side walls use width along local X axis (not Z)
+ * - Suitable for 3D rendering with per-wall group transforms
+ */
+export function generateWallGeometryLocal(
+  wallId: "west" | "east" | "north" | "south",
+): WallGeometry {
+  return generateWallGeometryInternal(wallId, true);
+}
+
+function generateWallGeometryInternal(
+  wallId: "west" | "east" | "north" | "south",
+  local: boolean,
+): WallGeometry {
   const wallConfigs = getWallConfigs();
   const config = wallConfigs[wallId];
 
@@ -82,22 +101,22 @@ export function generateWallGeometry(
   const isRakeWall = wallId === "north" || wallId === "south";
 
   // 1. Bottom plate
-  segments.push(...generateBottomPlate(config));
+  segments.push(...generateBottomPlate(config, local));
 
   // 2. Top plate(s)
-  segments.push(...generateTopPlate(config));
+  segments.push(...generateTopPlate(config, local));
 
   // 3. Studs (regular, king, jack)
-  segments.push(...generateStuds(config));
+  segments.push(...generateStuds(config, local));
 
   // 4. Opening framing (header, sill)
-  segments.push(...generateOpeningFraming(config));
+  segments.push(...generateOpeningFraming(config, local));
 
   // 5. Sheathing
   if (isRakeWall) {
-    segments.push(...generateRakeSheathing(config));
+    segments.push(...generateRakeSheathing(config, local));
   } else {
-    segments.push(...generateFlatSheathing(config));
+    segments.push(...generateFlatSheathing(config, local));
   }
 
   return {
@@ -114,8 +133,8 @@ export function generateWallGeometry(
 // SEGMENT GENERATORS
 // =============================================================================
 
-function generateBottomPlate(config: WallConfig): WallSegment[] {
-  const zPos = getWallZPosition(config.id);
+function generateBottomPlate(config: WallConfig, local = false): WallSegment[] {
+  const zPos = local ? 0 : getWallZPosition(config.id);
 
   return [
     makeSegment(
@@ -132,31 +151,43 @@ function generateBottomPlate(config: WallConfig): WallSegment[] {
   ];
 }
 
-function generateTopPlate(config: WallConfig): WallSegment[] {
+function generateTopPlate(config: WallConfig, local = false): WallSegment[] {
   const isRakeWall = config.id === "north" || config.id === "south";
-  const zPos = getWallZPosition(config.id);
+  const zPos = local ? 0 : getWallZPosition(config.id);
 
   if (isRakeWall) {
-    // For rake walls, top plate follows the roof slope
-    const heightLeft =
+    // Heights at each end of the wall (left = -halfWidth, right = +halfWidth in local X)
+    const heightAtLeft =
       config.id === "south" ? config.lowHeight : config.highHeight;
+    const heightAtRight =
+      config.id === "south" ? config.highHeight : config.lowHeight;
 
-    // Side walls have width along Z axis
-    const widthAxis =
-      config.id === "north" || config.id === "south" ? "z" : "x";
+    // Use a rotated box that follows the roof slope
+    const heightDiff = heightAtRight - heightAtLeft;
+    const slopeAngle = Math.atan2(heightDiff, config.width);
+    const slopeLength = Math.sqrt(
+      config.width * config.width + heightDiff * heightDiff,
+    );
+    const centerY = (heightAtLeft + heightAtRight) / 2 - TOP_PLATE_HEIGHT / 2;
+
+    // In local coords, slope is along X; in world coords for side walls, along Z
+    const rotation: [number, number, number] = local
+      ? [0, 0, slopeAngle]
+      : [slopeAngle, 0, 0];
 
     return [
       makeSegment(
-        createTrapezoid(
+        createBox(
           `${config.id}-top-plate`,
-          [0, heightLeft - TOP_PLATE_HEIGHT, zPos],
-          config.width,
-          PLATE_DEPTH,
-          TOP_PLATE_HEIGHT,
-          TOP_PLATE_HEIGHT,
+          [0, centerY, zPos],
+          [
+            local ? slopeLength : PLATE_DEPTH,
+            TOP_PLATE_HEIGHT,
+            local ? PLATE_DEPTH : slopeLength,
+          ],
           "framing",
           config.id,
-          widthAxis,
+          rotation,
         ),
         "Double Top Plate",
         "OBC 9.23.10.3",
@@ -180,10 +211,10 @@ function generateTopPlate(config: WallConfig): WallSegment[] {
   ];
 }
 
-function generateStuds(config: WallConfig): WallSegment[] {
+function generateStuds(config: WallConfig, local = false): WallSegment[] {
   const segments: WallSegment[] = [];
   const studPositions = getStudPositions(config);
-  const zPos = getWallZPosition(config.id);
+  const zPos = local ? 0 : getWallZPosition(config.id);
   const isSideWall = config.id === "north" || config.id === "south";
 
   for (const stud of studPositions) {
@@ -206,16 +237,17 @@ function generateStuds(config: WallConfig): WallSegment[] {
           ? "Jack Stud"
           : "Stud";
 
-    // For side walls, studs run along Z axis; for front/back walls, along X axis
-    const position: [number, number, number] = isSideWall
-      ? [0, yCenter, stud.x] // Side wall: stud.x is Z position
-      : [stud.x, yCenter, zPos]; // Front/back wall: stud.x is X position
+    // In local coords, all walls use the same orientation: X=along wall, Z=depth
+    // In world coords, side walls swap X↔Z
+    const position: [number, number, number] =
+      isSideWall && !local
+        ? [0, yCenter, stud.x] // Side wall world coords: stud.x is Z position
+        : [stud.x, yCenter, zPos]; // Local or front/back: stud.x is X position
 
-    // For side walls, stud dimensions are [depth, height, width]; for front/back, [width, height, depth]
-    // Side wall studs: X=STUD_DEPTH (wall thickness), Z=STUD_WIDTH (38mm visible in side view)
-    const dimensions: [number, number, number] = isSideWall
-      ? [STUD_DEPTH, studHeight, STUD_WIDTH]
-      : [STUD_WIDTH, studHeight, STUD_DEPTH];
+    const dimensions: [number, number, number] =
+      isSideWall && !local
+        ? [STUD_DEPTH, studHeight, STUD_WIDTH] // Side wall world coords: swapped
+        : [STUD_WIDTH, studHeight, STUD_DEPTH]; // Local or front/back: standard
 
     segments.push(
       makeSegment(
@@ -235,13 +267,16 @@ function generateStuds(config: WallConfig): WallSegment[] {
   return segments;
 }
 
-function generateOpeningFraming(config: WallConfig): WallSegment[] {
+function generateOpeningFraming(
+  config: WallConfig,
+  local = false,
+): WallSegment[] {
   const segments: WallSegment[] = [];
   const opening = getOpeningFraming(config);
 
   if (!opening) return segments;
 
-  const zPos = getWallZPosition(config.id);
+  const zPos = local ? 0 : getWallZPosition(config.id);
 
   // Header
   segments.push(
@@ -286,11 +321,7 @@ function generateOpeningFraming(config: WallConfig): WallSegment[] {
     makeSegment(
       createBox(
         `${config.id}-opening`,
-        [
-          opening.centerX,
-          openingBottom + openingHeight / 2,
-          zPos,
-        ],
+        [opening.centerX, openingBottom + openingHeight / 2, zPos],
         [opening.roughOpeningWidth, openingHeight, STUD_DEPTH],
         "opening",
         config.id,
@@ -302,8 +333,13 @@ function generateOpeningFraming(config: WallConfig): WallSegment[] {
   return segments;
 }
 
-function generateFlatSheathing(config: WallConfig): WallSegment[] {
-  const zPos = getWallZPosition(config.id) + SHEATHING_OFFSET;
+function generateFlatSheathing(
+  config: WallConfig,
+  local = false,
+): WallSegment[] {
+  const zPos = local
+    ? SHEATHING_OFFSET
+    : getWallZPosition(config.id) + SHEATHING_OFFSET;
   const opening = getOpeningFraming(config);
 
   // No opening — monolithic panel
@@ -466,12 +502,17 @@ function generateFlatSheathing(config: WallConfig): WallSegment[] {
   return segments;
 }
 
-function generateRakeSheathing(config: WallConfig): WallSegment[] {
-  const zPos = getWallZPosition(config.id) + SHEATHING_OFFSET;
+function generateRakeSheathing(
+  config: WallConfig,
+  local = false,
+): WallSegment[] {
+  const zPos = local
+    ? SHEATHING_OFFSET
+    : getWallZPosition(config.id) + SHEATHING_OFFSET;
   const opening = getOpeningFraming(config);
 
-  // Side walls (north/south) have their width along Z axis
-  const widthAxis = config.id === "north" || config.id === "south" ? "z" : "x";
+  // In local coords, width always runs along X; in world coords, side walls use Z
+  const widthAxis = local ? "x" : "z";
 
   const heightLeft =
     config.id === "south" ? config.lowHeight : config.highHeight;

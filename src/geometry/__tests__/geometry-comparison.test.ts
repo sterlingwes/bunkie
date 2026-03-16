@@ -91,9 +91,7 @@ describe("Geometry Comparison", () => {
       expect(sheathingSegments.length).toBeGreaterThanOrEqual(3);
 
       // Left and right pieces should be trapezoids (rake wall)
-      const leftPiece = sheathingSegments.find((s) =>
-        s.label.includes("left"),
-      );
+      const leftPiece = sheathingSegments.find((s) => s.label.includes("left"));
       expect(leftPiece).toBeDefined();
       expect(leftPiece!.primitive.type).toBe("trapezoid");
 

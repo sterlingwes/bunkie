@@ -107,23 +107,8 @@ export function Bunkie({ definition }: BunkieProps) {
         <>
           {floorAssembly && <Floor component={floorAssembly} />}
           {walls.map((wall) => {
-            const hasDoor = wall.id === "wall-west";
-            const hasWindow =
-              wall.id === "wall-south" || wall.id === "wall-north";
-            const windowPosition = wall.id === "wall-south" ? "front" : "back";
-            const isHidden = hiddenWalls.includes(wall.id);
-
-            if (isHidden) return null;
-
-            return (
-              <Wall
-                key={wall.id}
-                component={wall}
-                hasDoor={hasDoor}
-                hasWindow={hasWindow}
-                windowPosition={windowPosition}
-              />
-            );
+            if (hiddenWalls.includes(wall.id)) return null;
+            return <Wall key={wall.id} component={wall} />;
           })}
           {roof && <Roof component={roof} />}
         </>

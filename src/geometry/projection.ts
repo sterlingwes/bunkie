@@ -119,24 +119,54 @@ function projectBoxToSVG(
   view: ViewDirection,
   scale: number,
 ): SVGElementData[] {
-  // For simple box, project the bounding box
-  const bbox = {
-    min: [
-      box.position[0] - box.dimensions[0] / 2,
-      box.position[1] - box.dimensions[1] / 2,
-      box.position[2] - box.dimensions[2] / 2,
-    ] as Point3,
-    max: [
-      box.position[0] + box.dimensions[0] / 2,
-      box.position[1] + box.dimensions[1] / 2,
-      box.position[2] + box.dimensions[2] / 2,
-    ] as Point3,
-  };
-
-  const rect = projectBBox(bbox, view);
-
   // Sheathing renders behind framing (lower zOrder)
   const zOrder = box.material === "sheathing" ? 0 : box.position[1];
+
+  // If the box has rotation, render as a polygon from projected corners
+  if (
+    box.rotation &&
+    (box.rotation[0] !== 0 || box.rotation[1] !== 0 || box.rotation[2] !== 0)
+  ) {
+    const corners = getCorners(box);
+    const projected = corners.map((c) => projectPoint(c, view));
+
+    // Deduplicate near-identical projected points and sort by angle from centroid
+    const unique = deduplicateProjected(projected);
+    const cx = unique.reduce((s, p) => s + p[0], 0) / unique.length;
+    const cy = unique.reduce((s, p) => s + p[1], 0) / unique.length;
+    unique.sort(
+      (a, b) =>
+        Math.atan2(a[1] - cy, a[0] - cx) - Math.atan2(b[1] - cy, b[0] - cx),
+    );
+
+    const points = unique
+      .map((p) => `${p[0] * scale},${p[1] * scale}`)
+      .join(" ");
+
+    return [
+      {
+        type: "polygon",
+        props: {
+          points,
+          "data-id": box.id,
+          "data-material": box.material,
+          "data-group": box.group,
+        },
+        zOrder,
+      },
+    ];
+  }
+
+  // Non-rotated box: simple rect from bounding box
+  const [x, y, z] = box.position;
+  const [w, h, d] = box.dimensions;
+  const rect = projectBBox(
+    {
+      min: [x - w / 2, y - h / 2, z - d / 2],
+      max: [x + w / 2, y + h / 2, z + d / 2],
+    },
+    view,
+  );
 
   return [
     {
@@ -336,21 +366,80 @@ function getBBoxForView(
   };
 }
 
+/** Apply Euler rotation (XYZ order) to a point */
+function applyRotation(point: Point3, rotation: Point3): Point3 {
+  let [x, y, z] = point;
+  const [rx, ry, rz] = rotation;
+
+  if (rx !== 0) {
+    const cos = Math.cos(rx),
+      sin = Math.sin(rx);
+    const y1 = y * cos - z * sin;
+    const z1 = y * sin + z * cos;
+    y = y1;
+    z = z1;
+  }
+  if (ry !== 0) {
+    const cos = Math.cos(ry),
+      sin = Math.sin(ry);
+    const x1 = x * cos + z * sin;
+    const z1 = -x * sin + z * cos;
+    x = x1;
+    z = z1;
+  }
+  if (rz !== 0) {
+    const cos = Math.cos(rz),
+      sin = Math.sin(rz);
+    const x1 = x * cos - y * sin;
+    const y1 = x * sin + y * cos;
+    x = x1;
+    y = y1;
+  }
+
+  return [x, y, z];
+}
+
+/** Deduplicate projected 2D points that are within a small epsilon */
+function deduplicateProjected(points: Point2[], epsilon = 0.001): Point2[] {
+  const result: Point2[] = [];
+  for (const p of points) {
+    if (
+      !result.some(
+        (r) =>
+          Math.abs(r[0] - p[0]) < epsilon && Math.abs(r[1] - p[1]) < epsilon,
+      )
+    ) {
+      result.push(p);
+    }
+  }
+  return result;
+}
+
 function getCorners(p: GeometryPrimitive): Point3[] {
   switch (p.type) {
     case "box": {
       const [x, y, z] = p.position;
       const [w, h, d] = p.dimensions;
-      return [
-        [x - w / 2, y - h / 2, z - d / 2],
-        [x + w / 2, y - h / 2, z - d / 2],
-        [x - w / 2, y + h / 2, z - d / 2],
-        [x + w / 2, y + h / 2, z - d / 2],
-        [x - w / 2, y - h / 2, z + d / 2],
-        [x + w / 2, y - h / 2, z + d / 2],
-        [x - w / 2, y + h / 2, z + d / 2],
-        [x + w / 2, y + h / 2, z + d / 2],
+      const offsets: Point3[] = [
+        [-w / 2, -h / 2, -d / 2],
+        [+w / 2, -h / 2, -d / 2],
+        [-w / 2, +h / 2, -d / 2],
+        [+w / 2, +h / 2, -d / 2],
+        [-w / 2, -h / 2, +d / 2],
+        [+w / 2, -h / 2, +d / 2],
+        [-w / 2, +h / 2, +d / 2],
+        [+w / 2, +h / 2, +d / 2],
       ];
+      if (
+        p.rotation &&
+        (p.rotation[0] !== 0 || p.rotation[1] !== 0 || p.rotation[2] !== 0)
+      ) {
+        return offsets.map((o) => {
+          const [ox, oy, oz] = applyRotation(o, p.rotation!);
+          return [x + ox, y + oy, z + oz] as Point3;
+        });
+      }
+      return offsets.map(([ox, oy, oz]) => [x + ox, y + oy, z + oz] as Point3);
     }
     case "trapezoid": {
       const [x, y, z] = p.position;

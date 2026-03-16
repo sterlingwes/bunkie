@@ -221,7 +221,7 @@ exports[`SVG Output Snapshot > generates SVG element data for side wall > side-w
       "data-group": "south",
       "data-id": "south-top-plate",
       "data-material": "framing",
-      "points": "164,202.4 -164,202.4 -164,210 164,210",
+      "points": "-164.34611626324383,209.98420447813254 -163.65388373675614,202.4157955218675 164.34611626324383,232.4157955218675 163.65388373675614,239.98420447813254",
     },
     "type": "polygon",
   },

@@ -139,6 +139,60 @@ export const MATERIAL_COLORS: Record<
   },
 };
 
+/** 3D-specific color palette with roughness for physically-based rendering */
+export const MATERIAL_COLORS_3D: Record<
+  MaterialCategory,
+  {
+    primary: string;
+    hover: string;
+    selected: string;
+    roughness: number;
+  }
+> = {
+  framing: {
+    primary: "#c4a574",
+    hover: "#93c5fd",
+    selected: "#60a5fa",
+    roughness: 0.8,
+  },
+  sheathing: {
+    primary: "#d4b896",
+    hover: "#93c5fd",
+    selected: "#60a5fa",
+    roughness: 0.9,
+  },
+  opening: {
+    primary: "#78716C",
+    hover: "#93c5fd",
+    selected: "#60a5fa",
+    roughness: 0.8,
+  },
+  glass: {
+    primary: "#87ceeb",
+    hover: "#93c5fd",
+    selected: "#60a5fa",
+    roughness: 0.3,
+  },
+  foundation: {
+    primary: "#78716C",
+    hover: "#93c5fd",
+    selected: "#60a5fa",
+    roughness: 0.9,
+  },
+  floor: {
+    primary: "#c4a574",
+    hover: "#93c5fd",
+    selected: "#60a5fa",
+    roughness: 0.8,
+  },
+  roof: {
+    primary: "#696969",
+    hover: "#93c5fd",
+    selected: "#60a5fa",
+    roughness: 0.9,
+  },
+};
+
 // =============================================================================
 // HELPER FUNCTIONS
 // =============================================================================
